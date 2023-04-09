@@ -29,13 +29,26 @@ $$S(v, p) = S(v, p-1) - \left[S(v/p, p-1) - S(p-1, p-1)\right]$$
 
 One more very important observation is that if $$p^2 > v$$, then $$S(v, p) = S(v, p-1)$$ - that is, we only actually need to sieve out the primes up to $$\sqrt{v}$$, after which we will have $$S(x, \sqrt{x}) = \pi(x)$$.
 
-TODO stuff here
+### Square Root Trick
+The next important theoretical detail on the list relates to the "key values" `v` which show up as arguments in a recursive implementation of $$S(v, p)$$. Since $$S(v, p) = S(\lfloor v \rfloor, p)$$, we should only consider integer arguments.
 
-### Implementation (Lucy)
+Part of the story here is the equality
+
+$$\left \lfloor \frac{\lfloor x/m \rfloor}{n} \right \rfloor = \left \lfloor \frac{x}{mn} \right \rfloor$$
+
+You should convince yourself of this - the left hand side is the largest integer $$k$$ such that $$kn \leq \lfloor x/m \rfloor$$. This is true if and only if $$kn \leq x/m$$, which is maximized for $$k = \left \lfloor \frac{x}{mn} \right \rfloor$$.
+
+So, with this knowledge in mind, each key value $$v$$ is just the floor of a bigger key value divided by an integer - hence the set of key values is the set of distinct values taken by $$\left \lfloor \frac{x}{n} \right \rfloor$$.
+
+The "square root trick" describes exactly how many and which values that expression can take. It's closely related to Dirichlet's hyperbola method (described in [this blog post][7] and in section 3.5 of Apostol's _Introduction to Analytic Number Theory_). The idea is that if $$n \leq \sqrt{x}$$, all of the values $$\lfloor x/n \rfloor$$ will be distinct, and if $$n > \sqrt{x}$$ we will have $$\lfloor x/n \rfloor < \sqrt{x}$$. Therefore there are at most $$2\sqrt{x}$$ distinct key values to deal with, which is not so bad.
+
+This trick is ubiquitous and used in a large variety of number theoretic summation techniques, for example in [this algorithm][8] to compute the partial sums of the totient function $$\varphi(n)$$ in $$O(x^{3/4})$$ time[^1].
+
+### Algorithm (Lucy)
 1. Initialize `S[v] = v-1` for each key value `v`.
 2. For `p` in `2..sqrt(x)`,  
-    2a. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and go back to **2**.  
-    2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in **decreasing order**, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
+    2a. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and try again.  
+    2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
 3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
 
 
@@ -58,3 +71,7 @@ TODO stuff here
 [4]: https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 [5]: https://codeforces.com/blog/entry/91632
 [6]: https://en.wikipedia.org/wiki/Mertens%27_theorems#Mertens'_second_theorem_and_the_prime_number_theorem
+[7]: https://angyansheng.github.io/blog/dirichlet-hyperbola-method
+[8]: https://mathproblems123.wordpress.com/2018/05/10/sum-of-the-euler-totient-function/
+
+[^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
