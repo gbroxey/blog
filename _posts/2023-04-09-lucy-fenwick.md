@@ -42,7 +42,13 @@ So, with this knowledge in mind, each key value $$v$$ is just the floor of a big
 
 The "square root trick" describes exactly how many and which values that expression can take. It's closely related to Dirichlet's hyperbola method (described in [this blog post][7] and in section 3.5 of Apostol's _Introduction to Analytic Number Theory_). The idea is that if $$n \leq \sqrt{x}$$, all of the values $$\lfloor x/n \rfloor$$ will be distinct, and if $$n > \sqrt{x}$$ we will have $$\lfloor x/n \rfloor < \sqrt{x}$$. Therefore there are at most $$2\sqrt{x}$$ distinct key values to deal with, which is not so bad.
 
-![image depicting the hyperbola $$xy \leq 10$$ and some key values](hyperbola.png)
+![image depicting the hyperbola $$xy \leq 10$$ and some key values](/docs/assets/images/2023-04-09-hyperbola.png)
+
+![image depicting the hyperbola $$xy \leq 10$$ and some key values](/blog/docs/assets/images/2023-04-09-hyperbola.png)
+
+![image depicting the hyperbola $$xy \leq 10$$ and some key values](/docs/assets/images/2023-04-09-hyperbola.svg)
+
+![image depicting the hyperbola $$xy \leq 10$$ and some key values](/blog/docs/assets/images/2023-04-09-hyperbola.svg)
 
 This trick is ubiquitous and used in a large variety of number theoretic summation techniques, for example in [this algorithm][8] to compute the partial sums of the totient function $$\varphi(n)$$ in $$O(x^{3/4})$$ time[^1].
 
