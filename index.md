@@ -13,27 +13,27 @@ Not sure how this will look yet so here's a ton of filler text.
 
 Lorem markdownum se ruit. Ut avertite aegida et Pergama, tumida medium rebellant
 et atria esse!
-
-    if (software(prompt_tweet, soapUddiDrag(restore_bin_antivirus,
-            freeware_wimax, cms)) + 1) {
-        orientation_folder += 5;
-        display(impression);
-    }
-    if (websiteJpegWebsite(template_footer(tebibyteHardware), drive_base,
-            perlCpcSpreadsheet.string(system, dithering, -5))) {
-        kilohertz_reimage_dma(2);
-        snippet(markup_javascript_session(1, serial));
-        kilobit(dcim(symbolic, 4), tape_compact_infringement);
-    } else {
-        bar.bit_sidebar_w *= 47 / username;
-        serverDial(ray);
-    }
-    whiteRestoreSkyscraper.retina(user);
-    wizardMultitasking = ip_cpl_scrolling;
-    ad_meme_database(utilityParity(association_nntp.optical(cplWindow, java,
-            dynamic), resources_scalable_gate, format_backbone_simm(4,
-            cyberbullying_drag_scanner, 4)), shareware(-5));
-
+```
+if (software(prompt_tweet, soapUddiDrag(restore_bin_antivirus,
+        freeware_wimax, cms)) + 1) {
+    orientation_folder += 5;
+    display(impression);
+}
+if (websiteJpegWebsite(template_footer(tebibyteHardware), drive_base,
+        perlCpcSpreadsheet.string(system, dithering, -5))) {
+    kilohertz_reimage_dma(2);
+    snippet(markup_javascript_session(1, serial));
+    kilobit(dcim(symbolic, 4), tape_compact_infringement);
+} else {
+    bar.bit_sidebar_w *= 47 / username;
+    serverDial(ray);
+}
+whiteRestoreSkyscraper.retina(user);
+wizardMultitasking = ip_cpl_scrolling;
+ad_meme_database(utilityParity(association_nntp.optical(cplWindow, java,
+        dynamic), resources_scalable_gate, format_backbone_simm(4,
+        cyberbullying_drag_scanner, 4)), shareware(-5));
+```
 ## Degenerat minas
 
 Et neque! Cur sua subdita [curvos huic prope](http://nec.com/) consonus lumina;
