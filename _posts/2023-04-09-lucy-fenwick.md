@@ -27,17 +27,17 @@ This leads us to the crucial formula
 
 $$S(v, p) = S(v, p-1) - \left[S(v/p, p-1) - S(p-1, p-1)\right]$$
 
-One more very important observation is that if $p^2 > v$, then $$S(v, p) = S(v, p-1)$$ - that is, we only actually need to sieve out the primes up to $$\sqrt{v}$$, after which we will have $$S(x, \sqrt{x}) = \pi(x)$$.
+One more very important observation is that if $$p^2 > v$$, then $$S(v, p) = S(v, p-1)$$ - that is, we only actually need to sieve out the primes up to $$\sqrt{v}$$, after which we will have $$S(x, \sqrt{x}) = \pi(x)$$.
 
 ### Implementation (A)
-1. Initialize $$S[v] = v-1$$ for each key value $$v$$.
-2. For $$p$$ in $$2$$ to $$\sqrt{x}$$,
-  2a. If $$S[p] = S[p-1]$$, then $$p$$ is not a prime (why?) so increment $$p$$ and go back to **2**.
-  2b. Testing.
-  2c. Testing more
+1. Initialize `S[v] = v-1` for each key value `v`.
+2. For `p` in `2..sqrt(x)`,
+    1. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and go back to **2**.
+    2. Testing.
+    3. Testing more
 3. What?
-  3a. More list testing
-  3b. Hopefully this works
+    1. Testing some more
+    2. ???
 TODO
 
 ## Fenwick / Binary Indexed Trees
