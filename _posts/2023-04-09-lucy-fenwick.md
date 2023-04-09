@@ -19,8 +19,25 @@ The smallest element in the sieve is now marked as definitely prime, and all of 
 
 So, for each prime $$p \leq x$$, we would be iterating over all of its multiples, which gives us basically a runtime of $$\sum_{p \leq x} \frac{x}{p} \sim x \log \log x$$ (check out [Mertens' second theorem][6] if this is unfamiliar).
 
-To turn this into a nice prime counting algorithm we start by defining a function $$S(v, p)$$ which will be the number of integers $$n$$ in the range $$2 \leq n \leq v$$ which remain after sieving with all of the primes up to $$p$$. We start with $$S(v, 1) = v-1$$ since $$1$$ is never in the sieve.
+To turn this into a nice prime counting algorithm we define a function $$S(v, p)$$ which will be the number of integers $$n$$ in the range $$2 \leq n \leq v$$ remaining after sieving with all of the primes up to $$p$$. We start with $$S(v, 1) = v-1$$ since $$1$$ is never in the sieve.
 
+Considering $$S(v, p)$$, we see that every integer we eliminate from the sieve is a multiple of $$p$$. Specifically (and you should check this by doing the sieve by hand!) the integers we eliminate are exactly $$p$$ times those remaining in the sieve that are between $$p$$ and $$v/p$$!
+
+This leads us to the crucial formula
+
+$$S(v, p) = S(v, p-1) - \left[S(v/p, p-1) - S(p-1, p-1)\right]$$
+
+One more very important observation is that if $p^2 > v$, then $$S(v, p) = S(v, p-1)$$ - that is, we only actually need to sieve out the primes up to $$\sqrt{v}$$, after which we will have $$S(x, \sqrt{x}) = \pi(x)$$.
+
+### Implementation (A)
+1. Initialize $$S[v] = v-1$$ for each key value $$v$$.
+2. For $$p$$ in $$2$$ to $$\sqrt{x}$$,
+  2a. If $$S[p] = S[p-1]$$, then $$p$$ is not a prime (why?) so increment $$p$$ and go back to **2**.
+  2b. Testing.
+  2c. Testing more
+3. What?
+  3a. More list testing
+  3b. Hopefully this works
 TODO
 
 ## Fenwick / Binary Indexed Trees
@@ -28,6 +45,8 @@ TODO
 ## Analysis + Optimization
 
 ## Benchmarks
+
+## Sums of Primes, Primes Squared, ...
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
