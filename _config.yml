@@ -1,3 +1,10 @@
+title: griff's math blog!
+author: 
+  name: Griffin Macris
+  email: gnmacris@gmail.com
+description: >
+  Griffin's blog about math and programming, usually relating to number theory and combinatorics.
+
 theme: minima
 show_excerpts: true
 header_pages:
