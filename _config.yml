@@ -3,7 +3,3 @@ title: griff's math blog!
 author:
   name: Griffin Macris
   email: "gnmacris@gmail.com"
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
