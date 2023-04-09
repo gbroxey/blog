@@ -29,29 +29,16 @@ $$S(v, p) = S(v, p-1) - \left[S(v/p, p-1) - S(p-1, p-1)\right]$$
 
 One more very important observation is that if $$p^2 > v$$, then $$S(v, p) = S(v, p-1)$$ - that is, we only actually need to sieve out the primes up to $$\sqrt{v}$$, after which we will have $$S(x, \sqrt{x}) = \pi(x)$$.
 
-### Implementation (A)
+TODO stuff here
+
+### Implementation (Lucy)
 1. Initialize `S[v] = v-1` for each key value `v`.
 2. For `p` in `2..sqrt(x)`,  
     2a. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and go back to **2**.  
-    2b. Otherwise, `p` is a prime - for each key   
-    2c. Testing more
-3. What?  
-    3a. Testing some more  
-    3b. ???
-```nim
-  for i in 1..10:
-    echo i
-```
+    2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in **decreasing order**, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
+3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
 
-<details>
-<summary>Implementation (A) in Nim</summary>
-<p>
-```nim
-  for i in 1..10:
-    echo i
-```
-</p>
-</details>
+
 
 ## Fenwick / Binary Indexed Trees
 
@@ -60,6 +47,10 @@ One more very important observation is that if $$p^2 > v$$, then $$S(v, p) = S(v
 ## Benchmarks
 
 ## Sums of Primes, Primes Squared, ...
+
+## Primes in Arithmetic Progressions
+
+## Trick for Further Optimization
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
