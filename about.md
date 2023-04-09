@@ -23,7 +23,7 @@ I've submitted a handful of problems to Project Euler myself, you can find them 
 [670: Colouring a Strip](https://projecteuler.net/problem=670) and [671: Colouring a Loop](https://projecteuler.net/problem=671)[^1]  
 [821: 123-Separable](https://projecteuler.net/problem=821) 
 
-<center><img src="https://projecteuler.net/project/images/p671_loop_acceptable.png"><center>
+<center><img src="https://projecteuler.net/project/images/p671_loop_acceptable.png"></center>
 
 ## Other Involvements
 
