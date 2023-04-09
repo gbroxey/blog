@@ -31,14 +31,27 @@ One more very important observation is that if $$p^2 > v$$, then $$S(v, p) = S(v
 
 ### Implementation (A)
 1. Initialize `S[v] = v-1` for each key value `v`.
-2. For `p` in `2..sqrt(x)`,
-    1. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and go back to **2**.
-    2. Testing.
-    3. Testing more
-3. What?
-    1. Testing some more
-    2. ???
-TODO
+2. For `p` in `2..sqrt(x)`,  
+    2a. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and go back to **2**.  
+    2b. Otherwise, `p` is a prime - for each key   
+    2c. Testing more
+3. What?  
+    3a. Testing some more  
+    3b. ???
+```nim
+  for i in 1..10:
+    echo i
+```
+
+<details>
+<summary>Implementation (A) in Nim</summary>
+<p>
+```nim
+  for i in 1..10:
+    echo i
+```
+</p>
+</details>
 
 ## Fenwick / Binary Indexed Trees
 
