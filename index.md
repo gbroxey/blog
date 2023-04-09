@@ -1,6 +1,8 @@
 ---
 title: griff's math blog!
-author: Griffin Macris
+author: 
+  name: Griffin Macris
+  email: gnmacris@gmail.com
 ---
 
-## This is a test
+I go by ``griff`` / ``heteroing`` on Project Euler. This is where I'll post some of the math and programming stuff that I'm working on or think is interesting.
