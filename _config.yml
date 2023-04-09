@@ -1,6 +1,8 @@
 theme: minima
 title: griff's math blog!
-author: Griffin Macris
+author:
+  name: Griffin Macris
+  email: "gnmacris@gmail.com"
 
 plugins:
   - jekyll-feed
