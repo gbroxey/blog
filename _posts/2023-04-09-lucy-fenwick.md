@@ -44,8 +44,6 @@ The "square root trick" describes exactly how many and which values that express
 
 ![image depicting the hyperbola $$xy \leq 10$$ and some key values](hyperbola.png)
 
-![image depicting the hyperbola $$xy \leq 10$$ and some key values](hyperbola.svg)
-
 This trick is ubiquitous and used in a large variety of number theoretic summation techniques, for example in [this algorithm][8] to compute the partial sums of the totient function $$\varphi(n)$$ in $$O(x^{3/4})$$ time[^1].
 
 ### Algorithm (Lucy)
