@@ -1,3 +1,3 @@
 ---
-layout: home
+title: griff's math blog!
 ---
