@@ -1,3 +1,7 @@
 theme: minima
 title: griff's math blog!
 author: Griffin Macris
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
