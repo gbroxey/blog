@@ -29,4 +29,12 @@ I've submitted a handful of problems to Project Euler myself, you can find them 
 
 I made the Facebook group [actually good math problems](https://www.facebook.com/groups/1923323131245618), which is a very decent place to share and work on actually good math problems.
 
+## Computer Specs
+
+Given that a lot of what I work on is computational it makes sense, I think, for me to include the relevant hardware specifications here for those interested.
+
+**CPU**: AMD Ryzen 7 3700x  
+**GPU**: EVGA NVidia RTX 2070 Super  
+**RAM**: 64 GB Corsair
+
 [^1]: Problem 671 is an extension to 670 created by the PE development team.

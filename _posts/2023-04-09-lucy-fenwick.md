@@ -87,17 +87,67 @@ proc newFIArray(x: int64): FIArray =
   if isqrt == (x div isqrt): dec L
   result.arr = newSeq[int64](L)
 
-proc `[]`(S: var FIArray, v: int64): var int64 =
+proc `[]`(S: FIArray, v: int64): int64 =
   if v <= S.isqrt: return S.arr[v-1]
   return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
+
+proc `[]=`(S: var FIArray, v: int64, z: int64) =
+  if v <= S.isqrt: S.arr[v-1] = z
+  else: S.arr[^(S.x div v).int] = z
+
+iterator keysInc(S: FIArray): int64 =
+  ##Iterates over the key values of S in increasing order.
+  for v in 1..S.isqrt: yield v
+  if S.isqrt != S.x div S.isqrt: 
+    yield S.x div S.isqrt
+  for n in countdown(S.isqrt - 1, 1):
+    yield S.x div n
+
+iterator keysDec(S: FIArray): int64 =
+  ##Iterates over the key values of S in decreasing order.
+  for n in 1..(S.isqrt - 1):
+    yield S.x div n
+  if S.isqrt != S.x div S.isqrt: 
+    yield S.x div S.isqrt
+  for v in countdown(S.isqrt, 1): yield v
 ```
+
+Nothing magical is happening here quite yet, it's just incredibly helpful to have these functions set up when we actually implement Lucy's algorithm. Speaking of, we can describe and implement it now -
 
 ### Algorithm (Lucy)
 1. Initialize `S[v] = v-1` for each key value `v`.
 2. For `p` in `2..sqrt(x)`,  
-    2a. If `S[p] == S[p-1]`, then `p` is not a prime (why?) so increment `p` and try again.  
+    2a. If `S[p] == S[p-1]`, then `p` is not a prime (_why?_) so increment `p` and try again.  
     2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
 3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+
+And here's the incredibly simple Nim implementation:
+
+```nim
+proc pi(x: int64): FIArray =
+  var S = newFIArray(x)
+  for v in S.keysInc:
+    S[v] = v-1
+  for p in 2..S.isqrt:
+    if S[p] == S[p-1]: continue
+    #p is prime
+    for v in S.keysDec:
+      if v < p*p: break
+      S[v] = S[v] - (S[v div p] - S[p-1])
+  return S
+```
+
+Hopefully you can understand the allure of this prime counting method.
+
+A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in only `7.3s` (on my machine). Since we only store about $$2\sqrt{x} = 2*10^6$$ values in our container, this also has fantastic memory usage. If we try running it at a few more powers of ten we get the following runtime data:
+|$$x$$|$$\pi(x)$$|Time (s)|
+|:---:|:--------:|:------:|
+|$$10^9$$|`50847534`|`0.049`|
+|$$10^{10}$$|`455052511`|`0.259`|
+|$$10^{11}$$|`4118054813`|`1.370`|
+|$$10^{12}$$|`37607912018`|`7.259`|
+|$$10^{13}$$|`346065536839`|`39.198`|
+|$$10^{14}$$|`3204941750802`|`209.039`|
 
 
 
