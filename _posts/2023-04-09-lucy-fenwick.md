@@ -141,10 +141,10 @@ Hopefully you can understand the allure of this prime counting method.
 
 A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in only `7.3s` (on my machine). Since we only store about $$2\sqrt{x} = 2*10^6$$ values in our container, this also has fantastic memory usage. If we try running it at a few more powers of ten we get the following runtime data:
 
-**INDENTED**
+**INDENTED 2**
 
 <details>
-  <summary>Runtime Data (Lucy)</summary>
+    <summary>Runtime Data (Lucy)</summary>
 
 
   |x|pi(x)|Time (s)|
