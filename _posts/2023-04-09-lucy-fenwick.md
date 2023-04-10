@@ -144,6 +144,7 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 <details>
 <summary>Runtime Data (Lucy)</summary>
 
+
 |x|pi(x)|Time (s)|
 |:---:|:---:|:---:|
 |10<sup>9</sup>|50847534|0.049|
@@ -154,6 +155,7 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 |10<sup>14</sup>|3204941750802|209.039|
 
 </details>
+
 
 Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will also significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
 
