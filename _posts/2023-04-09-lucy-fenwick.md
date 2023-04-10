@@ -80,6 +80,7 @@ type FIArray = object
   arr: seq[int64]
 
 proc newFIArray(x: int64): FIArray =
+  ##Initializes a new FIArray with result[v] = 0 for all v.
   result.x = x
   var isqrt = isqrt(x)
   result.isqrt = isqrt
@@ -88,10 +89,12 @@ proc newFIArray(x: int64): FIArray =
   result.arr = newSeq[int64](L)
 
 proc `[]`(S: FIArray, v: int64): int64 =
+  ##Accesses S[v].
   if v <= S.isqrt: return S.arr[v-1]
   return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
 
 proc `[]=`(S: var FIArray, v: int64, z: int64) =
+  ##Sets S[v] = z.
   if v <= S.isqrt: S.arr[v-1] = z
   else: S.arr[^(S.x div v).int] = z
 
@@ -141,29 +144,24 @@ Hopefully you can understand the allure of this prime counting method.
 
 A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in only `7.3s` (on my machine). Since we only store about $$2\sqrt{x} = 2*10^6$$ values in our container, this also has fantastic memory usage. If we try running it at a few more powers of ten we get the following runtime data:
 
-**INDENTED 4**
 
-<details>
-  <summary>Runtime Data (Lucy)</summary>
-  <p>
-
-  |x|pi(x)|Time (s)|
-  |:---:|:---:|:---:|
-  |10<sup>9</sup>|50847534|0.049|
-  |10<sup>10</sup>|455052511|0.259|
-  |10<sup>11</sup>|4118054813|1.370|
-  |10<sup>12</sup>|37607912018|7.259|
-  |10<sup>13</sup>|346065536839|39.198|
-  |10<sup>14</sup>|3204941750802|209.039|
-
-  </p>
-</details>
+|x|pi(x)|Time (s)|
+|:---:|:---:|:---:|
+|10<sup>9</sup>|50847534|0.049|
+|10<sup>10</sup>|455052511|0.259|
+|10<sup>11</sup>|4118054813|1.370|
+|10<sup>12</sup>|37607912018|7.259|
+|10<sup>13</sup>|346065536839|39.198|
+|10<sup>14</sup>|3204941750802|209.039|
 
 
 Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will also significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
 
-
 ## Fenwick / Binary Indexed Trees
+
+A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a data structure which has been described in a [billion][10] [different][11] [places][12] in a lot of detail by [very smart computer scientists][13] who know a lot more than I do. Really - this thing has a plethora of uses, for example [counting inversions in an array][14], quickly calculating the index of a permutation among all permutations listed lexicographically[^2], and as you'll see soon, prime counting! Seriously, you should go read all the articles I just linked, because I'm only going to be lightly touching on how a Fenwick tree works, because I'd rather just use it as a black box here.
+
+## Application of Fenwick Trees to Lucy's Algorithm
 
 ## Analysis + Optimization
 
@@ -184,5 +182,12 @@ Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algori
 [7]: https://angyansheng.github.io/blog/dirichlet-hyperbola-method
 [8]: https://mathproblems123.wordpress.com/2018/05/10/sum-of-the-euler-totient-function/
 [9]: https://nim-lang.org/
+[10]: https://codeforces.com/blog/entry/57292
+[11]: https://www.hackerearth.com/practice/notes/binary-indexed-tree-or-fenwick-tree/#c217533
+[12]: https://math-porn.tumblr.com/post/93129714459/range-queries-and-fenwick-trees
+[13]: https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.14.8917
+[14]: https://www.geeksforgeeks.org/inversion-count-in-array-using-bit/
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
+
+[^2]: I looked and actually can't find a reference for this so I'll probably write something on it at some point.
