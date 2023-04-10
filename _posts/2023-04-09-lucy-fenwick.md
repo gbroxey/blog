@@ -128,7 +128,7 @@ Why, in step 2b, do we have to update the array elements in decreasing order?
 
 This is a side effect of us using a single array `S` to store `S[v, p]` for all keys `v` and `p <= isqrt`. There is a loop invariant here: after step 2b, `S[v] = S[v, p]`. During step 2b, part of the array should be `S[v, p]` and part of it should be `S[v, p-1]`. We have to be careful that when we update `S[v]` to equal `S[v, p]` that we will not need the value `S[v, p-1]` in the future, since it will be overwritten. The natural way to make sure of this is to simply update the highest `v` first, since any `S[v, p]` will only need to access `S[w, p-1]` for `w < p`.
 
-I'm not sure if my explanation of this part in words is completely satisfactory, so here I've drawn a small dependency graph of `S[v, p]` for `x = 10`.
+I'm not sure if my explanation of this part in words is completely satisfactory, so here I've[^4] drawn a small dependency graph of `S[v, p]` for `x = 10`.
 
 <center><img src="/blog/docs/assets/images/2023-04-09-dependency10.svg" width="85%" height="85%"></center>
 
@@ -557,7 +557,11 @@ Of course the same extension applies to Lucy + Fenwick, but we need $$\varphi(d)
 
 If you've gotten this far you must _really_ want every bit of speed you can get. Alright, I'll tell you what I know.
 
-TODO
+TODO - I'll write this tomorrow :)
+
+## Code
+
+The code for this blog post is available [here on GitHub][22].
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
@@ -580,9 +584,12 @@ TODO
 [19]: https://en.wikipedia.org/wiki/Completely_multiplicative_function
 [20]: https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_arithmetic_progressions
 [21]: https://en.wikipedia.org/wiki/Dirichlet_character
+[22]: https://github.com/gbroxey/blog/blob/main/code/2023-04-09-lucy-fenwick/pcount.nim
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
 [^2]: I looked and actually can't find a reference for this so I'll probably write something on it at some point.
 
 [^3]: The function `isqrt()` uses the Babylonian algorithm and belongs in [a utility file](https://github.com/gbroxey/blog/blob/main/code/utils/iops.nim) available in the blog's repository.
+
+[^4]: With help from gor3n in the Project Euler Discord group :)
