@@ -123,9 +123,10 @@ Nothing magical is happening here quite yet, it's just incredibly helpful to hav
     2a. If `S[p] == S[p-1]`, then `p` is not a prime (_why?_) so increment `p` and try again.  
     2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
 3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+# TODO
+Why decreasing order?
 
 And here's the incredibly simple Nim implementation:
-
 ```nim
 proc pi(x: int64): FIArray =
   var S = newFIArray(x)
@@ -159,7 +160,87 @@ Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algori
 
 ## Fenwick / Binary Indexed Trees
 
-A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a data structure which has been described in a [billion][10] [different][11] [places][12] in a lot of detail by [very smart computer scientists][13] who know a lot more than I do. Really - this thing has a plethora of uses, for example [counting inversions in an array][14], quickly calculating the index of a permutation among all permutations listed lexicographically[^2], and as you'll see soon, prime counting! Seriously, you should go read all the articles I just linked, because I'm only going to be lightly touching on how a Fenwick tree works, because I'd rather just use it as a black box here.
+A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a data structure which has been described in a [billion][10] [different][11] [places][12] in a lot of detail by [very smart computer scientists][13] who know a lot more than I do. Really - this thing has a plethora of uses, for example [counting inversions in an array][14], quickly calculating the index of a permutation among all permutations listed lexicographically[^2], and as you'll see soon, prime counting! Seriously, you should go read all the articles I just linked.
+
+I'm only going to be lightly touching on how a Fenwick tree works, because I'd rather just use it as a black box here.
+
+Suppose we have an array `a[1..n]` indexed from `1` to `n`.  
+A standard Fenwick tree supports two operations:
+- **Prefix sums**, which query `a[1] + a[2] + ... + a[i]` for some `i <= n`.
+- **Updates**, which modify the array by `a[i] += c` for some `i <= n` and integer `c`.
+
+On an ideal array, the first operation would take $$O(i)$$ time, and the second would take constant time.
+
+In our applications we would like to perform the prefix sums quickly. One idea is to store the prefix sums instead of the base array - that way we can get the prefix sums in constant time. But then to update an element of the array we would have to modify $$O(n-i+1)$$ partial sums, and so the update operation gets as slow as the prefix operation once was.
+
+A Fenwick tree balances the prefix and update operations - both will take $$O(\log n)$$ time, which is excellent.
+
+The way this is done is by computing a bunch of range sums over many different overlapping intervals of the base array. It's done in such a way that 
+- every prefix sum is composed of about $$O(\log n)$$ of the intervals we have pre-computed, and
+- every element of the base array belongs to about $$O(\log n)$$ of the intervals we care about!
+
+Thus, if we want to compute a prefix sum we just add up about $$O(\log n)$$ values, and to update an element of the base array we update about $$O(\log n)$$ range sums.
+
+<center>
+<img src="https://cp-algorithms.com/data_structures/binary_indexed_tree.png">  
+
+Image source is [cp-algorithms.com][16].</center>
+
+It's all very nice in theory but sounds like it would be a bit annoying to implement. Fortunately you can essentially use the binary structure of computer memory to your benefit, which makes it _exceptionally_ simple to code:
+
+```nim
+type Fenwick[T] = object
+  arr: seq[T]
+
+proc newFenwick[T](len: int): Fenwick =
+  result.arr.newSeq(len)
+
+proc len[T](f: Fenwick[T]): int = f.arr.len
+
+proc sum[T](f: Fenwick[T], i: SomeInteger): T =
+  ##Returns f[0] + f[1] + ... + f[i]. Time O(log i).
+  var ii = i+1 #uses 1-indexing for bit tricks
+  while ii>0:
+    result += f.arr[ii-1]
+    ii -= (ii and (-ii))
+
+proc addTo[T](f: var Fenwick[T], i: SomeInteger, c: T) =
+  ##Adds c to a single element of the base array. O(log i)
+  var ii = i+1 #uses 1-indexing for bit tricks
+  while ii<=f.arr.len:
+    f.arr[ii-1] += c
+    ii += (ii and (-ii))
+
+proc `[]`[T](f: Fenwick[T], i: SomeInteger): T =
+  ##Accesses a single element of the base array. O(log i)
+  if i==0: return f.sum(0)
+  return f.sum(i) - f.sum(i-1)
+
+proc `[]=`[T](f: var Fenwick[T], i: SomeInteger, x: T) =
+  ##Sets a single element of the base array. O(log i)
+  f.addTo(i, x-f[i])
+```
+
+This is an extremely simple, barebones implementation of the structure, but it'll work great.  
+I've also given it a generic type `T`, which will be `int` in our case. It's helpful to be able to use `int64` in case you want to do sums of primes later (you do).
+
+It's possible to do a lot more than this with a Fenwick tree. For example, if you have a nontrivial initial state you'd like the base array to have, you can initialize the tree in linear time instead of updating each of the elements individually. It's explained in [this Codeforces blog by sdnr1][15].
+
+For ease of use I'm going to use a slightly less general version of that method in which we create the Fenwick tree with a default value - every element of the base array equal to some constant `default`. It looks like this:
+
+```nim
+proc newFenwick[T](len: int, default: T): Fenwick[T] =
+  ##Initializes a fenwick tree with a constant array, f[i] = default for all i.
+  result.arr.newSeq(len)
+  for i in 0..<len:
+    result.arr[i] = default
+  for i in 1..len:
+    var j = i + (i and (-i))
+    if j<=len: 
+      result.arr[j-1] += result.arr[i-1]
+```
+
+This is everything we need from the land of data structures to speed up Lucy's algorithm.
 
 ## Application of Fenwick Trees to Lucy's Algorithm
 
@@ -187,6 +268,8 @@ A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a dat
 [12]: https://math-porn.tumblr.com/post/93129714459/range-queries-and-fenwick-trees
 [13]: https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.14.8917
 [14]: https://www.geeksforgeeks.org/inversion-count-in-array-using-bit/
+[15]: https://codeforces.com/blog/entry/63064
+[16]: https://cp-algorithms.com/data_structures/fenwick.html
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
