@@ -42,12 +42,55 @@ So, with this knowledge in mind, each key value $$v$$ is just the floor of a big
 
 The "square root trick" describes exactly how many and which values that expression can take. It's closely related to Dirichlet's hyperbola method (described in [this blog post][7] and in section 3.5 of Apostol's _Introduction to Analytic Number Theory_). The idea is that if $$n \leq \sqrt{x}$$, all of the values $$\lfloor x/n \rfloor$$ will be distinct, and if $$n > \sqrt{x}$$ we will have $$\lfloor x/n \rfloor < \sqrt{x}$$. Therefore there are at most $$2\sqrt{x}$$ distinct key values to deal with, which is not so bad.
 
-The following image shows a plot of $$10/n$$ (the blue line) and the values $$\lfloor 10/n \rfloor$$ as black points. The blue shaded section is for $$n \leq \sqrt{10}$$, and you can see that for $$n > \sqrt{10}$$ we have lots of repeated values.
+The following image shows a plot of $$10/n$$ (the blue line) and the values $$\lfloor 10/n \rfloor$$ as black points. The blue shaded section is for $$n \leq \sqrt{10}$$, and you can see that for $$n > \sqrt{10}$$ we have lots of repeated values due to the restriction $$10/n \leq \sqrt{10}$$.
 
-<img src="/blog/docs/assets/images/2023-04-09-hyperbola.png" width="75%" height="75%">
-
+<center><img src="/blog/docs/assets/images/2023-04-09-hyperbola.png" width="75%" height="75%"></center>
 
 This trick is ubiquitous and used in a large variety of number theoretic summation techniques, for example in [this algorithm][8] to compute the partial sums of the totient function $$\varphi(n)$$ in $$O(x^{3/4})$$ time[^1].
+
+### Data Structure Details
+
+To implement Lucy's algorithm, then, it helps to have a nice container to store an `int64` at each key value `v` (where `x` is fixed and known). In my personal library I use a lightweight wrapper object which stores the following data:
+- The value `x``
+- The value `isqrt` defined as $$\lfloor \sqrt{x} \rfloor$$
+- An array `arr` of length `L`, where $$L = 2\lfloor \sqrt{x} \rfloor$$, or if $$\left\lfloor \frac{x}{\lfloor \sqrt{x} \rfloor}\right\rfloor = \lfloor \sqrt{x}\rfloor$$ use $$L = 2\lfloor \sqrt{x} \rfloor-1$$
+
+We will see why we sometimes need this lower value of `L` presently.
+
+The strategy is to index the array by `1, 2, ..., isqrt, x div isqrt, x div (isqrt-1), ..., x`.  
+This has a total length of `2*isqrt`. If we query the input `v`, we check if `v <= isqrt`. If it is, we return `arr[v-1]`, and otherwise return `arr[L-(x div v)]`.
+
+For example, with $$x = 12$$ we have `isqrt == 3` and our array elements correspond to 
+
+$$\left\{1, 2, 3, \left\lfloor\frac{12}{3}\right\rfloor, \left\lfloor\frac{12}{2}\right\rfloor,\left\lfloor\frac{12}{1}\right\rfloor\right\} = \left\{1, 2, 3, 4, 6, 12 \right\}$$
+
+No issues here. Let's try with $$x = 10$$, where `isqrt = 3` again, but
+
+$$\left\{1, 2, 3, \left\lfloor\frac{10}{3}\right\rfloor, \left\lfloor\frac{10}{2}\right\rfloor,\left\lfloor\frac{10}{1}\right\rfloor\right\} = \left\{1, 2, 3, 3, 5, 10 \right\}$$
+
+This duplicate index would cause us a headache. Hence if at the boundary we have `isqrt == x div isqrt` we will omit that second value, giving us `L == 2*isqrt - 1` in that case. It's important to be careful about this both here and in other applications of the square root trick.
+
+In the code, I'll be calling this container `FIArray` - standing for floor indexed array. There's no actual name for this but this one seems as good as any. Here's a simple implementation in [Nim][9] (note that `div` is floor division):
+
+```nim
+type FIArray = object
+  ##Given x, stores a value at each distinct (x div n).
+  x: int64
+  isqrt: int64
+  arr: seq[int64]
+
+proc newFIArray(x: int64): FIArray =
+  result.x = x
+  var isqrt = isqrt(x)
+  result.isqrt = isqrt
+  var L = 2*isqrt
+  if isqrt == (x div isqrt): dec L
+  result.arr = newSeq[int64](L)
+
+proc `[]`(S: var FIArray, v: int64): var int64 =
+  if v <= S.isqrt: return S.arr[v-1]
+  return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
+```
 
 ### Algorithm (Lucy)
 1. Initialize `S[v] = v-1` for each key value `v`.
@@ -78,5 +121,6 @@ This trick is ubiquitous and used in a large variety of number theoretic summati
 [6]: https://en.wikipedia.org/wiki/Mertens%27_theorems#Mertens'_second_theorem_and_the_prime_number_theorem
 [7]: https://angyansheng.github.io/blog/dirichlet-hyperbola-method
 [8]: https://mathproblems123.wordpress.com/2018/05/10/sum-of-the-euler-totient-function/
+[9]: https://nim-lang.org/
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
