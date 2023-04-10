@@ -139,20 +139,22 @@ proc lucyFenwick*(n: int64, c: int = -1): FIArray =
         pi.arr[^i.int] -= getVal(n div (i*p)) - sp
         
       var j = p*p
-      var t = p*(1 + (p and 1))
       while j<=c:
         if not sieveRaw[j]:
           sieveRaw[j] = true
           sieve.addTo(j, -1)
-        j += t
+        j += p
 
   for v in pi.keysInc:
     if v>c: break
-    pi[v] = sieve.sum(v.int)
+    if sieveRaw[v]:
+      pi[v] = pi[v-1]
+    else: 
+      pi[v] = pi[v-1] + 1
   return pi
 
 import ../utils/eutil_timer
 
-const n = 1e14.int64
+const n = 1e13.int64
 timer: echo lucyFenwick(n)[n]
 timer: echo lucy(n)[n]

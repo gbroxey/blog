@@ -70,7 +70,7 @@ $$\left\{1, 2, 3, \left\lfloor\frac{10}{3}\right\rfloor, \left\lfloor\frac{10}{2
 
 This duplicate index would cause us a headache. Hence if at the boundary we have `isqrt == x div isqrt` we will omit that second value, giving us `L == 2*isqrt - 1` in that case. It's important to be careful about this both here and in other applications of the square root trick.
 
-In the code, I'll be calling this container `FIArray` - standing for floor indexed array. There's no actual name for this but this one seems as good as any. Here's a simple implementation in [Nim][9] (note that `div` is floor division):
+In the code, I'll be calling this container `FIArray` - standing for floor indexed array. There's no actual name for this but this one seems as good as any. Here's a simple implementation[^3] in [Nim][9] (note that `div` is floor division):
 
 ```nim
 type FIArray = object
@@ -254,6 +254,29 @@ This is everything we need from the land of data structures to speed up Lucy's a
 
 ## Application of Fenwick Trees to Lucy's Algorithm
 
+The way we trade memory for speed here is common to algorithms of this type.
+
+Select some constant $$\sqrt{x} < y \leq x$$ as a parameter to be optimized later. We will be performing a standard Eratosthenes sieve up to $$y$$ _while_ updating our `FIArray` using the recursion we derived earlier for the key values $$v > y$$. If you've seen some of the faster methods for computing the totient summatory function, this will seem familiar. I am going to describe the algorithm next, and we will discover why Fenwick trees are needed here.
+
+Initialize the Eratosthenes sieve as usual with all of the numbers from `2` to `y` marked as "maybe prime". At the same time initialize the `FIArray` for Lucy's algorithm as usual. Now for each of the $$O(x/y)$$ key values satisfying $$v \geq y$$ update the `FIArray` in the same way as in Lucy's algorithm. We will then proceed with a step of the sieve - identifying a prime `p` and eliminating all of its multiples from the sieve in $$O(y/p)$$ time.
+
+The important bit to note here is that if the Lucy step sets `S[v, p] -= S[v div p, p-1] - S[p-1, p-1]` and either of `v div p` or `p-1` is at most `y`, then instead of using the value stored in the `FIArray` we need to compute the number of remaining integers in the Eratosthenes sieve. This is the application of the Fenwick tree - we can store a `1` if the integers is maybe prime and a `0` if it is definitely not prime, and then prefix sums compute the number of remaining integers up to some value.
+
+Now that we know what's going to happen, here's the algorithm:
+
+### Algorithm (Lucy + Fenwick)
+1. Compute the sieving limit $$y$$.
+2. Initialize a Fenwick tree called `sieve` indexed on `0..y`, with default value `1`.  
+Set `sieve[0]` and `sieve[1]` to `0`, since these are not a part of the initial Eratosthenes setup.
+3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being true corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
+
+4. For `p` in `2..sqrt(x)`,  
+    4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
+    4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[v]` is equal to `S[v]` if `v > y` and equal to `sieve.sum(v)` otherwise.
+    4c. Do a step of the Eratosthenes sieve - for each multiple of `p` up to `y`, say `j = p*k`, check `sieveRaw[j]`. If it is `false`, we need to eliminate `j` from the sieve by setting `sieveRaw[j]` to `true` and adding `-1` to `sieve[j]`.
+5. For each key value $$v \leq y$$, test if `sieveRaw[v]`. If it is true, set `S[v] = S[v-1]`, otherwise `S[v] = S[v-1]+1`.
+6. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+
 ## Analysis + Optimization
 
 ## Benchmarks
@@ -284,3 +307,5 @@ This is everything we need from the land of data structures to speed up Lucy's a
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
 [^2]: I looked and actually can't find a reference for this so I'll probably write something on it at some point.
+
+[^3]: The function `isqrt()` uses the Babylonian algorithm and belongs in [a utility file](https://github.com/gbroxey/blog/blob/main/code/utils/iops.nim) available in the blog's repository.
