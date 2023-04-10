@@ -1,5 +1,7 @@
 title: griff's math blog!
-author: Griffin Macris
+author: 
+  name: Griffin Macris
+  email: gnmacris@gmail.com
 description: >
   Griffin's blog about math and programming, usually relating to number theory and combinatorics.
 
@@ -10,7 +12,7 @@ plugins:
   - jekyll-seo-tag
 
 minima:
-  skin: dark
+  skin: solarized-dark
   social_links:
   #   - { platform: devto,          user_url: "https://dev.to/jekyll" }
   #   - { platform: dribbble,       user_url: "https://dribbble.com/jekyll" }
