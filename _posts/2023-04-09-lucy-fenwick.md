@@ -11,7 +11,7 @@ I'm going to write this assuming that the reader hasn't seen either Lucy's algor
 
 ## The Lucy_Hedgehog Algorithm
 
-Named for Project Euler user Lucy_Hedgehog, this was actually originally an algorithm to compute the sum $$\sum_{p \leq x} p$$. You can find [her original post][3] about this in the forum threads for problem 10. The idea is to describe what happens in a [sieve of Eratosthenes][4] and use what some more people call the "square root trick".
+Named for Project Euler user Lucy_Hedgehog, this was actually originally an algorithm to compute the sum $$\sum_{p \leq x} p$$. You can find [their original post][3] about this in the forum threads for problem 10. The idea is to describe what happens in a [sieve of Eratosthenes][4] and use what some more people call the "square root trick".
 
 In the sieve of Eratosthenes, one starts by initializing every integer from $$2$$ to $$x$$ as "maybe prime".
 
@@ -269,7 +269,6 @@ Now that we know what's going to happen, here's the algorithm:
 2. Initialize a Fenwick tree called `sieve` indexed on `0..y`, with default value `1`.  
 Set `sieve[0]` and `sieve[1]` to `0`, since these are not a part of the initial Eratosthenes setup.
 3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being `true` corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
-
 4. For `p` in `2..sqrt(x)`,  
     4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
     4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p` and `v > y`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[u]` is equal to `S[u]` if `u > y` and equal to `sieve.sum(u)` otherwise.  
@@ -428,7 +427,25 @@ If we're willing to temporarily sacrifice 4GB of ram and permanently sacrifice t
 
 ## Sums of Primes, Primes Squared, ...
 
+For these remaining few sections, rather than going in depth like the previous ones I'm just going to give a summary overview to wrap things up. What I want to talk about now is adapting this algorithm to sum functions of primes $$f(p)$$ where $$f$$ is nice. There are some nice ways to do this when $$f$$ has a particular form - for example if $$f$$ is a [completely multiplicative function][19], [ecnerwala describes a cool algorithm in the comments of this blog post][5]. Here, we'll show that if we can compute partial sums of $$f(n)$$ quickly, and $$f(n)$$ is completely multiplicative, then we can compute $$\sum_{p \leq x} f(p)$$ using Lucy's algorithm. Moreover, as we would hope, we can also speed these up with Fenwick trees.
+
+First let's describe the difference in the plain Lucy algorithm.
+
+Instead of a standard Sieve of Eratosthenes, we'll be initializing the sieve array to $$f(v)$$ for $$2 \leq v \leq x$$. As we sweep $$p$$ from $$2$$ to $$\sqrt{x}$$, we will know $$p$$ is prime if the value at place $$p$$ is equal to $$f(p)$$. And if so, we'll be eliminating the values $$f(pk)$$ for the multiples of $$p$$ that remain. Let's copy and paste our explanation from the original Lucy algorithm and see what we have to change...
+
+To turn this into a nice prime ~~counting~~ summing algorithm we define a function $$S_f(v, p)$$ which will be the ~~number of integers~~ sum of $$f(n)$$ over the remaining $$n$$ in the range $$2 \leq n \leq v$$ after sieving with all of the primes up to $$p$$. We start with $$S_f(v, 1) = f(2) + f(3) + \ldots + f(v)$$ since $$1$$ is never in the sieve.
+
+Remembering from before that the integers we eliminate while sieving out $$p$$ for $$S_f(v, p)$$ are exactly $$p$$ times those remaining in the sieve that are between $$p$$ and $$v/p$$, we have
+
+$$S_f(v, p) = S_f(v, p-1) - f(p)\left[S_f(v/p, p-1) - S_f(p-1, p-1)\right]$$
+
+Lucy's [original post][3] on this uses $$f(n) = n$$ for all $$n$$, since they were summing primes rather than counting them. Assuming we can quickly sum these $$f$$ in order to get our initial values, the plain algorithm works just fine and will give you whatever sum you want.
+
+How about the Lucy + Fenwick algorithm? Well, there's not any issue there either - we have to initialize the sieve so that `sieve[i] = f[i]`, which is fine, and we have to use the slightly modified recursion for $$S_f(v, p)$$, but nothing else really changes. Trying to make this generic is a fun weekend project.
+
 ## Primes in Arithmetic Progressions
+
+Dirichlet considered the problem of computing the number of primes in a given arithmetic progression - that is, computing the number of primes in the sequence $$a, a+d, a+2d, \ldots$$ below $$x$$. We'll write $$\pi_{d,a}(x)$$ for this quantity.
 
 ## Trick for Further Optimization
 
@@ -450,6 +467,7 @@ If we're willing to temporarily sacrifice 4GB of ram and permanently sacrifice t
 [16]: https://cp-algorithms.com/data_structures/fenwick.html
 [17]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 [18]: https://en.wikipedia.org/wiki/Prime_number_theorem
+[19]: https://en.wikipedia.org/wiki/Completely_multiplicative_function
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
