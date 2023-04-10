@@ -500,7 +500,56 @@ Say we're sieving out the prime $$p$$. Compute its inverse $$p^{-1} \bmod d$$. T
 
 $$S_{d,a}(v, p) = S_{d,a}(v, p) - \left[S_{d,ap^{-1}}(v/p, p-1) - S_{d,ap^{-1}}(v/p-1, p-1)\right]$$
 
-We have to initialize each $$S_{d,a}(v,1)$$ to be the number of integers in the progression $$a, a+d, \ldots$$ up to $$v$$, and be careful to subtract $$1$$ from $$S_{d,1}(v,1)$$ since we still don't want $$1$$ to be included at the start. It's a little bit more work but not too bad.
+We have to initialize each $$S_{d,a}(v,1)$$ to be the number of integers in the progression $$a, a+d, \ldots$$ up to $$v$$, and be careful to subtract $$1$$ from $$S_{d,1}(v,1)$$ since we still don't want $$1$$ to be included at the start. It's a little bit more work but not too bad. It could look like this:
+
+```nim
+proc lucyAP(n: int64, k: int): seq[FIArray] =
+  #find reduced residues
+  var cop: seq[int] = @[]
+  var ci = newSeq[int](k) #ci[v] = index of v in cop if gcd(v, k) = 1
+  for i in 1..k-1:
+    if gcd(i, k)==1:
+      cop.add(i)
+      ci[i] = cop.high
+  #cop has size phi(k)
+
+  var pis = newSeq[FIArray](cop.len)
+  for i in 0..cop.high:
+    pis[i] = newFIArray(n)
+    for v in pis[i].keysInc:
+      pis[i][v] = (v - cop[i] + k) div k
+      if i == 0: pis[i][v] = pis[i][v] - 1
+
+  var minv = newSeq[int](k) #mod inverse of i mod k
+  for i in 1..<k:
+    if gcd(i, k) == 1: 
+      #compute mod inverse of i by brute force
+      for j in 1..<k:
+        if (i*j) mod k == 1:
+          minv[i] = j
+          break
+  for p in 2..pis[0].isqrt:
+    if gcd(p, k)>1: continue
+    #p is prime if any of the pis[i][p] > pis[i][p-1]
+    var isPrime = false
+    for i in 0..<pis.len:
+      if pis[i][p] > pis[i][p-1]:
+        isPrime = true
+        break
+    if not isPrime: continue
+    var sp = newSeq[int64](cop.len) #pis[i][p-1]
+    for i in 0..cop.high:
+      sp[i] = pis[ci[(cop[i]*minv[p mod k]) mod k]][p-1]
+    for v in pis[0].keysDec:
+      if v < p*p: break
+      for i in 0..cop.high:
+        var index = ci[(cop[i]*minv[p mod k]) mod k]
+        var eliminated = pis[index][v div p] - pis[index][p-1]
+        pis[i][v] = pis[i][v] - eliminated
+  return pis
+```
+
+This finds the number of primes of the form $$4k+1$$ and of the form $$4k+3$$, under $$10^{12}$$, as $$18803924340$$ and $$18803987677$$ respectively, in about 15s. That's just about double the runtime of the original Lucy algorithm which is what we would expect since $$\varphi(4) = 2$$.
 
 Of course the same extension applies to Lucy + Fenwick, but we need $$\varphi(d)$$ Fenwick trees, and we have to similarly be careful how the sieves interact, so I'll leave this to you to implement for yourself.
 

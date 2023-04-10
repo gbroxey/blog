@@ -146,3 +146,50 @@ proc lucyFenwick*(x: int64): FIArray =
     else: 
       S[v] = S[v-1] + 1
   return S
+
+#==== Lucy+Progressions ====
+
+proc lucyAP(n: int64, k: int): seq[FIArray] =
+  #find reduced residues
+  var cop: seq[int] = @[]
+  var ci = newSeq[int](k) #ci[v] = index of v in cop if gcd(v, k) = 1
+  for i in 1..k-1:
+    if gcd(i, k)==1:
+      cop.add(i)
+      ci[i] = cop.high
+  #cop has size phi(k)
+
+  var pis = newSeq[FIArray](cop.len)
+  for i in 0..cop.high:
+    pis[i] = newFIArray(n)
+    for v in pis[i].keysInc:
+      pis[i][v] = (v - cop[i] + k) div k
+      if i == 0: pis[i][v] = pis[i][v] - 1
+
+  var minv = newSeq[int](k) #mod inverse of i mod k
+  for i in 1..<k:
+    if gcd(i, k) == 1: 
+      #compute mod inverse of i by brute force
+      for j in 1..<k:
+        if (i*j) mod k == 1:
+          minv[i] = j
+          break
+  for p in 2..pis[0].isqrt:
+    if gcd(p, k)>1: continue
+    #p is prime if any of the pis[i][p] > pis[i][p-1]
+    var isPrime = false
+    for i in 0..<pis.len:
+      if pis[i][p] > pis[i][p-1]:
+        isPrime = true
+        break
+    if not isPrime: continue
+    var sp = newSeq[int64](cop.len) #pis[i][p-1]
+    for i in 0..cop.high:
+      sp[i] = pis[ci[(cop[i]*minv[p mod k]) mod k]][p-1]
+    for v in pis[0].keysDec:
+      if v < p*p: break
+      for i in 0..cop.high:
+        var index = ci[(cop[i]*minv[p mod k]) mod k]
+        var eliminated = pis[index][v div p] - pis[index][p-1]
+        pis[i][v] = pis[i][v] - eliminated
+  return pis
