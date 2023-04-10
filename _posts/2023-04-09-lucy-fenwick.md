@@ -268,17 +268,31 @@ Now that we know what's going to happen, here's the algorithm:
 1. Compute the sieving limit $$y$$.
 2. Initialize a Fenwick tree called `sieve` indexed on `0..y`, with default value `1`.  
 Set `sieve[0]` and `sieve[1]` to `0`, since these are not a part of the initial Eratosthenes setup.
-3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being true corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
+3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being `true` corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
 
 4. For `p` in `2..sqrt(x)`,  
     4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
-    4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[v]` is equal to `S[v]` if `v > y` and equal to `sieve.sum(v)` otherwise.
+    4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p` and `v > y`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[u]` is equal to `S[u]` if `u > y` and equal to `sieve.sum(u)` otherwise.  
     4c. Do a step of the Eratosthenes sieve - for each multiple of `p` up to `y`, say `j = p*k`, check `sieveRaw[j]`. If it is `false`, we need to eliminate `j` from the sieve by setting `sieveRaw[j]` to `true` and adding `-1` to `sieve[j]`.
 5. For each key value $$v \leq y$$, test if `sieveRaw[v]`. If it is true, set `S[v] = S[v-1]`, otherwise `S[v] = S[v-1]+1`.
 6. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
 
 ## Analysis + Optimization
+Clearly we are using $$O(y)$$ space. So how about our runtime?
 
+This part will involve a lot of tedious casework so feel free to skip it and trust me instead.
+
+For each prime $$p \leq \sqrt{x}$$, the Eratosthenes step has to modify `sieve[p*k]` for (at most) all of the values `p*k <= y`.  
+Each update using the Fenwick tree takes $$O(\log(y))$$ time, for a total of $$O\left(\frac{y \log y}{p}\right)$$ time.
+
+Then the Eratosthenes step takes us a total runtime of
+
+$$\begin{align*}
+\sum_{p \leq \sqrt{x}} \frac{y \log y}{p} &\sim y \log y \log \log \sqrt{x}\\
+&\sim y \log y \log \log x
+\end{align*}$$
+
+Okay, now for the Lucy step.
 ## Benchmarks
 
 ## Sums of Primes, Primes Squared, ...
