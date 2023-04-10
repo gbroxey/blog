@@ -143,13 +143,14 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 
 |x|pi(x)|Time (s)|
 |:---:|:---:|:---:|
-|10<sup>9</sup>|`50847534`|`0.049`|
-|10<sup>10</sup>|`455052511`|`0.259`|
-|10<sup>11</sup>|`4118054813`|`1.370`|
-|10<sup>12</sup>|`37607912018`|`7.259`|
-|10<sup>13</sup>|`346065536839`|`39.198`|
-|10<sup>14</sup>|`3204941750802`|`209.039`|
+|10<sup>9</sup>|50847534|0.049|
+|10<sup>10</sup>|455052511|0.259|
+|10<sup>11</sup>|4118054813|1.370|
+|10<sup>12</sup>|37607912018|7.259|
+|10<sup>13</sup>|346065536839|39.198|
+|10<sup>14</sup>|3204941750802|209.039|
 
+Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
 
 
 ## Fenwick / Binary Indexed Trees
