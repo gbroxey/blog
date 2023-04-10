@@ -146,8 +146,3 @@ proc lucyFenwick*(x: int64): FIArray =
     else: 
       S[v] = S[v-1] + 1
   return S
-
-import ../utils/eutil_timer
-
-var n = 1e14.int64
-timer: echo lucyFenwick(n)[n]

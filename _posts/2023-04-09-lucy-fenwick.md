@@ -363,7 +363,6 @@ Finally we can implement this in Nim! Here's how it looks.
 ```nim
 proc lucyFenwick*(x: int64): FIArray =
   var S = newFIArray(x)
-
   #compute y
   var xf = x.float64
   var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
@@ -393,7 +392,6 @@ proc lucyFenwick*(x: int64): FIArray =
       for i in 1..lim:
         S.arr[^i.int] -= S0(x div (i*p)) - sp
         #here, S.arr[^i] = S[x div i] is guaranteed due to the size of i.
-        
       var j = p*p
       while j <= y:
         if not sieveRaw[j]:
@@ -425,7 +423,9 @@ The following table includes the old runtimes for comparison.
 |10<sup>13</sup>|39.198|7.652|
 |10<sup>14</sup>|209.039|34.021|
 
-It's of note that the new algorithm, although using more memory, only uses about 1GB.
+It's of note that the new algorithm, although using more memory, only uses about 1GB for $$10^{14}$$.  
+If we're willing to temporarily sacrifice 4GB of ram and permanently sacrifice three minutes of our lives we can push this new algorithm to calculate $$\pi(10^{15}) = 29844570422669$$. In the implementation I gave I include a cap on $$y$$ to restrict memory usage, so we could push this to ask for $$\pi(10^{16})$$ or $$\pi(10^{17})$$ and get an answer in a relatively reasonable amount of time.
+
 ## Sums of Primes, Primes Squared, ...
 
 ## Primes in Arithmetic Progressions
