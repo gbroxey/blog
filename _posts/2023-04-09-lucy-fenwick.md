@@ -123,8 +123,14 @@ Nothing magical is happening here quite yet, it's just incredibly helpful to hav
     2a. If `S[p] == S[p-1]`, then `p` is not a prime (_why?_) so increment `p` and try again.  
     2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
 3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
-# TODO
-Why decreasing order?
+
+Why, in step 2b, do we have to update the array elements in decreasing order?
+
+This is a side effect of us using a single array `S` to store `S[v, p]` for all keys `v` and `p <= isqrt`. There is a loop invariant here: after step 2b, `S[v] = S[v, p]`. During step 2b, part of the array should be `S[v, p]` and part of it should be `S[v, p-1]`. We have to be careful that when we update `S[v]` to equal `S[v, p]` that we will not need the value `S[v, p-1]` in the future, since it will be overwritten. The natural way to make sure of this is to simply update the highest `v` first, since any `S[v, p]` will only need to access `S[w, p-1]` for `w < p`.
+
+I'm not sure if my explanation of this part in words is completely satisfactory, so here I've drawn a small dependency graph of `S[v, p]` for `x = 10`.
+
+<center><img src="/blog/docs/assets/images/2023-04-09-dependency10.png" width="75%" height="75%"></center>
 
 And here's the incredibly simple Nim implementation:
 ```nim
@@ -181,10 +187,9 @@ The way this is done is by computing a bunch of range sums over many different o
 
 Thus, if we want to compute a prefix sum we just add up about $$O(\log n)$$ values, and to update an element of the base array we update about $$O(\log n)$$ range sums.
 
-<center>
-<img src="https://cp-algorithms.com/data_structures/binary_indexed_tree.png">  
+<center><img src="https://cp-algorithms.com/data_structures/binary_indexed_tree.png"></center>
 
-Image source is [cp-algorithms.com][16].</center>
+Image source is [cp-algorithms.com][16].
 
 It's all very nice in theory but sounds like it would be a bit annoying to implement. Fortunately you can essentially use the binary structure of computer memory to your benefit, which makes it _exceptionally_ simple to code:
 
@@ -221,12 +226,14 @@ proc `[]=`[T](f: var Fenwick[T], i: SomeInteger, x: T) =
   f.addTo(i, x-f[i])
 ```
 
-This is an extremely simple, barebones implementation of the structure, but it'll work great.  
+This is a basic, barebones implementation of the structure, but it'll work great.  
 I've also given it a generic type `T`, which will be `int` in our case. It's helpful to be able to use `int64` in case you want to do sums of primes later (you do).
 
 It's possible to do a lot more than this with a Fenwick tree. For example, if you have a nontrivial initial state you'd like the base array to have, you can initialize the tree in linear time instead of updating each of the elements individually. It's explained in [this Codeforces blog by sdnr1][15].
 
-For ease of use I'm going to use a slightly less general version of that method in which we create the Fenwick tree with a default value - every element of the base array equal to some constant `default`. It looks like this:
+For ease of use I'm going to use a slightly less general version of that method in which we create the Fenwick tree with a default value - every element of the base array equal to some constant `default`.
+
+It looks like this:
 
 ```nim
 proc newFenwick[T](len: int, default: T): Fenwick[T] =
