@@ -185,10 +185,10 @@ In our applications we would like to perform the prefix sums quickly. One idea i
 A Fenwick tree balances the prefix and update operations - both will take $$O(\log n)$$ time, which is excellent.
 
 The way this is done is by computing a bunch of range sums over many different overlapping intervals of the base array. It's done in such a way that 
-- every prefix sum is composed of about $$O(\log n)$$ of the intervals we have pre-computed, and
-- every element of the base array belongs to about $$O(\log n)$$ of the intervals we care about!
+- every prefix sum is composed of $$O(\log n)$$ of the intervals we have pre-computed, and
+- every element of the base array belongs to $$O(\log n)$$ of the intervals we care about!
 
-Thus, if we want to compute a prefix sum we just add up about $$O(\log n)$$ values, and to update an element of the base array we update about $$O(\log n)$$ range sums.
+Thus, if we want to compute a prefix sum we just add up $$O(\log n)$$ values, and to update an element of the base array we update $$O(\log n)$$ range sums.
 
 <center><img src="https://cp-algorithms.com/data_structures/binary_indexed_tree.png"></center>
 
@@ -292,7 +292,68 @@ $$\begin{align*}
 &\sim y \log y \log \log x
 \end{align*}$$
 
-Okay, now for the Lucy step.
+Okay, now for the Lucy step. Here I won't aim for a perfect asymptotic but will be alright with an upper bound to avoid the most headache inducing analysis. Feel free to be more precise on your own.
+
+The analysis will be slightly different depending on whether $$p^2 \leq y$$.
+
+If it is one of these small primes, then for each key value $$v > y$$ we need to do at most $$O(\log y)$$ work to update the `FIArray` at `v`. Since there are about $$x/y$$ such key values, this is a total time of (at most)
+
+$$\begin{align*}
+\sum_{p \leq \sqrt{y}} \frac{x}{y} \log y &\sim \frac{x}{y} \log(y) \pi(\sqrt{y})\\
+&\sim \frac{x}{y} \log(y)\cdot \frac{2\sqrt{y}}{\log(y)} \sim \frac{2x}{\sqrt{y}}
+\end{align*}$$
+
+Now if instead $$p$$ is a big prime with $$p^2 > y$$, we will have to update only the key values with $$v \geq p^2$$, with a total time of (at most)
+
+$$\sum_{\sqrt{y} < p \leq \sqrt{x}} \frac{x}{p^2} \log(y) \sim x \log(y) \sum_{\sqrt{y} < p \leq \sqrt{x}} \frac{1}{p^2}$$
+
+Now we want to get a decent estimate on that inverse prime sum. It's actually a lot simpler than it seems, since we can upper bound it very lazily by
+
+$$\begin{align*}
+\sum_{\sqrt{y} < p \leq \sqrt{x}} \frac{1}{p^2} & \leq \sum_{\sqrt{y} < p} \frac{1}{p^2}\\
+& \leq \sum_{\sqrt{y} < n} \frac{1}{n^2}\\
+&= O\left( \int_{\sqrt{y}}^\infty \frac{1}{t^2}dt \right) = O\left(\frac{1}{\sqrt{y}}\right)
+\end{align*}$$
+
+So in total the Lucy part of the algorithm takes a runtime of at most
+
+$$O\left(\frac{x}{\sqrt{y}}\right) + O\left(\frac{x \log y}{\sqrt{y}}\right) = O\left(\frac{x \log y}{\sqrt{y}}\right)$$
+
+Our laziness in that last estimate is clear here. If we're more careful and use (for example) [Abel's summation theorem][17] along with estimates on $$\pi(t)$$ for $$t \leq x$$ we can get a clearer idea of how that second sum behaves. If we apply it to the sum $$\sum_{p > \sqrt{y}} \frac{1}{p^2}$$ we obtain
+
+$$\sum_{p > \sqrt{y}} \frac{1}{p^2} = -\frac{\pi(\sqrt{y})}{y} + \int_{\sqrt{y}}^\infty \frac{\pi(t)}{t^3}dt$$
+
+Using the estimate $$\pi(t) = O(t/\log(t))$$ we're going to prove that
+
+$$\sum_{p > \sqrt{y}} \frac{1}{p^2} = O\left(\frac{1}{\sqrt{y} \log \sqrt{y}}\right)$$
+
+which will be an excellent estimate.
+
+The first term is trivial, just plug in the estimate of $$\pi(\sqrt{y})$$ as follows:
+
+$$-\frac{\pi(\sqrt{y})}{y} = O\left(\frac{\sqrt{y}}{y \log \sqrt{y}}\right) = O\left(\frac{1}{\sqrt{y} \log \sqrt{y}}\right)$$
+
+For the second one, plugging the estimate in yields
+
+$$\begin{align*}
+\int_{\sqrt{y}}^\infty \frac{\pi(t)}{t^3}dt &= O\left(\int_{\sqrt{y}}^\infty \frac{1}{t^2 \log t}dt\right)\\
+&= O\left(\frac{1}{\log \sqrt{y}}\int_{\sqrt{y}}^\infty \frac{1}{t^2}dt\right)\\
+&= O\left(\frac{1}{\sqrt{y} \log \sqrt{y}}\right)
+\end{align*}$$
+
+So then finally we can plug this back into our estimate on the contribution of the big primes to show that they too only contribute $$O\left(\frac{x}{\sqrt{y}}\right)$$ to the final runtime in the Lucy section - nice!
+
+Alright, so putting this all together now:
+- The Eratosthenes section takes at most $$O(y \log y \log \log x)$$ time
+- The Lucy section takes at most $$O\left(\frac{x}{\sqrt{y}}\right)$$ time
+
+We want to choose $$y$$ to balance these out. To do this we can pick $$y$$ near
+
+$$\frac{x^{2/3}}{(2\log x \log \log x)^{2/3}}$$
+
+I'm not guaranteeing this is optimal, especially since my analysis gave a lot of slack.  
+It should be fine though - the final runtime with this value of $$y$$ should be at least as good as $$O(x^{2/3} (\log x \log \log x)^{1/3})$$
+Not bad really! You'll have to tune the value of $$y$$ in your own impementation, probably by multiplying by a constant or something. This is where you get to use some trial and error. I've found just using the value I stated works fine.
 ## Benchmarks
 
 ## Sums of Primes, Primes Squared, ...
@@ -317,6 +378,8 @@ Okay, now for the Lucy step.
 [14]: https://www.geeksforgeeks.org/inversion-count-in-array-using-bit/
 [15]: https://codeforces.com/blog/entry/63064
 [16]: https://cp-algorithms.com/data_structures/fenwick.html
+[17]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
+[18]: https://en.wikipedia.org/wiki/Prime_number_theorem
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
