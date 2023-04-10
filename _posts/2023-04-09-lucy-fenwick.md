@@ -462,9 +462,53 @@ How about the Lucy + Fenwick algorithm? Well, there's not any issue there either
 
 ## Primes in Arithmetic Progressions
 
-Dirichlet considered the problem of computing the number of primes in a given arithmetic progression - that is, computing the number of primes in the sequence $$a, a+d, a+2d, \ldots$$ below $$x$$. We'll write $$\pi_{d,a}(x)$$ for this quantity.
+Dirichlet considered the problem of computing the number of primes in a given arithmetic progression - that is, computing the number of primes in the sequence $$a, a+d, a+2d, \ldots$$ below $$x$$.
+
+We'll write $$\pi_{d,a}(x)$$ for this quantity.
+
+In Dirichlet's famous [theorem on arithmetic progressions][20], he proved that each $$\pi_{d,a}(x)$$ tends to infinity as $$x$$ gets large, so long as $$d$$ and $$a$$ don't share any factors (whence all large values of $$a, a+d, a+2d, \ldots$$ will be composite). To do this, he used what are called [Dirichlet characters][21] - complex valued, completely multiplicative, periodic functions $$\chi(n)$$.
+
+Given that these characters $$\chi$$ are periodic and completely multiplicative, they fit our rule for when we can compute $$\sum_{p \leq x} \chi(p)$$ nicely - they pose no problem other than being complex floats instead of integers.. actually.. that's very annoying. We'll ignore that for a moment and see how we would continue.
+
+Consider the set of all $$\varphi(d)$$ characters which have period $$d$$ (just trust me if you don't know what I'm talking about).
+
+We can compute the following sum in about $$O(\varphi(d)x^{2/3}(\log x \log \log x)^{1/3})$$ time:
+
+$$\begin{align*}
+\frac{1}{\varphi(d)} \sum_\chi \overline{\chi}(a) \sum_{p \leq x} \chi(p)
+\end{align*}$$
+
+Here, $$\overline{\chi}$$ is the complex conjugate of $$\chi$$. The reason this is nice is that we can actually switch the order of summation:
+
+$$\begin{align*}
+\frac{1}{\varphi(d)} \sum_{p \leq x} \sum_\chi \overline{\chi}(a) \chi(p)
+\end{align*}$$
+
+The orthogonality relations for Dirichlet characters give us
+
+$$\sum_\chi \overline{\chi}(a) \chi(p) = \begin{cases}\varphi(d) & \text{if } p \equiv a \bmod d\\ 0 &\text{otherwise}\end{cases}$$
+
+So our sum actually simplifies to $$\pi_{d,a}(x)$$.
+
+It sucks to work with complex numbers though - and it's possible to avoid the use of Dirichlet characters entirely by modifying the Lucy algorithm outright.
+
+We will have one Eratosthenes sieve for each of the $$\varphi(d)$$ possible reduced residues mod $$d$$ - for example if $$d = 6$$ we will have one sieve containing all of the integers congruent to $$1$$ mod $$6$$, and another for all of the integers congruent to $$5$$ mod $$6$$.
+
+In Lucy's algorithm this would mean instead of having a single `FIArray` called `S`, we would have a set of $$\varphi(d)$$ of them. Let's call them $$S_{d,a}(v, p)$$ for the $$\varphi(d)$$ relevant values of $$a$$. The tricky part here is figuring out how sieving works here.
+
+Say we're sieving out the prime $$p$$. Compute its inverse $$p^{-1} \bmod d$$. The integers we're sieving out from $$S_{d,a}$$ will be multiples of $$p$$, say each one is written as $$pk$$. Then $$k \equiv ap^{-1} \bmod d$$ gives us the sieve that each $$k$$ will belong to! This way, the nice recursion from Lucy's algorithm turns into...
+
+$$S_{d,a}(v, p) = S_{d,a}(v, p) - \left[S_{d,ap^{-1}}(v/p, p-1) - S_{d,ap^{-1}}(v/p-1, p-1)\right]$$
+
+We have to initialize each $$S_{d,a}(v,1)$$ to be the number of integers in the progression $$a, a+d, \ldots$$ up to $$v$$, and be careful to subtract $$1$$ from $$S_{d,1}(v,1)$$ since we still don't want $$1$$ to be included at the start. It's a little bit more work but not too bad.
+
+Of course the same extension applies to Lucy + Fenwick, but we need $$\varphi(d)$$ Fenwick trees, and we have to similarly be careful how the sieves interact, so I'll leave this to you to implement for yourself.
 
 ## Trick for Further Optimization
+
+If you've gotten this far you must _really_ want every bit of speed you can get. Alright, I'll tell you what I know.
+
+TODO
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
@@ -485,6 +529,8 @@ Dirichlet considered the problem of computing the number of primes in a given ar
 [17]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 [18]: https://en.wikipedia.org/wiki/Prime_number_theorem
 [19]: https://en.wikipedia.org/wiki/Completely_multiplicative_function
+[20]: https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_arithmetic_progressions
+[21]: https://en.wikipedia.org/wiki/Dirichlet_character
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
