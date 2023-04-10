@@ -130,7 +130,7 @@ This is a side effect of us using a single array `S` to store `S[v, p]` for all 
 
 I'm not sure if my explanation of this part in words is completely satisfactory, so here I've drawn a small dependency graph of `S[v, p]` for `x = 10`.
 
-<center><img src="/blog/docs/assets/images/2023-04-09-dependency10.png" width="85%" height="85%"></center>
+<center><img src="/blog/docs/assets/images/2023-04-09-dependency10.svg" width="85%" height="85%"></center>
 
 We see that each `S[v, p]` depends only on `S[w, p-1]` for `w <= v`.  
 Also notice the curious `S[5, 2]` node which is not actually used to compute `S[10, 3]` - we can skip some work by not updating `S[5, 2]` at all! That's not immediately relevant but it is a key part of some algorithms which do _not_ produce every value $$\pi(v)$$ and only produce a provably correct value of $$\pi(x)$$.
