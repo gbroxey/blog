@@ -101,60 +101,53 @@ proc `[]=`[T](f: var Fenwick[T], i: SomeInteger, x: T) =
 
 #==== Lucy+Fenwick ====
 
-proc lucyFenwick*(n: int64, c: int = -1): FIArray =
-  ##Returns (pi(n/v)) for all distinct values of floor(n/v).
-  ##Runs in time n/sqrt(c) and space c.
-  ##Defaults to c = n^(2/3) for optimal time = O(n^(2/3))
-  ##For large n, c is capped at 3e8 due to memory concerns.
-  var c = c
-  var sqrtn: int = isqrt(n).int
-  if c == -1:
-    c = round(pow(n.float64, 2.0/3.0) / pow(ln(n.float64), 3.0/3.0)).int
-    c = min(c, 4e9.int)
-    c = max(sqrtn+1, c)
-    if n <= 1e4.int:
-      c = n.int
-  var sieveRaw: seq[bool] #true iff it has been sieved out already
-  newSeq(sieveRaw, c+1)
-  var sieve = newFenwick[int](c+1, 1) #initialized to 1
+proc lucyFenwick*(x: int64): FIArray =
+  var S = newFIArray(x)
+  #compute y
+  var xf = x.float64
+  var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+  y = max(S.isqrt.int+1, y) #necessary lower bound
+  if x <= 10000:
+    y = x.int #if x is too small, easier to sieve the whole thing
+
+  var sieveRaw = newSeq[bool](y+1)
+  var sieve = newFenwick[int](y+1, 1) #initialized to 1
   sieve[1] = 0
   sieve[0] = 0
   
-  var pi = newFIArray(n)
-  for v in 1..pi.isqrt:
-    pi.arr[v-1] = v-1
-  for v in 1..pi.isqrt-1:
-    pi.arr[^v.int] = (n div v) - 1
+  for v in S.keysInc:
+    S[v] = v-1
 
-  proc getVal(x: int64): int64 =
-    if x<=c: return sieve.sum(x.int)
-    return pi[x]
+  proc S0(v: int64): int64 =
+    #returns sieve.sum(v) if v <= y, otherwise S[v].
+    if v<=y: return sieve.sum(v.int)
+    return S[v]
     
-  for p in 2..sqrtn:
+  for p in 2..S.isqrt:
     if not sieveRaw[p]:
       #right now: sieveRaw contains true if it has been removed before sieving out p
-      var sp = sieve.sum(p-1)
-      var lim = min(n div c, n div (p*p))
+      var sp = sieve.sum(p-1) #compute it only once
+      var lim = min(x div y, x div (p*p))
       for i in 1..lim:
-        pi.arr[^i.int] -= getVal(n div (i*p)) - sp
-        
+        S.arr[^i.int] -= S0(x div (i*p)) - sp
+        #here, S.arr[^i] = S[x div i] is guaranteed due to the size of i.
       var j = p*p
-      while j<=c:
+      while j <= y:
         if not sieveRaw[j]:
           sieveRaw[j] = true
           sieve.addTo(j, -1)
         j += p
 
-  for v in pi.keysInc:
-    if v>c: break
+  for v in S.keysInc:
+    if v>y: break
     if sieveRaw[v]:
-      pi[v] = pi[v-1]
+      S[v] = S[v-1]
     else: 
-      pi[v] = pi[v-1] + 1
-  return pi
+      S[v] = S[v-1] + 1
+  return S
 
 import ../utils/eutil_timer
 
-const n = 1e13.int64
+var n = 1e14.int64
 timer: echo lucyFenwick(n)[n]
-timer: echo lucy(n)[n]

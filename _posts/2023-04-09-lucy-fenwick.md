@@ -352,10 +352,80 @@ We want to choose $$y$$ to balance these out. To do this we can pick $$y$$ near
 $$\frac{x^{2/3}}{(2\log x \log \log x)^{2/3}}$$
 
 I'm not guaranteeing this is optimal, especially since my analysis gave a lot of slack.  
-It should be fine though - the final runtime with this value of $$y$$ should be at least as good as $$O(x^{2/3} (\log x \log \log x)^{1/3})$$
-Not bad really! You'll have to tune the value of $$y$$ in your own impementation, probably by multiplying by a constant or something. This is where you get to use some trial and error. I've found just using the value I stated works fine.
+It should be fine though - the final runtime with this value of $$y$$ should be at least as good as
+
+$$O(x^{2/3} (\log x \log \log x)^{1/3})$$
+
+Not bad really! You'll have to tune the value of $$y$$ in your own impementation, probably by multiplying by a constant or something. This is where you get to use some trial and error. I've found using about `1.7` times the value I stated works fine.
+
+Finally we can implement this in Nim! Here's how it looks.
+
+```nim
+proc lucyFenwick*(x: int64): FIArray =
+  var S = newFIArray(x)
+
+  #compute y
+  var xf = x.float64
+  var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+  y = max(S.isqrt.int+1, y) #necessary lower bound
+  if x <= 10000:
+    y = x.int #if x is too small, easier to sieve the whole thing
+
+  var sieveRaw = newSeq[bool](y+1)
+  var sieve = newFenwick[int](y+1, 1) #initialized to 1
+  sieve[1] = 0
+  sieve[0] = 0
+  
+  for v in S.keysInc:
+    S[v] = v-1
+
+  proc S0(v: int64): int64 =
+    #returns sieve.sum(v) if v <= y, otherwise S[v].
+    if v<=y: return sieve.sum(v.int)
+    return S[v]
+    
+  for p in 2..S.isqrt:
+    if not sieveRaw[p]:
+      #right now: sieveRaw contains true if it has been removed before sieving out p
+      var sp = sieve.sum(p-1) #compute it only once
+      var lim = min(x div y, x div (p*p))
+      for i in 1..lim:
+        S.arr[^i.int] -= S0(x div (i*p)) - sp
+        #here, S.arr[^i] = S[x div i] is guaranteed due to the size of i.
+        
+      var j = p*p
+      while j <= y:
+        if not sieveRaw[j]:
+          sieveRaw[j] = true
+          sieve.addTo(j, -1)
+        j += p
+
+  for v in S.keysInc:
+    if v>y: break
+    if sieveRaw[v]:
+      S[v] = S[v-1]
+    else: 
+      S[v] = S[v-1] + 1
+  return S
+  ```
+
 ## Benchmarks
 
+At last we're through the derivation and implementation. Let's see how it runs!
+
+The following table includes the old runtimes for comparison.
+
+|x|Lucy (s)| Lucy + Fenwick (s) |
+|:---:|:---:|:---:|
+|10<sup>9</sup>|0.049|0.014|
+|10<sup>10</sup>|0.259|0.068|
+|10<sup>11</sup>|1.370|0.306|
+|10<sup>12</sup>|7.259|1.574|
+|10<sup>13</sup>|39.198|7.652|
+|10<sup>14</sup>|209.039|34.021|
+
+It's of note that the new algorithm, although using more memory, only uses about 1GB.
 ## Sums of Primes, Primes Squared, ...
 
 ## Primes in Arithmetic Progressions
