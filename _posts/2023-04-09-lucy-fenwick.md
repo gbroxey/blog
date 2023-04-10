@@ -137,7 +137,7 @@ Also notice the curious `S[5, 2]` node which is not actually used to compute `S[
 
 For now, though, here's the incredibly simple Nim implementation of Lucy's algorithm:
 ```nim
-proc pi(x: int64): FIArray =
+proc lucy(x: int64): FIArray =
   var S = newFIArray(x)
   for v in S.keysInc:
     S[v] = v-1
@@ -166,6 +166,23 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 
 
 Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will also significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
+
+### Runtime Analysis
+
+This section is really short because this is actually pretty easy.
+
+For each prime $$p \leq \sqrt{x}$$ we need to do an array operation for each key value $$v \geq p^2$$. We'll count the contribution of primes with $$p^2 \geq \sqrt{x}$$ and those with $$p^2 < \sqrt{x}$$ separately.
+
+There are at most $$x^{1/4}$$ small primes, and for each of them we need to do $$O(\sqrt x)$$ array updates, for a total runtime contribution of $$O(x^{3/4})$$.
+
+For the large primes $$p$$, there are at most about $$\frac{\sqrt{x}}{p}$$ key values to look at (check this!), for a total runtime contribution of
+
+$$\begin{align*}
+\sum_{x^{1/4} \leq p \leq \sqrt{x}} \frac{\sqrt{x}}{p} &\leq \sum_{x^{1/4} \leq p \leq \sqrt{x}} \frac{\sqrt{x}}{x^{1/4}}\\
+&\leq x^{1/4} \sqrt{x} = x^{3/4}
+\end{align*}$$
+
+And so the runtime of Lucy's algorithm is $$O(x^{3/4})$$!
 
 ## Fenwick / Binary Indexed Trees
 
