@@ -1,7 +1,8 @@
 ---
 title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
-tags: [Prime Counting, Number Theory, Algorithms]
+modified_date: 2023-04-10
+tags: [prime counting, number theory, algorithms]
 ---
 
 > **Abstract.** I describe how Lucy_Hedgehog's algorithm works, and how it can be implemented. Then I show how Fenwick trees can be used to boost its runtime without much effort. The final runtime is at most $O(x^{2/3} (\log x \log \log x)^{1/3})$ to compute $\pi(x)$.  
