@@ -9,9 +9,7 @@ In fact many expositions of the ML algorithm that I've seen look awfully complic
 
 The purpose of this post is to talk about arguably the simplest efficient prime counting algorithm out there - it is nowhere near the fastest (and there are [lots of cool ways][5] to do this), but it is very fast. In the end we'll be able to compute $$\pi(10^{13})$$ in less than 3s. If you want the absolute fastest prime counting algorithm, you'll have to look at some more complicated math than this - I think it's generally accepted that Kim Walisch's [primecount][23] contains some of the fastest implementations of some very technically complex algorithms for this purpose. Check it out even if you aren't implementing those algorithms yourself.
 
- In Lucy's original post, they add that it "is also possible to improve the complexity of the algorithm... but the code would be more complex". In [the paper of Lagarias, Miller and Odlyzko][2], mention is made to a "special data structure" which is key to achieving a faster runtime. Both of these are referring to a Fenwick tree, a structure which allows efficient prefix sums and array updates.
-
-I'll be describing how the basic Lucy algorithm works first, and then showing how you can use a Fenwick tree to greatly improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
+I'll be describing how the basic algorithm works first, and then showing how you can use a Fenwick tree to greatly improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
 
 Throughout, $$x$$ will be the large integer (usually something like $$10^8 \ll x \ll 10^{15}$$) for which we want to calculate $$\pi(x)$$.
 
@@ -171,7 +169,7 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 |10<sup>14</sup>|3204941750802|209|
 
 
-Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will also significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
+Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. In Lucy's original post, they add that it "is also possible to improve the complexity of the algorithm... but the code would be more complex". In [the paper of Lagarias, Miller and Odlyzko][2], mention is made to a "special data structure" which is key to achieving a faster runtime. Both of these are referring to a Fenwick tree, a structure which allows efficient prefix sums and array updates. The inclusion of a Fenwick tree will significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost.
 
 ### Runtime Analysis
 
