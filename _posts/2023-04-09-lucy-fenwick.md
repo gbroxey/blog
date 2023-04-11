@@ -19,7 +19,7 @@ The purpose of this post is to talk about arguably the simplest efficient prime 
 
 I'll be describing how the basic algorithm works first, and then showing how you can use a Fenwick tree to greatly improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
 
-Throughout, $x$ will be the large integer (usually something like $10^8 \ll x \ll 10^{15}$) for which we want to calculate $\pi(x)$.
+Throughout, $x$ will be the large integer (like $10^8 \ll x \ll 10^{15}$) for which we want to calculate $\pi(x)$.
 
 ------
 
@@ -300,16 +300,18 @@ The important bit to note here is that if the Lucy step sets `S[v, p] -= S[v div
 Now that we know what's going to happen, here's the algorithm:
 
 ### Algorithm (Lucy + Fenwick)
-1. Compute the sieving limit $y$.
-2. Initialize a Fenwick tree called `sieve` indexed on `0..y`, with default value `1`.  
-Set `sieve[0]` and `sieve[1]` to `0`, since these are not a part of the initial Eratosthenes setup.
-3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being `true` corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
-4. For `p` in `2..sqrt(x)`,  
-    4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
-    4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p` and `v > y`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[u]` is equal to `S[u]` if `u > y` and equal to `sieve.sum(u)` otherwise.  
-    4c. Do a step of the Eratosthenes sieve - for each multiple of `p` up to `y`, say `j = p*k`, check `sieveRaw[j]`. If it is `false`, we need to eliminate `j` from the sieve by setting `sieveRaw[j]` to `true` and adding `-1` to `sieve[j]`.
-5. For each key value $v \leq y$, test if `sieveRaw[v]`. If it is true, set `S[v] = S[v-1]`, otherwise `S[v] = S[v-1]+1`.
-6. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+> 1. Compute the sieving limit $y$.
+> 2. Initialize a Fenwick tree called `sieve` indexed on `0..y`, with default value `1`.  
+> Set `sieve[0]` and `sieve[1]` to `0`, since these are not a part of the initial Eratosthenes setup.
+> 3. Initialize a boolean array `sieveRaw` in a similar way as `sieve` - initialized to `false`, and then set `sieveRaw[0]` and `sieveRaw[1]` to `true`. It's a little easier to have it inverted in this way, where `sieveRaw[j]` being `true` corresponds to `j` being composite. This has very little impact on space requirements and will allow us to query a single element of the base sieve array in constant time which will be helpful.
+> 4. For `p` in `2..sqrt(x)`,  
+>     4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
+>     4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p` and `v > y`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[u]` is equal to `S[u]` if `u > y` and equal to `sieve.sum(u)` otherwise.  
+>     4c. Do a step of the Eratosthenes sieve - for each multiple of `p` up to `y`, say `j = p*k`, check `sieveRaw[j]`. If it is `false`, we need to eliminate `j` from the sieve by setting `sieveRaw[j]` to `true` and adding `-1` to `sieve[j]`.
+> 5. For each key value $v \leq y$, test if `sieveRaw[v]`. If it is true, set `S[v] = S[v-1]`, otherwise `S[v] = S[v-1]+1`.
+> 6. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+
+---
 
 ## Analysis + Optimization
 Clearly we are using $O(y)$ space. So how about our runtime?
@@ -442,6 +444,8 @@ proc lucyFenwick*(x: int64): FIArray =
   return S
   ```
 
+---
+
 ## Benchmarks
 
 At last we're through the derivation and implementation. Let's see how it runs!
@@ -479,6 +483,8 @@ $$S_f(v, p) = S_f(v, p-1) - f(p)\left[S_f(v/p, p-1) - S_f(p-1, p-1)\right]$$
 Lucy's [original post][3] on this uses $f(n) = n$ for all $n$, since they were summing primes rather than counting them. Assuming we can quickly sum these $f$ in order to get our initial values, the plain algorithm works just fine and will give you whatever sum you want.
 
 How about the Lucy + Fenwick algorithm? Well, there's not any issue there either - we have to initialize the sieve so that `sieve[i] = f[i]`, which is fine, and we have to use the slightly modified recursion for $S_f(v, p)$, but nothing else really changes. Trying to make this generic is a fun weekend project.
+
+---
 
 ## Primes in Arithmetic Progressions
 
@@ -572,6 +578,8 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
 This finds the number of primes of the form $4k+1$ and of the form $4k+3$, under $10^{12}$, as $18803924340$ and $18803987677$ respectively, in about 15s. That's just about double the runtime of the original Lucy algorithm which is what we would expect since $\varphi(4) = 2$.
 
 Of course the same extension applies to Lucy + Fenwick, but we need $\varphi(d)$ Fenwick trees, and we have to similarly be careful how the sieves interact, so I'll leave this to you to implement for yourself.
+
+---
 
 ## Trick for Further Optimization
 
