@@ -502,7 +502,7 @@ In Lucy's algorithm this would mean instead of having a single `FIArray` called 
 
 Say we're sieving out the prime $$p$$. Compute its inverse $$p^{-1} \bmod d$$. The integers we're sieving out from $$S_{d,a}$$ will be multiples of $$p$$, say each one is written as $$pk$$. Then $$k \equiv ap^{-1} \bmod d$$ gives us the sieve that each $$k$$ will belong to! This way, the nice recursion from Lucy's algorithm turns into...
 
-$$S_{d,a}(v, p) = S_{d,a}(v, p) - \left[S_{d,ap^{-1}}(v/p, p-1) - S_{d,ap^{-1}}(v/p-1, p-1)\right]$$
+$$S_{d,a}(v, p) = S_{d,a}(v, p) - \left[S_{d,ap^{-1}}(v/p, p-1) - S_{d,ap^{-1}}(p-1, p-1)\right]$$
 
 We have to initialize each $$S_{d,a}(v,1)$$ to be the number of integers in the progression $$a, a+d, \ldots$$ up to $$v$$, and be careful to subtract $$1$$ from $$S_{d,1}(v,1)$$ since we still don't want $$1$$ to be included at the start. It's a little bit more work but not too bad. It could look like this:
 
