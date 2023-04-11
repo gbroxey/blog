@@ -21,6 +21,8 @@ I'll be describing how the basic algorithm works first, and then showing how you
 
 Throughout, $x$ will be the large integer (usually something like $10^8 \ll x \ll 10^{15}$) for which we want to calculate $\pi(x)$.
 
+------
+
 ## The Lucy_Hedgehog Algorithm
 
 Named for Project Euler user Lucy_Hedgehog, this was actually originally an algorithm to compute the sum $\sum_{p \leq x} p$. You can find [their original post][3] about this in the forum threads for problem 10. The idea is to describe what happens in a [sieve of Eratosthenes][4] and use what some more people call the "square root trick".
@@ -130,11 +132,11 @@ iterator keysDec(S: FIArray): int64 =
 Nothing magical is happening here quite yet, it's just incredibly helpful to have these functions set up when we actually implement Lucy's algorithm. Speaking of, we can describe and implement it now -
 
 ### Algorithm (Lucy)
-1. Initialize `S[v] = v-1` for each key value `v`.
-2. For `p` in `2..sqrt(x)`,  
-    2a. If `S[p] == S[p-1]`, then `p` is not a prime (_why?_) so increment `p` and try again.  
-    2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
-3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
+> 1. Initialize `S[v] = v-1` for each key value `v`.
+> 2. For `p` in `2..sqrt(x)`,  
+>     2a. If `S[p] == S[p-1]`, then `p` is not a prime (_why?_) so increment `p` and try again.  
+>     2b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p`, in _decreasing order_, update the value at `v` by  `S[v] -= S[v div p] - S[p-1]`.
+> 3. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
 
 Why, in step 2b, do we have to update the array elements in decreasing order?
 
