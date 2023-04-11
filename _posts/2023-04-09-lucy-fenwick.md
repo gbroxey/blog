@@ -3,10 +3,12 @@ title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
 ---
 
-> **Abstract.** I describe how Lucy_Hedgehog's algorithm works, and how it can be implemented. Then I show how Fenwick trees can be used to boost its runtime without much effort.   
-> The final runtime is at most $O(x^{2/3} (\log x \log \log x)^{1/3})$ to compute $\pi(x)$.  
-> I also give an extension to sums of primes and to primes in arithmetic progressions.  
->The implementation gives $\pi(10^{13})$ in less than 3s.
+**Abstract.** I describe how Lucy_Hedgehog's algorithm works, and how it can be implemented. Then I show how Fenwick trees can be used to boost its runtime without much effort.   
+The final runtime is at most $O(x^{2/3} (\log x \log \log x)^{1/3})$ to compute $\pi(x)$.  
+I also give an extension to sums of primes and to primes in arithmetic progressions.  
+The implementation gives $\pi(10^{13})$ in less than 3s.
+
+-----
 
 There are a lot of nice combinatorial algorithms for computing $\pi(x)$, the number of primes $p \leq x$. One very commonly implemented algorithm is the [Meissel-Lehmer algorithm][1], which runs in roughly $O(x^{2/3})$ time and either $O(x^{2/3})$ or $O(x^{1/3})$ space depending on if you go through the trouble to do segmented sieving, which can be complicated.
 
@@ -193,6 +195,8 @@ $$\begin{align*}
 
 And so the runtime of Lucy's algorithm is $O(x^{3/4})$!
 
+---
+
 ## Fenwick / Binary Indexed Trees
 
 A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a data structure which has been described in a [billion][10] [different][11] [places][12] in a lot of detail by [very smart computer scientists][13] who know a lot more than I do. Really - this thing has a plethora of uses, for example [counting inversions in an array][14], quickly calculating the index of a permutation among all permutations listed lexicographically[^2], and as you'll see soon, prime counting! Seriously, you should go read all the articles I just linked.
@@ -277,6 +281,8 @@ proc newFenwick[T](len: int, default: T): Fenwick[T] =
 ```
 
 This is everything we need from the land of data structures to speed up Lucy's algorithm.
+
+---
 
 ## Application of Fenwick Trees to Lucy's Algorithm
 
@@ -451,6 +457,8 @@ The following table includes the old runtimes for comparison.
 It's of note that the new algorithm, although using more memory, only uses about 1GB for $10^{14}$.  
 If we're willing to temporarily sacrifice 4GB of ram and permanently sacrifice three minutes of our lives we can push this new algorithm to calculate $\pi(10^{15}) = 29844570422669$. In the implementation I gave I include a cap on $y$ to restrict memory usage, so we could push this to ask for $\pi(10^{16})$ or $\pi(10^{17})$ and get an answer in a relatively reasonable amount of time.
 
+---
+
 ## Sums of Primes, Primes Squared, ...
 
 For these remaining few sections, rather than going in depth like the previous ones I'm just going to give a summary overview to wrap things up. What I want to talk about now is adapting this algorithm to sum functions of primes $f(p)$ where $f$ is nice. There are some nice ways to do this when $f$ has a particular form - for example if $f$ is a [completely multiplicative function][19], [ecnerwala describes a cool algorithm in the comments of this blog post][5]. Here, we'll show that if we can compute partial sums of $f(n)$ quickly, and $f(n)$ is completely multiplicative, then we can compute $\sum_{p \leq x} f(p)$ using Lucy's algorithm. Moreover, as we would hope, we can also speed these up with Fenwick trees.
@@ -597,11 +605,15 @@ The rest of the algorithm is unchanged apart from only returning `S[x]` at the e
 |10<sup>14</sup>|209|34|13|
 |10<sup>15</sup>|&mdash;|171|77|
 
+---
+
 ## Code
 
 The code for this blog post is available [here on GitHub][22].
 
 *Updated on 4/10/2023.*
+
+---
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
@@ -634,3 +646,5 @@ The code for this blog post is available [here on GitHub][22].
 [^3]: The function `isqrt()` uses the Babylonian algorithm and belongs in [a utility file](https://github.com/gbroxey/blog/blob/main/code/utils/iops.nim) available in the blog's repository.
 
 [^4]: With help from gor3n in the Project Euler Discord group :)
+
+---
