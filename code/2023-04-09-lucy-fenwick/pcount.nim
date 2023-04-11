@@ -101,7 +101,7 @@ proc `[]=`[T](f: var Fenwick[T], i: SomeInteger, x: T) =
 
 #==== Lucy+Fenwick ====
 
-proc lucyFenwick*(x: int64): FIArray =
+proc lucyFenwick(x: int64): FIArray =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
@@ -196,7 +196,7 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
 
 #==== Further Optimization ====
 
-proc lucyFenwickFast*(x: int64): int64 =
+proc lucyFenwickFast(x: int64): int64 =
   ##Identical to lucyFenwick except for a slightly changed Lucy update
   var S = newFIArray(x)
   #compute y
