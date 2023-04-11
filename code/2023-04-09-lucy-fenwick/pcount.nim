@@ -193,3 +193,48 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
         var eliminated = pis[index][v div p] - pis[index][p-1]
         pis[i][v] = pis[i][v] - eliminated
   return pis
+
+#==== Further Optimization ====
+
+proc lucyFenwickFast*(x: int64): int64 =
+  ##Identical to lucyFenwick except for a slightly changed Lucy update
+  var S = newFIArray(x)
+  #compute y
+  var xf = x.float64
+  var y = round(1.7*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+  y = max(S.isqrt.int+1, y) #necessary lower bound
+  if x <= 10000:
+    y = x.int #if x is too small, easier to sieve the whole thing
+
+  var sieveRaw = newSeq[bool](y+1)
+  var sieve = newFenwick[int](y+1, 1) #initialized to 1
+  sieve[1] = 0
+  sieve[0] = 0
+  
+  for v in S.keysInc:
+    S[v] = v-1
+
+  proc S0(v: int64): int64 =
+    #returns sieve.sum(v) if v <= y, otherwise S[v].
+    if v<=y: return sieve.sum(v.int)
+    return S[v]
+  for p in 2..S.isqrt:
+    if not sieveRaw[p]:
+      #right now: sieveRaw contains true if it has been removed before sieving out p
+      var sp = sieve.sum(p-1) #compute it only once
+      var lim = min(x div y, x div (p*p))
+      #===THIS SECTION IS DIFFERENT
+      S.arr[^1] -= S0(x div p) - sp
+      for i in p..lim:
+        if sieveRaw[i]: continue
+        S.arr[^i.int] -= S0(x div (i*p)) - sp
+        #here, S.arr[^i] = S[x div i] is guaranteed due to the size of i.
+      #===
+      var j = p*p
+      while j <= y:
+        if not sieveRaw[j]:
+          sieveRaw[j] = true
+          sieve.addTo(j, -1)
+        j += p
+  return S[x]

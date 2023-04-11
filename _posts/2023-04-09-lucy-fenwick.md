@@ -5,9 +5,15 @@ date: 2023-04-09
 
 There are a lot of nice combinatorial algorithms for computing $$\pi(x)$$, the number of primes $$p \leq x$$. One very commonly implemented algorithm is the [Meissel-Lehmer algorithm][1], which runs in roughly $$O(x^{2/3})$$ time and either $$O(x^{2/3})$$ or $$O(x^{1/3})$$ space depending on if you go through the trouble to do segmented sieving, which can be complicated.
 
-In fact I think the whole ML algorithm looks awfully complicated. This [exposition][2] by Lagarias, Miller, and Odlyzko gives a lot of detail for those who wish to try implementing it. I personally haven't tried to implement it myself yet. Mostly because the method I'm going to detail in this post has proven completely sufficient for me and much simpler to write.
+In fact many expositions of the ML algorithm that I've seen look awfully complicated. This [exposition][2] by Lagarias, Miller, and Odlyzko gives a lot of detail for those who wish to try implementing it. I haven't tried myself yet. Mostly because the method I'm going to detail in this post has proven completely sufficient for me and simpler to write.
 
-I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before. Feel free to skip over sections if it's not new to you - some of this information [already appears][5] in well written blogs elsewhere, but I really wanted to write about this myself.
+The purpose of this post is to talk about arguably the simplest efficient prime counting algorithm out there - it is nowhere near the fastest (and there are [lots of cool ways][5] to do this), but it is very fast. In the end we'll be able to compute $$\pi(10^{13})$$ in less than 3s. If you want the absolute fastest prime counting algorithm, you'll have to look at some more complicated math than this - I think it's generally accepted that Kim Walisch's [primecount][23] contains some of the fastest implementations of some very technically complex algorithms for this purpose. Check it out even if you aren't implementing those algorithms yourself.
+
+ In Lucy's original post, they add that it "is also possible to improve the complexity of the algorithm... but the code would be more complex". In [the paper of Lagarias, Miller and Odlyzko][2], mention is made to a "special data structure" which is key to achieving a faster runtime. Both of these are referring to a Fenwick tree, a structure which allows efficient prefix sums and array updates.
+
+I'll be describing how the basic Lucy algorithm works first, and then showing how you can use a Fenwick tree to greatly improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
+
+Throughout, $$x$$ will be the large integer (usually something like $$10^8 \ll x \ll 10^{15}$$) for which we want to calculate $$\pi(x)$$.
 
 ## The Lucy_Hedgehog Algorithm
 
@@ -21,7 +27,7 @@ So, for each prime $$p \leq x$$, we would be iterating over all of its multiples
 
 To turn this into a nice prime counting algorithm we define a function $$S(v, p)$$ which will be the number of integers $$n$$ in the range $$2 \leq n \leq v$$ remaining after sieving with all of the primes up to $$p$$. We start with $$S(v, 1) = v-1$$ since $$1$$ is never in the sieve.
 
-Considering $$S(v, p)$$, we see that every integer we eliminate from the sieve is a multiple of $$p$$. Specifically (and you should check this by doing the sieve by hand!) the integers we eliminate are exactly $$p$$ times those remaining in the sieve that are between $$p$$ and $$v/p$$!
+Considering $$S(v, p)$$, we see that every integer we eliminate from the sieve is a multiple of $$p$$. Specifically (and you should check this by doing the sieve by hand!) the integers we eliminate are $$p*n$$ where $$n$$ are the integers remaining in the sieve that are between $$p$$ and $$v/p$$.
 
 This leads us to the crucial formula
 
@@ -64,7 +70,7 @@ For example, with $$x = 12$$ we have `isqrt == 3` and our array elements corresp
 
 $$\left\{1, 2, 3, \left\lfloor\frac{12}{3}\right\rfloor, \left\lfloor\frac{12}{2}\right\rfloor,\left\lfloor\frac{12}{1}\right\rfloor\right\} = \left\{1, 2, 3, 4, 6, 12 \right\}$$
 
-No issues here. Let's try with $$x = 10$$, where `isqrt = 3` again, but
+No issues here. Let's try with $$x = 10$$, where `isqrt == 3` again, but
 
 $$\left\{1, 2, 3, \left\lfloor\frac{10}{3}\right\rfloor, \left\lfloor\frac{10}{2}\right\rfloor,\left\lfloor\frac{10}{1}\right\rfloor\right\} = \left\{1, 2, 3, 3, 5, 10 \right\}$$
 
@@ -161,8 +167,8 @@ A quick benchmark tells us that we can compute $$\pi(10^{12}) = 37607912018$$ in
 |10<sup>10</sup>|455052511|0.259|
 |10<sup>11</sup>|4118054813|1.370|
 |10<sup>12</sup>|37607912018|7.259|
-|10<sup>13</sup>|346065536839|39.198|
-|10<sup>14</sup>|3204941750802|209.039|
+|10<sup>13</sup>|346065536839|39|
+|10<sup>14</sup>|3204941750802|209|
 
 
 Beyond $$10^{14}$$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $$10^{14}$$ you only need an array of length $$2*10^7$$ which is very reasonable. The inclusion of a Fenwick tree will also significantly increase memory requirements, from $$O(\sqrt{x})$$ to $$O(x^{2/3})$$ or so, but it will also give us a nice performance boost if you're able to spend a bit more on RAM.
@@ -277,7 +283,7 @@ Select some constant $$\sqrt{x} < y \leq x$$ as a parameter to be optimized late
 
 Initialize the Eratosthenes sieve as usual with all of the numbers from `2` to `y` marked as "maybe prime". At the same time initialize the `FIArray` for Lucy's algorithm as usual. Now for each of the $$O(x/y)$$ key values satisfying $$v \geq y$$ update the `FIArray` in the same way as in Lucy's algorithm. We will then proceed with a step of the sieve - identifying a prime `p` and eliminating all of its multiples from the sieve in $$O(y/p)$$ time.
 
-The important bit to note here is that if the Lucy step sets `S[v, p] -= S[v div p, p-1] - S[p-1, p-1]` and either of `v div p` or `p-1` is at most `y`, then instead of using the value stored in the `FIArray` we need to compute the number of remaining integers in the Eratosthenes sieve. This is the application of the Fenwick tree - we can store a `1` if the integers is maybe prime and a `0` if it is definitely not prime, and then prefix sums compute the number of remaining integers up to some value.
+The important bit to note here is that if the Lucy step sets `S[v, p] -= S[v div p, p-1] - S[p-1, p-1]` and either of `v div p` or `p-1` is at most `y`, then instead of using the value stored in the `FIArray` we need to compute the number of remaining integers in the Eratosthenes sieve. This is the application of the Fenwick tree - we can store a `1` if the integer is maybe prime and a `0` if it is definitely not prime, and then prefix sums compute the number of remaining integers up to some value.
 
 Now that we know what's going to happen, here's the algorithm:
 
@@ -452,7 +458,7 @@ Instead of a standard Sieve of Eratosthenes, we'll be initializing the sieve arr
 
 To turn this into a nice prime ~~counting~~ summing algorithm we define a function $$S_f(v, p)$$ which will be the ~~number of integers~~ sum of $$f(n)$$ over the remaining $$n$$ in the range $$2 \leq n \leq v$$ after sieving with all of the primes up to $$p$$. We start with $$S_f(v, 1) = f(2) + f(3) + \ldots + f(v)$$ since $$1$$ is never in the sieve.
 
-Remembering from before that the integers we eliminate while sieving out $$p$$ for $$S_f(v, p)$$ are exactly $$p$$ times those remaining in the sieve that are between $$p$$ and $$v/p$$, we have
+Remembering from before that the integers we eliminate while sieving out $$p$$ for $$S_f(v, p)$$ are exactly $$p*n$$ where $$n$$ are the integers remaining in the sieve that are between $$p$$ and $$v/p$$, we have
 
 $$S_f(v, p) = S_f(v, p-1) - f(p)\left[S_f(v/p, p-1) - S_f(p-1, p-1)\right]$$
 
@@ -555,13 +561,44 @@ Of course the same extension applies to Lucy + Fenwick, but we need $$\varphi(d)
 
 ## Trick for Further Optimization
 
-If you've gotten this far you must _really_ want every bit of speed you can get. Alright, I'll tell you what I know.
+This is just a very brief final note on how we can get what appears to be a constant factor better runtime for the Lucy+Fenwick algorithm. I think I saw it used in someone's implementation of the original Lucy algorithm but I can't find the original reference. Here's how it works:
 
-TODO - I'll write this tomorrow :)
+Suppose we only want to correctly calculate $$S(x, \sqrt{x})$$, and we don't care about $$S(v, \sqrt{x})$$ for any key values $$v < x$$.
+
+Let $$p_i$$ be the largest prime up to $$\sqrt{x}$$ (so we want to calculate $$S(x, p_i)$$).
+We only need to correctly calculate $$S(x/n, p_{i-1})$$ for $$n$$ having only factors strictly greater than $$p_{i-1}$$. To get all those, we need to get $$S(x/n, p_{i-2})$$ for $$n$$ having only factors strictly greater than $$p_{i-2}$$. Notice that in the Lucy+Fenwick algorithm quite a bit of time is expended to compute some of the $$S(x/n, p_j)$$ where $$n$$ has some factors smaller than $$p_j$$. Helpfully, built into the implementation I gave is a nice array `sieveRaw[n]` which, at the required point in the algorithm, tells us exactly whether we actually need to update `S[x div n]`.
+
+Here's how this would look for `lucyFenwick`:
+
+```nim
+...
+var lim = min(x div y, x div (p*p))
+S.arr[^1] -= S0(x div p) - sp #do 1 separately
+#every integer 1 < i < p has a prime factor smaller than p
+for i in p..lim: 
+  if sieveRaw[i]: continue #we don't need to update S[x div i]
+  S.arr[^i.int] -= S0(x div (i*p)) - sp
+...
+```
+
+The rest of the algorithm is unchanged apart from only returning `S[x]` at the end, since the other values of `S` are not guaranteed to be correct anymore. Here's a final runtime table comparing all the algorithms:
+
+
+|x|Lucy (s)|Lucy + Fenwick (s)|Lucy + Fenwick + Trick (s)|
+|:---:|:---:|:---:|:---:|
+|10<sup>9</sup>|0.049|0.014|0.006|
+|10<sup>10</sup>|0.259|0.068|0.022|
+|10<sup>11</sup>|1.370|0.306|0.097|
+|10<sup>12</sup>|7.259|1.574|0.474|
+|10<sup>13</sup>|39.198|7.652|2.637|
+|10<sup>14</sup>|209|34|13|
+|10<sup>15</sup>|&mdash;|171|77|
 
 ## Code
 
 The code for this blog post is available [here on GitHub][22].
+
+*Updated on 4/10/2023.*
 
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
@@ -585,6 +622,7 @@ The code for this blog post is available [here on GitHub][22].
 [20]: https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_arithmetic_progressions
 [21]: https://en.wikipedia.org/wiki/Dirichlet_character
 [22]: https://github.com/gbroxey/blog/blob/main/code/2023-04-09-lucy-fenwick/pcount.nim
+[23]: https://github.com/kimwalisch/primecount
 
 [^1]: The author here claims the given algorithm runs in $$O(x^{2/3})$$ time - this is possible using a trick similar to the one we are going to describe here. The analysis of our plain Lucy algorithm basically applies to this author's algorithm and shows it runs in $$O(x^{3/4})$$ time which is still good.
 
