@@ -27,7 +27,7 @@ layout: base
       {%- if page.tags -%}
         <br>
         Tags: {% for tag in page.tags %}
-          {{tag; }}
+          {{_tag_, }}
         {% endfor %}
       {%- endif -%}</p>
   </header>
