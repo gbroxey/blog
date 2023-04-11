@@ -1,7 +1,5 @@
 ---
 title: "WIP"
-date: 1999-01-01
-hidden: true
 ---
 
 This is a test post which should be hidden from the front page.
