@@ -29,10 +29,11 @@ Actually, that's an issue. Can we come up with a nice example of a set with no d
 
 We can tell that the fraction will always give us something between $0$ and $1$. So any badly behaved set should oscillate between being very dense and very sparse. One way to do this is to use the set of integers with an odd number of binary bits!
 
-The following is a plot of $\left|A \cap \{1, 2, \ldots, n\}\right| / n$ for this set:
+The following is a plot of $\left|A \cap \{1, 2, \ldots, n\}\right|/n$ for this set.
 
-<center><img src="/blog/docs/assets/images/wip-bad-density.svg" width="75%" height="75%"></center>
+<center><img src="/blog/docs/assets/images/wip-bad-density.svg" width="85%" height="85%"></center>
 
-You can see that there is no defined density in this case. It oscillates between $1/3$ and $2/3$ forever. It is not particularly challenging to prove, *but* you should try to do it yourself if you haven't worked with density before.
+You can see that there is no defined density in this case. It oscillates between $1/3$ and $2/3$ forever.  
+It is not particularly challenging to prove, *but* you should try to do it yourself if you haven't worked with density before. The lightly dashed lines in the graph are at $y = \frac{1}{3}, \frac{2}{3}$ and every power of two for the $x$ values. This should give you a pretty good idea of how the proof could go.
 
 [1]: https://en.wikipedia.org/wiki/Natural_density
