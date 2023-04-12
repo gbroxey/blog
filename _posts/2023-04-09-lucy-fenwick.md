@@ -622,10 +622,6 @@ The rest of the algorithm is unchanged apart from only returning `S[x]` at the e
 
 The code for this blog post is available [here on GitHub][22].
 
-*Updated on 4/10/2023.*
-
----
-
 [1]: https://en.wikipedia.org/wiki/Meissel%E2%80%93Lehmer_algorithm
 [2]: https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf
 [3]: https://projecteuler.net/thread=10;page=5#111677
