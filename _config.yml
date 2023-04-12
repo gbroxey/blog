@@ -39,3 +39,5 @@ disqus:
   # Disable comments for any post by adding `comments: false` to that post's YAML Front Matter.
   shortname: griffmathblog
   url: https://gbroxey.github.io/
+
+baseurl: /blog/ #test to fix tags page

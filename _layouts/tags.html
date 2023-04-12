@@ -20,7 +20,7 @@ layout: base
     <h2 id="{{tag[0] | uri_escape | downcase}}">{{tag[0]}}</h2>
       <p>
         {% for p in posts %}
-        <a href="{{ p.url }}">{{ p.title }}</a> ({{p.type}}/{{p.category}}) &raquo;  <span class="entry-date"><time datetime="{{ p.date | date_to_xmlschema }}" itemprop="datePublished">{{ p.date | date: "%B %d, %Y" }}</time></span>
+        <a href="{{ p.url }}">{{ p.title }}</a> &mdash; <span class="entry-date"><time datetime="{{ p.date | date_to_xmlschema }}" itemprop="datePublished">{{ p.date | date: "%B %d, %Y" }}</time></span>
       <br />
         {% endfor %}
       </p>
