@@ -40,4 +40,22 @@ The following is a plot of $A(x)/x$ for this set:
 You can see that there is no defined density in this case. It oscillates between $1/3$ and $2/3$ forever.  
 It is not particularly challenging to prove, *but* you should try to do it yourself if you haven't worked with density before. The lightly dashed lines in the graph are at $y = \frac{1}{3}, \frac{2}{3}$ and every power of two for the $x$ values. This should give you a pretty good idea of how the proof could go.
 
+To get around this we can define an upper and lower density. In this case, the upper density would be $2/3$, and the lower density would be $1/3$. They're defined as you would expect:
+
+$$\begin{align*}
+\overline{\mathrm d}(A) &= \limsup_{x \to \infty} \frac{A(x)}{x}\\
+\underline{\mathrm d}(A) &= \liminf_{x \to \infty} \frac{A(x)}{x}
+\end{align*}$$
+
+The notation for this is terribly inconsistent. This is the notation I like. Sometimes when authors are referring to upper density, the word "upper" is omitted. When it would be ambiguous I'll be specific.
+
+---
+
+**GCD Problem:**
+
+> Write $G$ for the set of all $\gcd(x, y)$ where $x, y$ are different members of the set $A$.  
+> Then $\mathrm d(G) = 0$ implies $\mathrm d(S) = 0$.
+
+
+
 [1]: https://en.wikipedia.org/wiki/Natural_density
