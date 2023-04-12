@@ -19,19 +19,23 @@ Density is a way to measure the largeness of an infinite set of naturals - it's 
 
 You could probably come up with more "obvious" properties of density even without knowing how it is actually defined. This is a pretty good sign actually, since each property restricts how we could define it. 
 
-The following definition should make a good amount of sense:
+First, we'll use the following notation for the **counting function** of the set $A$.
 
-$$\mathrm d(A) = \lim_{n \to \infty} \frac{\left| A \cap \{1, 2, \ldots, n\}\right|}{n}$$
+$$A(x) = \left| A \cap \{1, 2, \ldots, \lfloor x \rfloor\}\right|$$
 
-This is known as [natural density][1]. The numerator is the number of elements of $A$ up to $n$, so the fraction tells us the probability a uniformly chosen integer up to $n$ is in $A$. You can check all of the obvious properties listed above - they are all nice and easy to prove, assuming that all the limits actually exist.
+This is the number of elements of $A$ which are no greater than $x$. It's helpful to have this shorthand. Now let's try to define density! The following should make a good amount of sense:
+
+$$\mathrm d(A) = \lim_{x \to \infty} \frac{A(x)}{x}$$
+
+This is known as [natural density][1]. The numerator is the number of elements of $A$ up to $x$, so the fraction tells us the probability a uniformly chosen integer up to $x$ is in $A$. You can check all of the obvious properties listed above - they are all nice and easy to prove, assuming that all the limits actually exist.
 
 Actually, that's an issue. Can we come up with a nice example of a set with no defined density?
 
 We can tell that the fraction will always give us something between $0$ and $1$. So any badly behaved set should oscillate between being very dense and very sparse. One way to do this is to use the set of integers with an odd number of binary bits!
 
-The following is a plot of $\left|A \cap \{1, 2, \ldots, n\}\right|/n$ for this set.
+The following is a plot of $A(x)/x$ for this set:
 
-<center><img src="/blog/docs/assets/images/wip-bad-density.svg" width="85%" height="85%"></center>
+<center><img src="/blog/docs/assets/images/wip-bad-density.svg"></center><br>
 
 You can see that there is no defined density in this case. It oscillates between $1/3$ and $2/3$ forever.  
 It is not particularly challenging to prove, *but* you should try to do it yourself if you haven't worked with density before. The lightly dashed lines in the graph are at $y = \frac{1}{3}, \frac{2}{3}$ and every power of two for the $x$ values. This should give you a pretty good idea of how the proof could go.
