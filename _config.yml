@@ -33,6 +33,7 @@ minima:
 show_excerpts: true
 header_pages:
   - about.md
+  - tags.md
 
 disqus:
   # Leave shortname blank to disable comments site-wide.

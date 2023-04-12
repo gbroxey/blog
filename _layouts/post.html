@@ -26,7 +26,7 @@ layout: base
       {%- endif -%}
       {%- if page.tags -%}
         <br>
-        Tag{% if page.tags.size > 1 %}s{% endif %}: 
+        [Tag{% if page.tags.size > 1 %}s{% endif %}](/tags): 
         <i>{{ page.tags | sort | join: ", " }}</i>
       {%- endif -%}</p>
   </header>
