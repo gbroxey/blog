@@ -1,0 +1,32 @@
+---
+layout: base
+---
+<article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+
+  {% assign sorted_tags = site.tags | sort %}
+  {% for tag in sorted_tags %}
+  {% assign posts = tag[1] | sort %}
+
+  {% if posts %}
+
+    <h2 id="{{tag[0] | uri_escape | downcase}}">{{tag[0]}}</h2>
+      <p>
+        {% for p in posts %}
+      <a href="/{{p.type | downcase}}/">{{ p.date | date: "%B %d, %Y" }}</time></span>
+      <br />
+        {% endfor %}
+      </p>
+    
+  {% endif %}
+
+  {% endfor %}
+
+</article>
