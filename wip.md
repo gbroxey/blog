@@ -264,7 +264,7 @@ $$\prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \sum_{p \leq n} \frac{1}{p}
 
 It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$.
 
-This proof proceeds by contradiction. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$, which does bear some resemblance to my proof. To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
+This proof proceeds by contrapositive. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$, which does bear some resemblance to my proof. To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
 
 We're going to be putting all of the integers in $S$ into buckets such that there are asymptotically many buckets, and that many buckets will give rise to unique elements of $G$.
 
@@ -321,10 +321,8 @@ Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ becaus
 The number of bucket representatives up to $n$ is asymptotically $\delta n$.  
 Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$.
 
-Recall that we have an arbitrary $\varepsilon > 0$, and that we pick $n$ with $A(n) \geq (\dsup(A)-\varepsilon)n$.
-
-Consider the set of buckets which contain only a single element of $A$ up to $n$.
-
+Recall that we have an arbitrary $\varepsilon > 0$, and that we pick $n$ with $A(n) \geq (\dsup(A)-\varepsilon)n$.  
+Consider the set of buckets which contain only a single element of $A$ up to $n$.  
 Then the number of elements outside these buckets is at asymptotically least
 
 $$A(n) - \delta n \geq (\dsup(A) - \delta - \varepsilon)n$$
