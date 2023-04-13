@@ -96,12 +96,16 @@ Now we know how density interacts with disjoint unions.
 Let's see how it interacts with set complements.
 
 > **Lemma 3.** We have the following, whenever $B \subseteq A$:
+> 
 $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
+> 
 > When $\dnat(A)$ exists, we have equality in the first two relations.  
 > Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+> 
 $$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)$$
+> 
 $$\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
 
 _Proof._ The first two are easy using counting functions; note that $\limsup \left(-\frac{B(n)}{n}\right) = -\liminf \frac{B(n)}{n}$, and that a similar relation works for $\liminf$. Fill in the details by hand if this doesn't make intuitive sense.
@@ -116,7 +120,13 @@ $$\begin{align*}
     H(A \cup B) &= H(A) + H(B) - H(A \cap B)
 \end{align*}$$
 
-_Proof._ 
+_Proof._ Write $A' = A-B$, so by Lemma 3 we have $\dsup(A') \leq \dsup(A) - \dinf(A \cap B)$.
+
+Moreover $A \cup B = A' \cup B$ is a disjoint union, so Lemma 2 gives us
+$$\dsup(A \cup B) = \dsup(A' \cup B) \leq \dsup(A') + \dsup(B) \leq \dsup(A) + \dsup(B) - \dinf(A \cap B)$$
+Similar applications of Lemmas 2 and 3 give us the other two results.
+
+As before this can be extended to a finite number of sets by induction. The inductive step actually uses both inequalities, so they must be proved together. $\proofqed$
 
 ---
 
@@ -128,20 +138,52 @@ In this section, I'll be making one or two extra definitions of my own, and prov
 > That is, $A$ has "nearly disjoint" $B$-dilations. When this is true, we will write $A \perp B$.  
 > Note that this is _not_ a symmetric relation in general.
 
-> **Lemma 1.** Suppose that $A \perp B$, and that $\sum \frac{1}{b}$ exists.  
-> Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
-> When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
+> **Lemma 5.** Suppose that $A \perp B$, and that $H(B)$ exists.  
+> Then $\dinf(A \times B) \geq \dinf(A) H(B)$.  
+> When $H(B) = \infty$, the conclusion is that $\dinf(A) = 0$.
 
-> **Lemma 2.** If $\sum \frac{1}{b} < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
+_Proof._ Start with finite $B$. We'll use superadditivity and inclusion-exclusion.
+$$\dinf(A \times B) \geq \sum_b \dinf(bA) - \sum_{b_1 < b_2} \dsup(b_1A \cap b_2A) = \sum \frac{\dinf(A)}{b} = \dinf(A)H(B)$$
+Now if we use the desired bound for finite subsets $B' \subseteq B$, we'll have 
+$$\dinf(A \times B) \geq \dinf(A \times B') \geq \dinf(A) H(B')$$
+
+Now as $H(B') \to H(B)$ from below, we see that $\dinf(A \times B) \geq \dinf(A) H(B)$.
+
+In the case $H(B) = \infty$ we can suppose $\dinf(A) > 0$ for contradiction.  
+We would have $\dinf(A)H(B') \to \infty$ which is impossible since it's bounded by $1$. $\proofqed$
+
+> **Lemma 6.** If $\sum \frac{1}{b} < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
+
+_Proof._ We start with $(A \times B)(x) \leq \sum_{b \in B} A(x/b)$.
+
+Pick any $\varepsilon > 0$, and pick some partition $B = B_0 \cup B_1$ such that $B_0$ is finite and such that $H(B_1) \leq \varepsilon$.
+
+Then we have
+
+$$\begin{align*}
+    (A \times B)(x) &\leq \sum_{b \in B_0} A(x/b) + \sum_{b \in B_1} x/b\\
+    &= \sum_{b \in B_0} A(x/b) + x H(B_1)\\
+    &\leq \sum_{b \in B_0} A(x/b) + \varepsilon x
+\end{align*}$$
+
+Now there exists a $y_0$ such that for all $y \geq y_0$ we have $A(y) \leq (\dsup(A)+\varepsilon)y$.
+
+Suppose $x \geq \max(B_0)y_0$. Then we have
+
+$$(A \times B)(x) \leq \sum_{b \in B_0} (\dsup(A) + \varepsilon) \frac{x}{b} + \varepsilon x = (\dsup(A) + \varepsilon) H(B_0)x + \varepsilon x$$
+
+Therefore $\dsup(A \times B) \leq (\dsup(A) + \varepsilon)H(B_0) + \varepsilon \leq (\dsup(A) + \varepsilon)H(B) + \varepsilon$.
+
+Letting $\varepsilon \to 0$ gives the result. $\proofqed$
 
 The previous two lemmas have a lovely consequence which will be very helpful later.
 
-> **Lemma 3.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
+> **Lemma 7.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
 > Then $\sum \frac{1}{b}$ converges, and $A \times B$ has a natural density, which is equal to $\dnat(A) \sum \frac{1}{b}$.
 
 That $\sum \frac{1}{b}$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
 
-Then using Lemmas 1 and 2 we have
+Then using Lemmas 5 and 6 we have
 
 $$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
 
