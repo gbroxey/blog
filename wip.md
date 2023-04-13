@@ -4,9 +4,9 @@ tags: [number theory, density]
 ---
 
 $$
-\def\dnat{{\mathrm d}}
-\def\dsup{{\overline{\mathrm d}}}
-\def\dinf{{\underline{\mathrm d}}}
+\newcommand\dnat{{\mathrm d}}
+\newcommand\dsup{{\overline{\mathrm d}}}
+\newcommand\dinf{{\underline{\mathrm d}}}
 $$
 
 > **Abstract.** Suppose $A$ is a set of natural numbers, and write $G$ for the set of all $\gcd(x, y)$ where $x, y$ are different members of $A$. I'll prove that if $G$ has density zero, then $A$ has density zero. This will be written for people who have seen limits before but aren't familiar with density. Therefore we will be deriving some of its simple properties first, and then aiming at the stated problem. I'll present a nice proof which will prepare us for some generalizations I'll get to in future posts.
