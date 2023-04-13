@@ -100,6 +100,7 @@ Let's see how it interacts with set complements.
 $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
+> 
 > When $\dnat(A)$ exists, we have equality in the first two relations.
 Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
 > 
@@ -111,7 +112,7 @@ _Proof._ The first two are easy using counting functions; note that $\limsup \le
 As for the third equation, just note that $A-B$ and $B$ are disjoint, then use Lemma 2. $\proofqed$
 
 > **Lemma 4** (Inclusion-Exclusion). The following holds for all $A, B$:
-
+> 
 $$\begin{align*}
     \dsup(A \cup B) &\leq \dsup(A) + \dsup(B) - \dinf(A \cap B)\\
     \dinf(A \cup B) &\geq \dinf(A) + \dinf(B) - \dsup(A \cap B)\\
