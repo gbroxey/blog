@@ -61,11 +61,12 @@ Now that we have things written out, with a defined upper and lower density for 
 
 In this section, I'll be making one or two extra definitions of my own, and proving some very nice properties which will assist us in our later proofs. I've tried to pick notations that make sense and help make things less wordy.
 
-> **Lemma 1.** Suppose that $A$ has nearly disjoint $B$-dilations, and that $\sum \frac{1}{b}$ exists.  
-> Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
-> When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
+In this section, $A$ and $B$ are general sets, and $a$ and $b$ refer to their elements.
 
-Or like this:
+> **Definition.** Suppose that, for distinct $b_1$ and $b_2$ in $B$, we have $\dnat(b_1 A \cap b_2 A) = 0$.  
+> That is, $A$ has "nearly disjoint" $B$-dilations. When this is true, we will write $A \perp B$.  
+> Note that this is _not_ a symmetric relation in general.
+
 > **Lemma 1.** Suppose that $A \perp B$, and that $\sum \frac{1}{b}$ exists.  
 > Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
 > When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
@@ -74,7 +75,7 @@ Or like this:
 
 The previous two lemmas have a lovely consequence which will be very helpful later.
 
-> **Lemma 3.** Suppose that $A$ has nearly disjoint $B$-dilations, and that $A$ has a nonzero natural density.  
+> **Lemma 3.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
 > Then $\sum \frac{1}{b}$ converges, and $A \times B$ has a natural density, which is equal to $\dnat(A) \sum \frac{1}{b}$.
 
 That $\sum \frac{1}{b}$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
@@ -83,7 +84,7 @@ Then using Lemmas 1 and 2 we have
 
 $$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
 
-Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$.
+Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$. $\quad\quad\quad\square$
 
 ---
 
