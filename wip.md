@@ -250,24 +250,77 @@ The plan is to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$, and that $\dsup(
 _Proof._ First, $R_0$ is periodic mod $k!$ and so has a nonzero natural density.  
 Then since $R_0 \perp R_1$ (check this yourself), by Lemma 7, $R_0 \times R_1$ has a natural density.
 
-Now we'll show $R_0 \times R_1 \perp R_2$, after which by Lemma 7 we'll have $\dnat(R_0 \times R_1) H(R_2) = \dnat(\mathbb N) = 1$.
+Now we'll show $(R_0 \times R_1) \perp R_2$, after which by Lemma 7 we'll have $\dnat(R_0 \times R_1) H(R_2) = \dnat(\mathbb N) = 1$.
 
 Suppose $t_1, t_2$ are in $R_2$; that is, they are distinct divisors of $k!$.  
 
 Examine the factorizations of numbers in $t_1R_2$ and $t_2R_2$.  
 By taking remainders of the $p_i$ exponents mod $e_i+1$ in the factorizations, you'll recover the $p_i$ exponents of $t_1$ and $t_2$. Since at least one has to differ, the sets $t_1R_2$ and $t_2R_2$ are disjoint. 
 
-The last stated inequality is simply because every natural up to $k$ is a divisor of $k!$. $\proofqed$
+The lemma's inequality is simply because every natural up to $k$ is a divisor of $k!$. $\proofqed$
 
-## TODO
+To finish the proof, we need to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$. This is not too hard:
+
+> **Lemma 9.** Suppose $U$ and $V$ are sets of naturals such that $U \times V = \mathbb N$, where $V$ is finite.  
+> Suppose also that $U$ has _disjoint_ $V$-dilations: $v_1 U \cap v_2 U$ is empty for distinct $v_1, v_2 \in V$.  
+> Then, if $A \perp V$, we have $\dsup(A) \leq \dsup(U)$.
+
+_Proof._ First, we reduce to the case where $A$ has fully disjoint $V$-dilations.   
+Let $A'$ be the set
+
+$$A' = A - \bigcup_{\substack{v_1, v_2 \in V \\ v_1 \neq v_2}}\frac{1}{v_1}\left(v_1 A \cap v_2 A\right)$$
+
+Intuitively, we look at all of the intersections $v_1 A \cap v_2 A$ and throw out the offending elements of $A$.
+
+Since $\dnat(v_1 A \cap v_2 A) = 0$, we have $\dsup(A) = \dsup(A')$.
+
+So now we can move forward assuming that $A$ has disjoint $V$-dilations.
+
+The next step is to construct an injective map $\phi: A \to U$ with $\phi(a) \leq a$.  
+With such a map, we would have $A(n) = \left[\phi(A)\right](n) \leq U(n)$, so $\dsup(A) \leq \dsup(U)$.
+
+For each $a \in A$, let $\phi(a)$ be the smallest $u \in U$ such that $a \in uV$.  
+At least one $u$ must exist. That $\phi(a) \leq a$ is obvious, since $a = \phi(a)v$ for some $v$ in $V$.
+
+Now suppose $\phi(a_1) = \phi(a_2) = u$ for some distinct $a_1, a_2$ in $A$.  
+Then $a_1 = uv_1$ and $a_2 = uv_2$ for some $v_1, v_2$ in $V$.  
+But then $v_2a_1 = v_1a_2$ and so $v_1A$ and $v_2A$ are not disjoint.
+
+Since this is a contradiction, $\phi$ is injective. $\proofqed$
+
+To finish the proof of the GCD problem we need to show $\dsup(A) \leq \dsup(R_0 \times R_1)$.
+
+Set $U = R_0 \times R_1$ and $V = R_2$ in Lemma 9, and we are done!
 
 ---
 
 Now let's look at a fun corollary:
 
-> Let $\mathbb P_k$ be the set of integers with at most $k$ prime factors.
-> Then $\mathrm d(\mathbb P_k) = 0$ for all $k$.  
-> In particular, the primes have density zero.
+> **Corollary 1.** Let $\mathbb P_k$ be the set of integers with at most $k$ prime factors.  
+> Then $\dnat(\mathbb P_k) = 0$ for all $k$. In particular, the primes have density zero.
+
+_Proof._ This is clearly true for $k = 0$, for which $\mathbb P_0 = \{1\}$.
+
+It's time for induction. Suppose $\dnat(\mathbb P_{k-1}) = 0$.  
+The GCD of any two naturals in $\mathbb P_k$ has strictly less than $k$ prime factors, and is therefore in $\mathbb P_{k-1}$.  
+A bit more thinking shows that if $A = \mathbb P_k$, then $G = \mathbb P_{k-1}$.  
+Since $\dnat(G) = 0$, we have $\dnat(A) = 0$. $\proofqed$
+
+This was essentially my motivation for this problem and for working with density at all. I had started playing with this corollary and trying to find ways to prove it relying as heavily on density as I could during late high school, and eventually found this proof structure.
+
+Well actually, I attempted to use the following conjecture:
+
+> **Conjecture 1.** Suppose $A \perp B$. Then $\dsup(A) \leq H(B)^{-1}$.  
+> When $H(B) = \infty$, the conclusion is $\dsup(A) = 0$.
+
+Note the similarity to Lemma 5.
+
+It was just too elegant not to try to prove. As of now I haven't seen a proof that works in all cases.
+
+The GCD problem as we saw followed from the $A \perp \mathbb N$ case.  
+The astute reader will notice that, in fact, we proved the conjecture whenever $B$ was the set of divisors of some integer, or more generally whenever we can come up with a set $U$ with disjoint $B$-dilations satisfying $U \times B = \mathbb N$ and $\dnat(U)H(B) = 1$. These have been the easiest cases to prove.
+
+Future blog posts will dig into some other special cases of this conjecture, using nice geometric ideas and probability theory. Anyone able to prove the conjecture for any interesting $B$ should contact me!
 
 ---
 
