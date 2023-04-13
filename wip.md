@@ -77,13 +77,13 @@ We'll start with some definitions that will make our theorems look nicer.
 We can easily describe how dilation changes the properties of a set we like.
 
 > **Lemma 1.** We have the following inequalities:
-
+> 
 $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, H(bA) = \frac{1}{b} H(A)$$
 
 _Proof._ This is easy using definitions, [I promise][5]. Try it! $\proofqed$
 
 > **Lemma 2.** When $A$ and $B$ are disjoint, we have the following:
-
+> 
 $$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
     \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)\\
     H(A \cup B) &= H(A) + H(B)
@@ -100,16 +100,15 @@ Let's see how it interacts with set complements.
 $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
+> When $\dnat(A)$ exists, we have equality in the first two relations.
+Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+> 
+$$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)\\
+\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
 
 _Proof._ The first two are easy using counting functions; note that $\limsup \left(-\frac{B(n)}{n}\right) = -\liminf \frac{B(n)}{n}$, and that a similar relation works for $\liminf$. Fill in the details by hand if this doesn't make intuitive sense.
 
 As for the third equation, just note that $A-B$ and $B$ are disjoint, then use Lemma 2. $\proofqed$
-
-When $\dnat(A)$ exists, we have equality in the first two relations.
-Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
-
-$$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)\\
-\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
 
 > **Lemma 4** (Inclusion-Exclusion). The following holds for all $A, B$:
 
