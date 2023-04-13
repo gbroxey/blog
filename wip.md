@@ -105,7 +105,7 @@ $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
 > 
 > When $\dnat(A)$ exists, we have equality in the first two relations.  
-> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in **Lemma 2** as follows:
 > 
 $$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)$$
 > 
@@ -127,7 +127,7 @@ _Proof._ Write $A' = A-B$, so by Lemma 3 we have $\dsup(A') \leq \dsup(A) - \din
 
 Moreover $A \cup B = A' \cup B$ is a disjoint union, so Lemma 2 gives us
 $$\dsup(A \cup B) = \dsup(A' \cup B) \leq \dsup(A') + \dsup(B) \leq \dsup(A) + \dsup(B) - \dinf(A \cap B)$$
-Similar applications of Lemmas 2 and 3 give us the other two results.
+Similar applications of **Lemmas 2** and **3** give us the other two results.
 
 As before this can be extended to a finite number of sets by induction. The inductive step actually uses both inequalities, so they must be proved together. $\proofqed$
 
@@ -187,9 +187,9 @@ The previous two lemmas have a lovely consequence which will be very helpful lat
 > **Lemma 7.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
 > Then $\sum \frac{1}{b}$ converges, and $A \times B$ has a natural density, which is equal to $\dnat(A) \sum \frac{1}{b}$.
 
-That $\sum \frac{1}{b}$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
+That $\sum \frac{1}{b}$ exists is a consequence of **Lemma 1** given $\dinf(A) > 0$.
 
-Then using Lemmas 5 and 6 we have
+Then using **Lemmas 5** and **6** we have
 
 $$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
 
@@ -285,7 +285,7 @@ _Proof._ The set of bucket representatives can be written as the product $R_0 \t
 
 Helpfully, $R_0$ is periodic mod $\prod_{p \leq T} p$, and hence it has a nonzero natural density.
 
-Then, since $R_0 \perp R_1$ (check this yourself), the set of bucket representatives has a defined natural density, and moreover we know it has to be $\dnat(R_0 \times R_1) = \dnat(R_0) H(R_1)$.
+Then, since $R_0 \perp R_1$ (check this yourself), the set of bucket representatives has a defined natural density (**Lemma 7**), and we know it has to be $\dnat(R_0 \times R_1) = \dnat(R_0) H(R_1)$.
 
 Now we can calculate
 
@@ -303,18 +303,53 @@ we have the claimed density. $\proofqed$
 
 We have one last property of this setup to verify.
 
-> **Lemma 1001.** Bucket membership is closed under $\gcd$.  
-> In other words, if $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
+> **Lemma 1001.** Bucket membership is closed under $\gcd$:  
+> If $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
 
 _Proof._ This is easy from definitions. You don't want this post to be LONGER, do you? $\proofqed$
 
-For the proof to work, we need to choose a value of $T$ large enough so that
+We're ready to prove the GCD problem now.
+
+Choose a value of $T$ large enough so that
 
 $$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
 
-This is possible by Lemma 999. Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ because we'll be using it pretty often in the next few lines of the proof.
+This is possible by **Lemma 999**.
 
-The number of bucket representatives up to $n$ is asymptotically $\delta n$. Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$. Now we can do 
+Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ because we'll be using it pretty often in the next few lines.
+
+The number of bucket representatives up to $n$ is asymptotically $\delta n$.  
+Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$.
+
+Recall that we have an arbitrary $\varepsilon > 0$, and that we pick $n$ with $A(n) \geq (\dsup(A)-\varepsilon)n$.
+
+Consider the set of buckets which contain only a single element of $A$ up to $n$.
+
+Then the number of elements outside these buckets is at asymptotically least
+
+$$A(n) - \delta n \geq (\dsup(A) - \delta - \varepsilon)n$$
+
+Pick $\varepsilon$ small enough so that $\dsup(A) - \delta - \varepsilon > 0$.
+
+All the rest of these elements have to be in buckets which are not singletons.  
+How many buckets must there be?  
+Since each one has at most $2^k$ elements, the number of such buckets is at least
+
+$$\frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
+
+In each bucket, we can pick two distinct $a_1, a_2 \leq n$ and produce $\gcd(a_1, a_2) \in G$.  
+These GCDs we're generating are no greater than $n$.  
+Thanks to **Lemma 1001**, they are also all distinct, and we have
+
+$$G(n) \geq \frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
+
+Remember that this is not for all $n$ but only those $n$ satisfying $A(n) \geq (\dsup(A)-\varepsilon)n$.
+
+We immediately have 
+
+$$\dsup(G) \geq \frac{\dsup(A)-\delta-\varepsilon}{2^k} > 0$$
+
+which completes the proof. $\proofqed$
 
 
 
