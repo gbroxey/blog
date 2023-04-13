@@ -256,7 +256,11 @@ The following proof of [the original GCD problem](#gcd-problem) is due to [Proje
 
 We need the following lemma about prime numbers:
 
-$$\lim_{n \to \infty} \prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \lim_{n \to \infty} \sum_{p \leq n} \frac{1}{p} \to \infty$$
+> **Lemma 999.** For all $n$, we have
+> 
+$$\prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \sum_{p \leq n} \frac{1}{p}$$
+> 
+> And as $n$ tends to infinity, so does $\prod_{p \leq n} \left(1 + \frac{1}{p}\right)$.
 
 It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$.
 
@@ -273,7 +277,9 @@ We're just rounding down each of those first exponents to be even. So for exampl
 Therefore $51480$ is in the bucket with representative $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
 
 > **Lemma 1000.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.  
->  Therefore when bucketing the integers up to $n$, there will asymptotically be about $n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ buckets.
+>  Therefore, up to $n$, the number of bucket representatives is asymptotically
+> 
+$$n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$$
 
 _Proof._ The set of bucket representatives can be written as the product $R_0 \times R_1$, where $R_0$ is the set of all integers not divisible by any primes $p \leq T$, and $R_1$ is the set of all square $T$-smooth naturals.
 
@@ -295,11 +301,22 @@ $$\left(1 - \frac{1}{p}\right)\frac{1}{1-p^{-2}} = \left(1 + \frac{1}{p}\right)^
 
 we have the claimed density. $\proofqed$
 
-Pick a value $T$ large enough so that
+We have one last property of this setup to verify.
+
+> **Lemma 1001.** Bucket membership is closed under $\gcd$.  
+> In other words, if $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
+
+_Proof._ This is easy from definitions. You don't want this post to be LONGER, do you? $\proofqed$
+
+For the proof to work, we need to choose a value of $T$ large enough so that
 
 $$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
 
-This is possible due to the lemma aforementioned. 
+This is possible by Lemma 999. Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ because we'll be using it pretty often in the next few lines of the proof.
+
+The number of bucket representatives up to $n$ is asymptotically $\delta n$. Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$. Now we can do 
+
+
 
 [1]: https://en.wikipedia.org/wiki/Natural_density
 [2]: https://projecteuler.net/about
