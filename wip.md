@@ -59,7 +59,14 @@ Now that we have things written out, with a defined upper and lower density for 
 
 ## Preliminaries
 
+In this section, I'll be making one or two extra definitions of my own, and proving some very nice properties which will assist us in our later proofs. I've tried to pick notations that make sense and help make things less wordy.
+
 > **Lemma 1.** Suppose that $A$ has nearly disjoint $B$-dilations, and that $\sum \frac{1}{b}$ exists.  
+> Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
+> When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
+
+Or like this:
+> **Lemma 1.** Suppose that $A \perp B$, and that $\sum \frac{1}{b}$ exists.  
 > Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
 > When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
 
