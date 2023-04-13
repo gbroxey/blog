@@ -160,7 +160,7 @@ Now as $H(B') \to H(B)$ from below, we see that $\dinf(A \times B) \geq \dinf(A)
 In the case $H(B) = \infty$ we can suppose $\dinf(A) > 0$ for contradiction.  
 We would have $\dinf(A)H(B') \to \infty$ which is impossible since it's bounded above by $1$. $\proofqed$
 
-> **Lemma 6.** If $H(B) < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
+> **Lemma 6.** If $H(B) < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) H(B)$.
 
 _Proof._ We start with $(A \times B)(x) \leq \sum_{b \in B} A(x/b)$.
 
@@ -189,7 +189,7 @@ The previous two lemmas have a lovely consequence which will be very helpful lat
 > **Lemma 7.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
 > Then $H(B) < \infty$, and $A \times B$ has a natural density, which is equal to $\dnat(A) H(B)$.
 
-That $H(B) < \infty$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
+That $H(B) < \infty$ exists is a consequence of Lemma 5 given $\dinf(A) > 0$.
 
 Then using Lemmas 5 and 6 we have
 
@@ -204,7 +204,7 @@ Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B)
 > Write $G$ for the set of all $\gcd(x, y)$ where $x, y$ are different members of the set $A$.  
 > Then $\dnat(G) = 0$ implies $\dnat(A) = 0$.
 
-The proof I am going to present is a little hard to produce from thin air. There are other proofs, one of which I'll be including [at the end](#alternate-proof). My proof leads us down a path which leads to quite a few interesting and beautiful places, but the alternate proof is more direct. Hopefully you will see the value in both.
+The proof I am going to present is a little hard to produce from thin air. There are other proofs, one of which I'll be including [at the end](#alternate-proof). My proof leads us down a path which stops at quite a few interesting and beautiful places, but the alternate proof is more direct. Hopefully you will see the value in both.
 
 The strategy here is to first use the GCD condition to show that the dilations $kA$ are roughly disjoint ($A \perp \mathbb N$). This is not too hard. After this we'll need to show that, if $A$ were to have a nonzero upper density, then some of the dilations $kA$ necessarily overlap a lot. This is the more tricky part.
 
@@ -338,9 +338,10 @@ $$\prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \sum_{p \leq n} \frac{1}{p}
 
 It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$.
 
-This proof proceeds by contrapositive. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$, which does bear some resemblance to my proof. To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
+This proof proceeds by contrapositive. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$.  
+To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
 
-We're going to be putting all of the integers in $S$ into buckets such that there are asymptotically many buckets, and that many buckets will give rise to unique elements of $G$.
+We're going to be putting all of the integers in $S$ into buckets such that there are asymptotically very many buckets, and that many buckets will give rise to unique elements of $G$.
 
 Pick a nice large value $T$. Every integer can be written as a product $ab$ where $a$ is $T$-smooth (no prime factors greater than $T$) and $b$ has only prime factors greater than $T$.  Say $a = p_1^{e_1} p_2^{e_2} \ldots p_k^{e_k}$ is factored into primes. Then $ab$ will go into a bucket corresponding to the representative
 
@@ -390,14 +391,14 @@ $$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
 
 This is possible by Lemma 10.
 
-Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ because we'll be using it pretty often in the next few lines.
+Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.
 
 The number of bucket representatives up to $n$ is asymptotically $\delta n$.  
 Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$.
 
 Recall that we have an arbitrary $\varepsilon > 0$, and that we pick $n$ with $A(n) \geq (\dsup(A)-\varepsilon)n$.  
 Consider the set of buckets which contain only a single element of $A$ up to $n$.  
-Then the number of elements outside these buckets is at asymptotically least
+Then the number of elements outside these buckets is at asymptotically at least
 
 $$A(n) - \delta n \geq (\dsup(A) - \delta - \varepsilon)n$$
 
