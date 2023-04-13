@@ -7,6 +7,7 @@ $$
 \newcommand{\dnat}{\mathrm d}
 \newcommand{\dsup}{\overline{\mathrm d}}
 \newcommand{\dinf}{\underline{\mathrm d}}
+\newcommand{\proofqed}{\quad\quad\quad\square}
 $$
 
 > **Abstract.** Suppose $A$ is a set of natural numbers, and write $G$ for the set of all $\gcd(x, y)$ where $x, y$ are different members of $A$. I'll prove that if $G$ has density zero, then $A$ has density zero. This will be written for people who have seen limits before but aren't familiar with density. Therefore we will be deriving some of its simple properties first, and then aiming at the stated problem. I'll present a nice proof which will prepare us for some generalizations I'll get to in future posts.
@@ -59,9 +60,57 @@ Now that we have things written out, with a defined upper and lower density for 
 
 ## Preliminaries
 
-In this section, I'll be making one or two extra definitions of my own, and proving some very nice properties which will assist us in our later proofs. I've tried to pick notations that make sense and help make things less wordy.
+Let's start by proving some things about density.  
+This will be the really basic stuff, so skip to [the next section](#nearly-disjoint-dilations) if this all looks familiar.
 
 In this section, $A$ and $B$ are general sets, and $a$ and $b$ refer to their elements.
+
+We'll start with some definitions that will make our theorems look nicer.
+
+> **Definition.** Write $H(A)$ for the harmonic sum $\sum\frac{1}{a}$ over $a \in A$, or $H(A) = \infty$ if it diverges.
+
+> **Definition.** For naturals $b$, write $bA$ for the set of all $ba$ for $a \in A$. This is the $b$-dilation of $A$.  
+> We can define $A \times B$ (equivalently $B \times A$) for the union of all the $b$-dilates of $A$, over $b \in B$.
+
+We can easily describe how dilation changes the properties of a set we like.
+
+> **Lemma 1.** We have the following inequalities:
+> $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, \sum_{z \in bA} \frac{1}{z} = \frac{1}{b} \sum_{z \in A} \frac{1}{z}$$
+
+_Proof._ This is easy using definitions, [I promise][5]. Try it! $\proofqed$
+
+> **Lemma 2.** When $A$ and $B$ are disjoint, we have the following:
+> $$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
+    \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)\\
+    H(A \cup B) &= H(A) + H(B)
+    \end{align*}$$
+
+_Proof._ This follows from subadditivity of $\limsup$, superadditivity of $\liminf$, and definitions.  
+This extends to disjoint unions of any finite number of sets by induction. $\proofqed$
+
+Now we know how density interacts with disjoint unions.  
+Let's see how it interacts with set complements.
+
+> **Lemma 3.** We have the following, whenever $B \subseteq A$:
+> $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
+    \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
+    H(A-B) &= H(A) - H(B)\end{align*}$$
+> When $\dnat(A)$ exists, we have equality in the first two relations.  
+> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+> $$\begin{align*}\dsup(A) + \dinf(B) &\leq \dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
+    \dinf(A) + \dsup(B) &\geq \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)
+    \end{align*}$$
+
+_Proof._ 
+
+> **Lemma 4** (Inclusion-Exclusion). The following always hold ($A$ and $B$ do not have to be disjoint):
+> 
+
+---
+
+## Nearly Disjoint Dilations
+
+In this section, I'll be making one or two extra definitions of my own, and proving some very nice properties which will assist us in our later proofs. I've tried to pick notations that make sense and help make things less wordy.
 
 > **Definition.** Suppose that, for distinct $b_1$ and $b_2$ in $B$, we have $\dnat(b_1 A \cap b_2 A) = 0$.  
 > That is, $A$ has "nearly disjoint" $B$-dilations. When this is true, we will write $A \perp B$.  
@@ -84,7 +133,7 @@ Then using Lemmas 1 and 2 we have
 
 $$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
 
-Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$. $\quad\quad\quad\square$
+Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$. $\proofqed$
 
 ---
 
@@ -178,3 +227,4 @@ This is possible due to the lemma aforementioned.
 [2]: https://projecteuler.net/about
 [3]: https://en.wikipedia.org/wiki/Divergence_of_the_sum_of_the_reciprocals_of_the_primes
 [4]: https://math.berkeley.edu/~tb65536/index.html
+[5]: http://catb.org/jargon/html/E/exercise--left-as-an.html
