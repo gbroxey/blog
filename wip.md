@@ -88,6 +88,9 @@ $$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
     \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)\\
     H(A \cup B) &= H(A) + H(B)
     \end{align*}$$
+> 
+> The first inequality will be referred to as subadditivity of upper density.  
+> Likewise the second will be referred to as superadditivity of lower density. 
 
 _Proof._ This follows from subadditivity of $\limsup$, superadditivity of $\liminf$, and definitions.  
 This extends to disjoint unions of any finite number of sets by induction. $\proofqed$
@@ -143,16 +146,19 @@ In this section, I'll be making one or two extra definitions of my own, and prov
 > When $H(B) = \infty$, the conclusion is that $\dinf(A) = 0$.
 
 _Proof._ Start with finite $B$. We'll use superadditivity and inclusion-exclusion.
+
 $$\dinf(A \times B) \geq \sum_b \dinf(bA) - \sum_{b_1 < b_2} \dsup(b_1A \cap b_2A) = \sum \frac{\dinf(A)}{b} = \dinf(A)H(B)$$
+
 Now if we use the desired bound for finite subsets $B' \subseteq B$, we'll have 
+
 $$\dinf(A \times B) \geq \dinf(A \times B') \geq \dinf(A) H(B')$$
 
 Now as $H(B') \to H(B)$ from below, we see that $\dinf(A \times B) \geq \dinf(A) H(B)$.
 
 In the case $H(B) = \infty$ we can suppose $\dinf(A) > 0$ for contradiction.  
-We would have $\dinf(A)H(B') \to \infty$ which is impossible since it's bounded by $1$. $\proofqed$
+We would have $\dinf(A)H(B') \to \infty$ which is impossible since it's bounded above by $1$. $\proofqed$
 
-> **Lemma 6.** If $\sum \frac{1}{b} < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
+> **Lemma 6.** If $H(B) < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
 
 _Proof._ We start with $(A \times B)(x) \leq \sum_{b \in B} A(x/b)$.
 
@@ -264,12 +270,30 @@ $$p_1^{2\lfloor e_1/2 \rfloor} p_2^{2\lfloor e_2/2 \rfloor} \ldots p_k^{2\lfloor
 
 We're just rounding down each of those first exponents to be even. So for example, if we had $T = 5$ and we wanted to put the integer $51480$ into a bucket, we would factor $51480 = 2^3 \cdot 3^2 \cdot 5 \cdot 11 \cdot 13$ first, and round down the exponents on $2, 3, 5$ to be even.
 
-Therefore $51480$ is in a bucket corresponding to $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
+Therefore $51480$ is in the bucket with representative $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
 
-**Claim.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$, and therefore when bucketing the integers up to $n$, there will asymptotically be about $n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ buckets.
+> **Lemma 1000.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.  
+>  Therefore when bucketing the integers up to $n$, there will asymptotically be about $n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ buckets.
 
-We can see that every integer is either a bucket representative, or is some representative multiplied by a few of the primes up to $T$. We can prove our claim by showing that the density of the bucket representatives exists and equals $$.
+_Proof._ The set of bucket representatives can be written as the product $R_0 \times R_1$, where $R_0$ is the set of all integers not divisible by any primes $p \leq T$, and $R_1$ is the set of all square $T$-smooth naturals.
 
+Helpfully, $R_0$ is periodic mod $\prod_{p \leq T} p$, and hence it has a nonzero natural density.
+
+Then, since $R_0 \perp R_1$ (check this yourself), the set of bucket representatives has a defined natural density, and moreover we know it has to be $\dnat(R_0 \times R_1) = \dnat(R_0) H(R_1)$.
+
+Now we can calculate
+
+$$\begin{align*}
+\dnat(R_0) &= \prod_{p \leq T} \left(1 - \frac{1}{p}\right)\\
+H(R_1) &= \prod_{p \leq T} \left(1 + \frac{1}{p^2} + \frac{1}{p^4} + \ldots\right)\\
+&= \prod_{p \leq T} \frac{1}{1-p^{-2}}
+\end{align*}$$
+
+Then, since
+
+$$\left(1 - \frac{1}{p}\right)\frac{1}{1-p^{-2}} = \left(1 + \frac{1}{p}\right)^{-1}$$
+
+we have the claimed density. $\proofqed$
 
 Pick a value $T$ large enough so that
 
