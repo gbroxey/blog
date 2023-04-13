@@ -60,10 +60,9 @@ Now that we have things written out, with a defined upper and lower density for 
 
 ## Preliminaries
 
-Let's start by proving some things about density.  
 This will be the really basic stuff, so skip to [the next section](#nearly-disjoint-dilations) if this all looks familiar.
 
-In this section, $A$ and $B$ are general sets, and $a$ and $b$ refer to their elements.
+In this section, $A$ and $B$ are general sets of naturals, and $a$ and $b$ refer to their elements.
 
 We'll start with some definitions that will make our theorems look nicer.
 
@@ -72,7 +71,8 @@ We'll start with some definitions that will make our theorems look nicer.
 
 > **Definition.** For naturals $b$, write $bA$ for the set of all $ba$ for $a \in A$.  
 > This is the $b$-dilation of $A$.  
-> We can define $A \times B$ for the union of all the $b$-dilates of $A$, over $b \in B$.
+> We can define $A \times B$ for the union of all the $b$-dilates of $A$, over $b \in B$.  
+> In other words, $A \times B = \{ab \mid a \in A, b \in B\}$.
 
 We can easily describe how dilation changes the properties of a set we like.
 
@@ -126,7 +126,9 @@ $$\begin{align*}
 _Proof._ Write $A' = A-B$, so by Lemma 3 we have $\dsup(A') \leq \dsup(A) - \dinf(A \cap B)$.
 
 Moreover $A \cup B = A' \cup B$ is a disjoint union, so Lemma 2 gives us
+
 $$\dsup(A \cup B) = \dsup(A' \cup B) \leq \dsup(A') + \dsup(B) \leq \dsup(A) + \dsup(B) - \dinf(A \cap B)$$
+
 Similar applications of Lemmas 2 and 3 give us the other two results.
 
 As before this can be extended to a finite number of sets by induction. The inductive step actually uses both inequalities, so they must be proved together. $\proofqed$
@@ -137,7 +139,7 @@ As before this can be extended to a finite number of sets by induction. The indu
 
 In this section, I'll be making one or two extra definitions of my own, and proving some very nice properties which will assist us in our later proofs. I've tried to pick notations that make sense and help make things less wordy.
 
-> **Definition.** Suppose that, for distinct $b_1$ and $b_2$ in $B$, we have $\dnat(b_1 A \cap b_2 A) = 0$.  
+> **Definition.** Suppose that, for any distinct $b_1$ and $b_2$ in $B$, we have $\dnat(b_1 A \cap b_2 A) = 0$.  
 > That is, $A$ has "nearly disjoint" $B$-dilations. When this is true, we will write $A \perp B$.  
 > Note that this is _not_ a symmetric relation in general.
 
@@ -185,9 +187,9 @@ Letting $\varepsilon \to 0$ gives the result. $\proofqed$
 The previous two lemmas have a lovely consequence which will be very helpful later.
 
 > **Lemma 7.** Suppose that $A \perp B$, and that $A$ has a nonzero natural density.  
-> Then $\sum \frac{1}{b}$ converges, and $A \times B$ has a natural density, which is equal to $\dnat(A) \sum \frac{1}{b}$.
+> Then $H(B) < \infty$, and $A \times B$ has a natural density, which is equal to $\dnat(A) H(B)$.
 
-That $\sum \frac{1}{b}$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
+That $H(B) < \infty$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
 
 Then using Lemmas 5 and 6 we have
 
@@ -227,16 +229,35 @@ Now factoring back in $g = \gcd(k, j)$, we have
 
 $$kA \cap jA \subseteq \frac{kj}{g} G = \mathrm{lcm}(k, j) G$$
 
-So in fact, if $G$ has density zero, so does every intersection $kA \cap jA$ for distinct $k, j$, and $A \perp \mathbb N$.
+So in fact, if $G$ has density zero, so does every intersection $kA \cap jA$ for distinct $k, j$, so $A \perp \mathbb N$.
 
 ---
 
 Next we want to attempt to relate this to the density of $A$. How can we do this?
 
-Pick your favorite large integer $n$ and construct the set $B$ of all divisors of $n!$.  
-We'll also construct a nice set $C$ such that the dilations $cB$ partition $\mathbb N$.
+Pick your favorite large integer $k$ and let $R_0$ be the set of all the naturals coprime to everything up to $k$.  
+Factor $k! = p_1^{e_1} p_2^{e_2} \ldots p_j^{e_j}$, where $j = \pi(k)$.  
+We'll let $R_1$ be the set of all the naturals whose $p_i$-exponent is divisible by $e_i+1$.  
+Finally let $R_2$ be the set of all the divisors of $k!$.
 
-The goal is to prove that $\dsup(A) \leq \dsup(C)$, and that as $n$ gets large, $\dsup(C)$ tends to zero.
+We see that $A \perp R_2$ (since $A \perp \mathbb N$), and we see $R_0 \times R_1 \times R_2 = \mathbb N$.
+
+The plan is to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$, and that $\dsup(R_0 \times R_1)$ goes to zero as $k \to \infty$.
+
+> **Lemma 8.** The set $R_0 \times R_1$ has a natural density, and it is at most $H(R_2)^{-1}$.  
+> Also, $H(R_2) \geq 1 + \frac{1}{2} + \ldots + \frac{1}{k} \to \infty$.
+
+_Proof._ First, $R_0$ is periodic mod $k!$ and so has a nonzero natural density.  
+Then since $R_0 \perp R_1$ (check this yourself), by Lemma 7, $R_0 \times R_1$ has a natural density.
+
+Now we'll show $R_0 \times R_1 \perp R_2$, after which by Lemma 7 we'll have $\dnat(R_0 \times R_1) H(R_2) = \dnat(\mathbb N) = 1$.
+
+Suppose $t_1, t_2$ are in $R_2$; that is, they are distinct divisors of $k!$.  
+
+Examine the factorizations of numbers in $t_1R_2$ and $t_2R_2$.  
+By taking remainders of the $p_i$ exponents mod $e_i+1$ in the factorizations, you'll recover the $p_i$ exponents of $t_1$ and $t_2$. Since at least one has to differ, the sets $t_1R_2$ and $t_2R_2$ are disjoint. 
+
+The last stated inequality is simply because every natural up to $k$ is a divisor of $k!$. $\proofqed$
 
 ## TODO
 
