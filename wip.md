@@ -77,12 +77,12 @@ We'll start with some definitions that will make our theorems look nicer.
 We can easily describe how dilation changes the properties of a set we like.
 
 > **Lemma 1.** We have the following inequalities:  
-> $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, H(bA) = \frac{1}{b} H(A)$$
+$$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, H(bA) = \frac{1}{b} H(A)$$
 
 _Proof._ This is easy using definitions, [I promise][5]. Try it! $\proofqed$
 
 > **Lemma 2.** When $A$ and $B$ are disjoint, we have the following:  
-> $$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
+$$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
     \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)\\
     H(A \cup B) &= H(A) + H(B)
     \end{align*}$$
@@ -94,14 +94,14 @@ Now we know how density interacts with disjoint unions.
 Let's see how it interacts with set complements.
 
 > **Lemma 3.** We have the following, whenever $B \subseteq A$:  
-> $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
+$$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
 > When $\dnat(A)$ exists, we have equality in the first two relations.  
 > Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:  
-> $$\begin{align*}\dsup(A) + \dinf(B) &\leq \dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
-    \dinf(A) + \dsup(B) &\geq \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)
-    \end{align*}$$
+$$\begin{align*}\dsup(A) + \dinf(B) &\leq \dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
+\dinf(A) + \dsup(B) &\geq \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)
+\end{align*}$$
 
 _Proof._ 
 
