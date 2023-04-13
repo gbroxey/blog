@@ -96,33 +96,30 @@ Now we know how density interacts with disjoint unions.
 Let's see how it interacts with set complements.
 
 > **Lemma 3.** We have the following, whenever $B \subseteq A$:
-
-$$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
-    \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
-    H(A-B) &= H(A) - H(B)\end{align*}$$
-
-> When $\dnat(A)$ exists, we have equality in the first two relations.  
-> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
-
-$$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)\\
-\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
-
-> **Lemma 3.** We have the following, whenever $B \subseteq A$:  
-<p style="text-align:center;">
-$$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
-    \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
-    H(A-B) &= H(A) - H(B)\end{align*}$$
-</p>
-> When $\dnat(A)$ exists, we have equality in the first two relations.  
-> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:  
-<p style="text-align:center;">
-$$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)\\
-\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
-</p>
-_Proof._ 
-
-> **Lemma 4** (Inclusion-Exclusion). The following always hold ($A$ and $B$ do not have to be disjoint):
 > 
+$$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
+    \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
+    H(A-B) &= H(A) - H(B)\end{align*}$$
+
+_Proof._ The first two are easy using counting functions; note that $\limsup \left(-\frac{B(n)}{n}\right) = -\liminf \frac{B(n)}{n}$, and that a similar relation works for $\liminf$. Fill in the details by hand if this doesn't make intuitive sense.
+
+As for the third equation, just note that $A-B$ and $B$ are disjoint, then use Lemma 2. $\proofqed$
+
+When $\dnat(A)$ exists, we have equality in the first two relations.
+Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+
+$$\dsup(A) + \dinf(B) \leq \dsup(A \cup B) \leq \dsup(A) + \dsup(B)\\
+\dinf(A) + \dsup(B) \geq \dinf(A \cup B) \geq \dinf(A) + \dinf(B)$$
+
+> **Lemma 4** (Inclusion-Exclusion). The following holds for all $A, B$:
+
+$$\begin{align*}
+    \dsup(A \cup B) &\leq \dsup(A) + \dsup(B) - \dinf(A \cap B)\\
+    \dinf(A \cup B) &\geq \dinf(A) + \dinf(B) - \dsup(A \cap B)\\
+    H(A \cup B) &= H(A) + H(B) - H(A \cap B)
+\end{align*}$$
+
+_Proof._ 
 
 ---
 
