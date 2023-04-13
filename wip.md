@@ -67,19 +67,21 @@ In this section, $A$ and $B$ are general sets, and $a$ and $b$ refer to their el
 
 We'll start with some definitions that will make our theorems look nicer.
 
-> **Definition.** Write $H(A)$ for the harmonic sum $\sum\frac{1}{a}$ over $a \in A$, or $H(A) = \infty$ if it diverges.
+> **Definition.** Write $H(A)$ for the harmonic sum $\sum\frac{1}{a}$ over $a \in A$.  
+> When it diverges, write $H(A) = \infty$.
 
-> **Definition.** For naturals $b$, write $bA$ for the set of all $ba$ for $a \in A$. This is the $b$-dilation of $A$.  
-> We can define $A \times B$ (equivalently $B \times A$) for the union of all the $b$-dilates of $A$, over $b \in B$.
+> **Definition.** For naturals $b$, write $bA$ for the set of all $ba$ for $a \in A$.  
+> This is the $b$-dilation of $A$.  
+> We can define $A \times B$ for the union of all the $b$-dilates of $A$, over $b \in B$.
 
 We can easily describe how dilation changes the properties of a set we like.
 
-> **Lemma 1.** We have the following inequalities:
-> $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, \sum_{z \in bA} \frac{1}{z} = \frac{1}{b} \sum_{z \in A} \frac{1}{z}$$
+> **Lemma 1.** We have the following inequalities:  
+> $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, H(bA) = \frac{1}{b} H(A)$$
 
 _Proof._ This is easy using definitions, [I promise][5]. Try it! $\proofqed$
 
-> **Lemma 2.** When $A$ and $B$ are disjoint, we have the following:
+> **Lemma 2.** When $A$ and $B$ are disjoint, we have the following:  
 > $$\begin{align*}\dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
     \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)\\
     H(A \cup B) &= H(A) + H(B)
@@ -91,12 +93,12 @@ This extends to disjoint unions of any finite number of sets by induction. $\pro
 Now we know how density interacts with disjoint unions.  
 Let's see how it interacts with set complements.
 
-> **Lemma 3.** We have the following, whenever $B \subseteq A$:
+> **Lemma 3.** We have the following, whenever $B \subseteq A$:  
 > $$\begin{align*}\dsup(A - B) &\leq \dsup(A) - \dinf(B)\\
     \dinf(A - B) &\geq \dinf(A) - \dsup(B)\\
     H(A-B) &= H(A) - H(B)\end{align*}$$
 > When $\dnat(A)$ exists, we have equality in the first two relations.  
-> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:
+> Also, by substituting $A = A' \cup B'$ and $B = B'$ for disjoint $A', B'$, we can extend the inequalities in Lemma 2 as follows:  
 > $$\begin{align*}\dsup(A) + \dinf(B) &\leq \dsup(A \cup B) &\leq \dsup(A) + \dsup(B)\\
     \dinf(A) + \dsup(B) &\geq \dinf(A \cup B) &\geq \dinf(A) + \dinf(B)
     \end{align*}$$
