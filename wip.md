@@ -11,8 +11,6 @@ $$
 
 > **Abstract.** Suppose $A$ is a set of natural numbers, and write $G$ for the set of all $\gcd(x, y)$ where $x, y$ are different members of $A$. I'll prove that if $G$ has density zero, then $A$ has density zero. This will be written for people who have seen limits before but aren't familiar with density. Therefore we will be deriving some of its simple properties first, and then aiming at the stated problem. I'll present a nice proof which will prepare us for some generalizations I'll get to in future posts.
 
----
-
 ## Defining Density
 Density is a way to measure the largeness of an infinite set of naturals - it's a number between $0$ and $1$ describing how tightly packed the elements of a set are. There are a lot of ways to define it, and there's not an immediate indication which one is best. We can come up with a few properties that a property called density should probably have:
 
@@ -60,6 +58,25 @@ Now that we have things written out, with a defined upper and lower density for 
 ---
 
 ## Preliminaries
+
+> **Lemma 1.** Suppose that $A$ has nearly disjoint $B$-dilations, and that $\sum \frac{1}{b}$ exists.  
+> Then $\dinf(A \times B) \geq \dinf(A) \sum \frac{1}{b}$.  
+> When $\sum \frac{1}{b}$ diverges, the conclusion is that $\dinf(A) = 0$.
+
+> **Lemma 2.** If $\sum \frac{1}{b} < \infty$ (and no other restrictions), then $\dsup(A \times B) \leq \dsup(A) \sum \frac{1}{b}$.
+
+The previous two lemmas have a lovely consequence which will be very helpful later.
+
+> **Lemma 3.** Suppose that $A$ has nearly disjoint $B$-dilations, and that $A$ has a nonzero natural density.  
+> Then $\sum \frac{1}{b}$ converges, and $A \times B$ has a natural density, which is equal to $\dnat(A) \sum \frac{1}{b}$.
+
+That $\sum \frac{1}{b}$ exists is a consequence of Lemma 1 given $\dinf(A) > 0$.
+
+Then using Lemmas 1 and 2 we have
+
+$$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
+
+Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$.
 
 ---
 
@@ -118,7 +135,7 @@ Now let's look at a fun corollary:
 
 ## Alternate Proof
 
-The following proof of [the original GCD problem](#gcd-problem) is due to [Project Euler][2] user tb65536.
+The following proof of [the original GCD problem](#gcd-problem) is due to [Project Euler][2] user [tb65536][4].
 
 We need the following lemma about prime numbers:
 
@@ -126,8 +143,30 @@ $$\lim_{n \to \infty} \prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \lim_{n
 
 It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$.
 
-This proof proceeds by contradiction. We will assume 
+This proof proceeds by contradiction. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$, which does bear some resemblance to my proof. To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
+
+We're going to be putting all of the integers in $S$ into buckets such that there are asymptotically many buckets, and that many buckets will give rise to unique elements of $G$.
+
+Pick a nice large value $T$. Every integer can be written as a product $ab$ where $a$ is $T$-smooth (no prime factors greater than $T$) and $b$ has only prime factors greater than $T$.  Say $a = p_1^{e_1} p_2^{e_2} \ldots p_k^{e_k}$ is factored into primes. Then $ab$ will go into a bucket corresponding to the representative
+
+$$p_1^{2\lfloor e_1/2 \rfloor} p_2^{2\lfloor e_2/2 \rfloor} \ldots p_k^{2\lfloor e_k/2 \rfloor} \cdot b$$
+
+We're just rounding down each of those first exponents to be even. So for example, if we had $T = 5$ and we wanted to put the integer $51480$ into a bucket, we would factor $51480 = 2^3 \cdot 3^2 \cdot 5 \cdot 11 \cdot 13$ first, and round down the exponents on $2, 3, 5$ to be even.
+
+Therefore $51480$ is in a bucket corresponding to $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
+
+**Claim.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$, and therefore when bucketing the integers up to $n$, there will asymptotically be about $n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ buckets.
+
+We can see that every integer is either a bucket representative, or is some representative multiplied by a few of the primes up to $T$. We can prove our claim by showing that the density of the bucket representatives exists and equals $$.
+
+
+Pick a value $T$ large enough so that
+
+$$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
+
+This is possible due to the lemma aforementioned. 
 
 [1]: https://en.wikipedia.org/wiki/Natural_density
 [2]: https://projecteuler.net/about
 [3]: https://en.wikipedia.org/wiki/Divergence_of_the_sum_of_the_reciprocals_of_the_primes
+[4]: https://math.berkeley.edu/~tb65536/index.html
