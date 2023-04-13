@@ -72,7 +72,7 @@ We'll start with some definitions that will make our theorems look nicer.
 > **Definition.** For naturals $b$, write $bA$ for the set of all $ba$ for $a \in A$.  
 > This is the $b$-dilation of $A$.  
 > We can define $A \times B$ for the union of all the $b$-dilates of $A$, over $b \in B$.  
-> In other words, $A \times B = \{ab \mid a \in A, b \in B\}$.
+> In other words, $A \times B = \lbrace ab \mid a \in A, b \in B \rbrace$.
 
 We can easily describe how dilation changes the properties of a set we like.
 
@@ -277,7 +277,7 @@ Since $\dnat(v_1 A \cap v_2 A) = 0$, we have $\dsup(A) = \dsup(A')$.
 So now we can move forward assuming that $A$ has disjoint $V$-dilations.
 
 The next step is to construct an injective map $\phi: A \to U$ with $\phi(a) \leq a$.  
-With such a map, we would have $A(n) = \left[\phi(A)\right](n) \leq U(n)$, so $\dsup(A) \leq \dsup(U)$.
+With such a map, we would have $A(n) = \lbrack\phi(A)\rbrack(n) \leq U(n)$, so $\dsup(A) \leq \dsup(U)$.
 
 For each $a \in A$, let $\phi(a)$ be the smallest $u \in U$ such that $a \in uV$.  
 At least one $u$ must exist. That $\phi(a) \leq a$ is obvious, since $a = \phi(a)v$ for some $v$ in $V$.
@@ -330,7 +330,7 @@ The following proof of [the original GCD problem](#gcd-problem) is due to [Proje
 
 We need the following lemma about prime numbers:
 
-> **Lemma 999.** For all $n$, we have
+> **Lemma 10.** For all $n$, we have
 > 
 $$\prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \sum_{p \leq n} \frac{1}{p}$$
 > 
@@ -350,7 +350,7 @@ We're just rounding down each of those first exponents to be even. So for exampl
 
 Therefore $51480$ is in the bucket with representative $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
 
-> **Lemma 1000.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.  
+> **Lemma 11.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.  
 >  Therefore, up to $n$, the number of bucket representatives is asymptotically
 > 
 $$n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$$
@@ -377,7 +377,7 @@ we have the claimed density. $\proofqed$
 
 We have one last property of this setup to verify.
 
-> **Lemma 1001.** Bucket membership is closed under $\gcd$:  
+> **Lemma 12.** Bucket membership is closed under $\gcd$:  
 > If $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
 
 _Proof._ This is easy from definitions. You don't want this post to be LONGER, do you? $\proofqed$
@@ -388,7 +388,7 @@ Choose a value of $T$ large enough so that
 
 $$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
 
-This is possible by Lemma 999.
+This is possible by Lemma 10.
 
 Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$ because we'll be using it pretty often in the next few lines.
 
@@ -411,7 +411,7 @@ $$\frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
 
 In each such bucket, we can pick two distinct $a_1, a_2 \leq n$ and produce $\gcd(a_1, a_2) \in G$.  
 These GCDs we're generating are no greater than $n$.  
-Thanks to Lemma 1001, they are also all distinct, and so we have
+Thanks to Lemma 12, they are also all distinct, and so we have
 
 $$G(n) \geq \frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
 
