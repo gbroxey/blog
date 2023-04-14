@@ -8,13 +8,6 @@ tags: [number theory, density]
 
 -----
 
-$$
-\newcommand{\dnat}{\mathrm d}
-\newcommand{\dsup}{\overline{\mathrm d}}
-\newcommand{\dinf}{\underline{\mathrm d}}
-\newcommand{\proofqed}{\quad\quad\quad\square}
-$$
-
 ## Defining Density
 Density is a way to measure the largeness of an infinite set of naturals - it's a number between $0$ and $1$ describing how tightly packed the elements of a set are. There are a lot of ways to define it, and there's not an immediate indication which one is best. We can come up with a few properties that a property called density should probably have:
 
@@ -29,7 +22,12 @@ You could probably come up with more "obvious" properties of density even withou
 
 First, we'll use the following notation for the **counting function** of the set $A$.
 
-$$A(x) = \left| A \cap \{1, 2, \ldots, \lfloor x \rfloor\}\right|$$
+$$
+\newcommand{\dnat}{\mathrm d}
+\newcommand{\dsup}{\overline{\mathrm d}}
+\newcommand{\dinf}{\underline{\mathrm d}}
+\newcommand{\proofqed}{\quad\quad\quad\square}
+A(x) = \left| A \cap \{1, 2, \ldots, \lfloor x \rfloor\}\right|$$
 
 This is the number of elements of $A$ which are no greater than $x$. It's helpful to have this shorthand. Now let's try to define density! The following should make a good amount of sense:
 
