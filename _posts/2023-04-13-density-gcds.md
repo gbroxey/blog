@@ -238,7 +238,7 @@ Next we want to attempt to relate this to the density of $A$. How can we do this
 
 Pick your favorite large integer $k$ and let $R_0$ be the set of all the naturals coprime to everything up to $k$.  
 Factor $k! = p_1^{e_1} p_2^{e_2} \ldots p_j^{e_j}$, where $j = \pi(k)$.  
-We'll let $R_1$ be the set of all the naturals whose $p_i$-exponent is divisible by $e_i+1$.  
+We'll let $R_1$ be the set of all $k$-smooth naturals whose $p_i$-exponent is divisible by $e_i+1$.  
 Finally let $R_2$ be the set of all the divisors of $k!$.
 
 We see that $A \perp R_2$ (since $A \perp \mathbb N$), and we see $R_0 \times R_1 \times R_2 = \mathbb N$.  
