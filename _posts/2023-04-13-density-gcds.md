@@ -194,9 +194,9 @@ That $H(B) < \infty$ exists is a consequence of Lemma 5 given $\dinf(A) > 0$.
 
 Then using Lemmas 5 and 6 we have
 
-$$\dinf(A) \sum \frac{1}{b} \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(S) \sum \frac{1}{b}$$
+$$\dinf(A) H(B) \leq \dinf(A \times B) \leq \dsup(A \times B) \leq \dsup(A) H(B)$$
 
-Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) \sum \frac{1}{b}$. $\proofqed$
+Since $\dinf(A) = \dsup(A)$, these are all equalities, whence $\dnat(A \times B) = \dnat(A) H(B)$. $\proofqed$
 
 ---
 
