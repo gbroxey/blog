@@ -76,7 +76,7 @@ We'll start with some definitions that will make our theorems look nicer.
 
 We can easily describe how dilation changes the properties of a set we like.
 
-> **Lemma 1.** We have the following inequalities:
+> **Lemma 1.** We have the following equalities:
 > 
 $$\dinf(bA) = \frac{1}{b} \dinf(A) \,\,\,\,\,\,\,\,\,  \dsup(bA) = \frac{1}{b}  \dsup(A) \,\,\,\,\,\,\,\,\, H(bA) = \frac{1}{b} H(A)$$
 
@@ -240,29 +240,24 @@ Factor $k! = p_1^{e_1} p_2^{e_2} \ldots p_j^{e_j}$, where $j = \pi(k)$.
 We'll let $R_1$ be the set of all the naturals whose $p_i$-exponent is divisible by $e_i+1$.  
 Finally let $R_2$ be the set of all the divisors of $k!$.
 
-We see that $A \perp R_2$ (since $A \perp \mathbb N$), and we see $R_0 \times R_1 \times R_2 = \mathbb N$.
+We see that $A \perp R_2$ (since $A \perp \mathbb N$), and we see $R_0 \times R_1 \times R_2 = \mathbb N$.  
+Moreover, every product $r_0 r_1 r_2$ is unique, so that $R_0 \perp R_1$ and $(R_0 \times R_1) \perp R_2$.[^1]
 
 The plan is to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$, and that $\dsup(R_0 \times R_1)$ goes to zero as $k \to \infty$.
 
-> **Lemma 8.** The set $R_0 \times R_1$ has a natural density, and it is at most $H(R_2)^{-1}$.  
+> **Lemma 8.** The set $R_0 \times R_1$ has a natural density, which equals $H(R_2)^{-1}$.  
 > Also, $H(R_2) \geq 1 + \frac{1}{2} + \ldots + \frac{1}{k} \to \infty$.
 
 _Proof._ First, $R_0$ is periodic mod $k!$ and so has a nonzero natural density.  
-Then since $R_0 \perp R_1$ (check this yourself), by Lemma 7, $R_0 \times R_1$ has a natural density.
+Then by Lemma 7, since $R_0 \perp R_1$, the set $R_0 \times R_1$ has a natural density.
 
-Now we'll show $(R_0 \times R_1) \perp R_2$, after which by Lemma 7 we'll have $\dnat(R_0 \times R_1) H(R_2) = \dnat(\mathbb N) = 1$.
-
-Suppose $t_1, t_2$ are in $R_2$; that is, they are distinct divisors of $k!$.  
-
-Examine the factorizations of numbers in $t_1R_2$ and $t_2R_2$.  
-By taking remainders of the $p_i$ exponents mod $e_i+1$ in the factorizations, you'll recover the $p_i$ exponents of $t_1$ and $t_2$. Since at least one has to differ, the sets $t_1R_2$ and $t_2R_2$ are disjoint. 
+Finally since $(R_0 \times R_1) \perp R_2$, by Lemma 7 we have $\dnat(R_0 \times R_1) H(R_2) = \dnat(\mathbb N) = 1$.
 
 The lemma's inequality is simply because every natural up to $k$ is a divisor of $k!$. $\proofqed$
 
 To finish the proof, we need to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$. This is not too hard:
 
 > **Lemma 9.** Suppose $U$ and $V$ are sets of naturals such that $U \times V = \mathbb N$, where $V$ is finite.  
-> Suppose also that $U$ has _disjoint_ $V$-dilations: $v_1 U \cap v_2 U$ is empty for distinct $v_1, v_2 \in V$.  
 > Then, if $A \perp V$, we have $\dsup(A) \leq \dsup(U)$.
 
 _Proof._ First, we reduce to the case where $A$ has fully disjoint $V$-dilations.   
@@ -277,7 +272,7 @@ Since $\dnat(v_1 A \cap v_2 A) = 0$, we have $\dsup(A) = \dsup(A')$.
 So now we can move forward assuming that $A$ has disjoint $V$-dilations.
 
 The next step is to construct an injective map $\phi: A \to U$ with $\phi(a) \leq a$.  
-With such a map, we would have $A(n) = \lbrack\phi(A)\rbrack(n) \leq U(n)$, so $\dsup(A) \leq \dsup(U)$.
+With such a map, we would have $A(n) \leq \lbrack\phi(A)\rbrack(n) \leq U(n)$, so $\dsup(A) \leq \dsup(U)$.
 
 For each $a \in A$, let $\phi(a)$ be the smallest $u \in U$ such that $a \in uV$.  
 At least one $u$ must exist. That $\phi(a) \leq a$ is obvious, since $a = \phi(a)v$ for some $v$ in $V$.
@@ -326,101 +321,83 @@ Future blog posts will dig into some other special cases of this conjecture, usi
 
 ## Alternate Proof
 
-The following proof of [the original GCD problem](#gcd-problem) is due to [Project Euler][2] user [tb65536][4].
+The following proof of [the original GCD problem](#gcd-problem) is due to [Project Euler][2] user [tb65536][4].  
 
-We need the following lemma about prime numbers:
+<!-- We need the following lemma about prime numbers:
 
 > **Lemma 10.** For all $n$, we have
 > 
 $$\prod_{p \leq n} \left(1 + \frac{1}{p}\right) \geq \sum_{p \leq n} \frac{1}{p}$$
 > 
-> And as $n$ tends to infinity, so does $\prod_{p \leq n} \left(1 + \frac{1}{p}\right)$.
+> And as $n$ tends to infinity, so does $\prod_{p \leq n} \left(1 + \frac{1}{p}\right)$. -->
 
-It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$.
+<!-- It's pretty simple to prove this, especially if you assume that the sum of reciprocals of primes diverges. There are quite a few nice proofs of this fact which you can read about [on Wikipedia][3]. The inequality there is obvious if you expand out the product: $1/p$ appears as a term for every prime $p$. -->
 
-This proof proceeds by contrapositive. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$.  
-To do so, we'll pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$. The goal is to prove that $\limsup G(n)/n > 0$.
+It proceeds by contrapositive. We will assume that $\dsup(A) > 0$ and prove that $\dsup(G) > 0$.
 
-We're going to be putting all of the integers in $S$ into buckets such that there are asymptotically very many buckets, and that many buckets will give rise to unique elements of $G$.
+We're going to be putting all of the integers in $A$ into buckets such that there are asymptotically very many buckets, and that many buckets will give rise to unique elements of $G$.
 
-Pick a nice large value $T$. Every integer can be written as a product $ab$ where $a$ is $T$-smooth (no prime factors greater than $T$) and $b$ has only prime factors greater than $T$.  Say $a = p_1^{e_1} p_2^{e_2} \ldots p_k^{e_k}$ is factored into primes. Then $ab$ will go into a bucket corresponding to the representative
+We will use some of the same setup as the first proof:
 
-$$p_1^{2\lfloor e_1/2 \rfloor} p_2^{2\lfloor e_2/2 \rfloor} \ldots p_k^{2\lfloor e_k/2 \rfloor} \cdot b$$
+Pick your favorite large integer $k$ and let $R_0$ be the set of all the naturals coprime to everything up to $k$.  
+Factor $k! = p_1^{e_1} p_2^{e_2} \ldots p_j^{e_j}$, where $j = \pi(k)$.  
+Let $R_1$ be the set of all the naturals whose $p_i$-exponent is divisible by $e_i+1$.  
+Let $R_2$ be the set of all the divisors of $k!$.
 
-We're just rounding down each of those first exponents to be even. So for example, if we had $T = 5$ and we wanted to put the integer $51480$ into a bucket, we would factor $51480 = 2^3 \cdot 3^2 \cdot 5 \cdot 11 \cdot 13$ first, and round down the exponents on $2, 3, 5$ to be even.
+Suppose that we have an element $a$ of $A$. Since $R_0 \times R_1 \times R_2 = \mathbb N$, there is a unique integer $r \in R_0 \times R_1$ such that the dilation $r R_2$ contains $a$. This value $r$ will be the bucket representative for $a$.
 
-Therefore $51480$ is in the bucket with representative $2^2 \cdot 3^2 \cdot 5^0 \cdot 11 \cdot 13 = 5148$.
+Recall from Lemma 8 that the density of $R_0 \times R_1$, the set of bucket representatives, is $H(R_2)^{-1}$.  
+Therefore, the number of bucket representatives up to $n$ is asymptotically
 
-> **Lemma 11.** The density of the set of bucket representatives is $\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.  
->  Therefore, up to $n$, the number of bucket representatives is asymptotically
-> 
 $$n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$$
-
-_Proof._ The set of bucket representatives can be written as the product $R_0 \times R_1$, where $R_0$ is the set of all integers not divisible by any primes $p \leq T$, and $R_1$ is the set of all square $T$-smooth naturals.
-
-Helpfully, $R_0$ is periodic mod $\prod_{p \leq T} p$, and hence it has a nonzero natural density.
-
-Then, since $R_0 \perp R_1$ (check this yourself), the set of bucket representatives has a defined natural density (Lemma 7), and we know it has to be $\dnat(R_0 \times R_1) = \dnat(R_0) H(R_1)$.
-
-Now we can calculate
-
-$$\begin{align*}
-\dnat(R_0) &= \prod_{p \leq T} \left(1 - \frac{1}{p}\right)\\
-H(R_1) &= \prod_{p \leq T} \left(1 + \frac{1}{p^2} + \frac{1}{p^4} + \ldots\right)\\
-&= \prod_{p \leq T} \frac{1}{1-p^{-2}}
-\end{align*}$$
-
-Then, since
-
-$$\left(1 - \frac{1}{p}\right)\frac{1}{1-p^{-2}} = \left(1 + \frac{1}{p}\right)^{-1}$$
-
-we have the claimed density. $\proofqed$
 
 We have one last property of this setup to verify.
 
 > **Lemma 12.** Bucket membership is closed under $\gcd$:  
 > If $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
 
-_Proof._ This is easy from definitions. You don't want this post to be LONGER, do you? $\proofqed$
+_Proof._ There is a bucket representative $r \in R_0 \times R_1$ so that $a_1, a_2 \in r R_2$.  
+Write $a_1 = r t_1$ and $a_2 = r t_2$ for $t_1, t_2 \in R_2$.  
+Then $\gcd(a_1, a_2) = r \gcd(t_1, t_2)$ is also a member of $r R_2$, since $\gcd(t_1, t_2)$ divides $k!$. $\proofqed$
 
 We're ready to prove the GCD problem now.
 
-Choose a value of $T$ large enough so that
-
-$$\prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1} <\, \dsup(A)$$
-
+Choose a value of $k$ large enough so that $H(R_2)^{-1} < \dsup(A)$.  
 This is possible by Lemma 10.
 
-Let's write $\delta = \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$.
+Let's write $\delta = H(R_2)^{-1}$.
 
 The number of bucket representatives up to $n$ is asymptotically $\delta n$.  
-Also, writing $k = \pi(T)$, each bucket contains at most $2^k$ elements of $A$.
+Also, each bucket contains at most $|R_2| = \sigma_0(k!)$ elements of $A$.[^2]
 
-Recall that we have an arbitrary $\varepsilon > 0$, and that we pick $n$ with $A(n) \geq (\dsup(A)-\varepsilon)n$.  
+Now pick any $\varepsilon > 0$, and assume that $n$ is an arbitrarily large integer such that $A(n) \geq (\dsup(A)-\varepsilon)n$.  
+The goal is to prove that $\limsup G(n)/n > 0$.
+
 Consider the set of buckets which contain only a single element of $A$ up to $n$.  
+Pick $n$ large enough so that there are at most $(\delta+\varepsilon)n$ bucket representatives.  
 Then the number of elements outside these buckets is at asymptotically at least
 
-$$A(n) - \delta n \geq (\dsup(A) - \delta - \varepsilon)n$$
+$$A(n) - (\delta+\varepsilon) n \geq (\dsup(A) - \delta - 2\varepsilon)n$$
 
-Pick $\varepsilon$ small enough so that $\dsup(A) - \delta - \varepsilon > 0$.
+Pick $\varepsilon$ small enough so that $\dsup(A) - \delta - 2\varepsilon > 0$.
 
 All the rest of these elements have to be in buckets which are not singletons.  
 How many buckets must there be?  
-Since each one has at most $2^k$ elements, the number of such buckets is at least
+Since each one has at most $\sigma_0(k!)$ elements, the number of such buckets is at least
 
-$$\frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
+$$\frac{\dsup(A)-\delta-2\varepsilon}{\sigma_0(k!)}n$$
 
 In each such bucket, we can pick two distinct $a_1, a_2 \leq n$ and produce $\gcd(a_1, a_2) \in G$.  
 These GCDs we're generating are no greater than $n$.  
 Thanks to Lemma 12, they are also all distinct, and so we have
 
-$$G(n) \geq \frac{\dsup(A)-\delta-\varepsilon}{2^k}n$$
+$$G(n) \geq \frac{\dsup(A)-\delta-2\varepsilon}{\sigma_0(k!)}n$$
 
 Remember that this is not for all $n$ but only those $n$ satisfying $A(n) \geq (\dsup(A)-\varepsilon)n$.
 
 We immediately have 
 
-$$\dsup(G) \geq \frac{\dsup(A)-\delta-\varepsilon}{2^k} > 0$$
+$$\dsup(G) \geq \frac{\dsup(A)-\delta-2\varepsilon}{\sigma_0(k!)} > 0$$
 
 which completes the proof. $\proofqed$
 
@@ -431,3 +408,7 @@ which completes the proof. $\proofqed$
 [3]: https://en.wikipedia.org/wiki/Divergence_of_the_sum_of_the_reciprocals_of_the_primes
 [4]: https://math.berkeley.edu/~tb65536/index.html
 [5]: http://catb.org/jargon/html/E/exercise--left-as-an.html
+
+[^1]: Check this yourself: examine the $p_i$ exponent in the prime factorization of numbers in $n$. If $i \leq j$, it follows from taking the quotient and remainder of the exponent mod $e_i + 1$.
+
+[^2]: Here, $\sigma_0(k!)$ is the number of divisors of $k!$.
