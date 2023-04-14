@@ -347,9 +347,6 @@ Let $R_2$ be the set of all the divisors of $k!$.
 Suppose that we have an element $a$ of $A$. Since $R_0 \times R_1 \times R_2 = \mathbb N$, there is a unique integer $r \in R_0 \times R_1$ such that the dilation $r R_2$ contains $a$. This value $r$ will be the bucket representative for $a$.
 
 Recall from Lemma 8 that the density of $R_0 \times R_1$, the set of bucket representatives, is $H(R_2)^{-1}$.  
-Therefore, the number of bucket representatives up to $n$ is asymptotically
-
-$$n \cdot \prod_{p \leq T} \left(1 + \frac{1}{p}\right)^{-1}$$
 
 We have one last property of this setup to verify.
 
