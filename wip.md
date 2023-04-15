@@ -3,4 +3,4 @@ title: "Nearly Disjoint Dilations: Primes"
 tags: [wip page]
 ---
 
-[Last time](/blog/2023-04-13-density-gcds.md), we
+[Last time](/blog/2023/04/13/density-gcds.html), we
