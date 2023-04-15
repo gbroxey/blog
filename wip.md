@@ -137,22 +137,22 @@ _Proof._ Write $[n]$ for the set $\{1, 2, \ldots, n\}$, and also assume by Lemma
 Let $U_{\leq n}$ be a a random variable whose values are subsets of $[n]$ with expected size $\frac{\varepsilon^2}{2}n$.  
 More specifically[^1] each integer $x \leq n$ should be independently included with probability $\frac{\varepsilon^2}{2}$.
 
-We can lower bound the expectation $E(\left|(U_{\leq n} \times S) \cap [n]\right|)$ by noticing that among the approximately $(1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n$ integers up to $n$ which are divisible by more than $k$ distinct members of $S$, the probability of inclusion in $U_{\leq n} \times S$ is at least $1 - (1-\frac{\varepsilon^2}{2})^{k+1}$.
+We can lower bound the expectation $E(\left\vert (U_{\leq n} \times S) \cap [n]\right\vert )$ by noticing that among the approximately $(1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n$ integers up to $n$ which are divisible by more than $k$ distinct members of $S$, the probability of inclusion in $U_{\leq n} \times S$ is at least $1 - (1-\frac{\varepsilon^2}{2})^{k+1}$.
 
 Therefore we have the inequality
 
 $$\begin{align*}
-E(\left|(U_{\leq n} \times S) \cap [n]\right|) &\geq \left[1 - \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}\right](1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n\\
+E(\left\vert (U_{\leq n} \times S) \cap [n]\right\vert ) &\geq \left[1 - \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}\right](1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n\\
 &\geq n - \left(\dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
 \end{align*}$$
 
 Now we need to show we can actually choose a specific set $U_{\leq n} \subseteq [n]$ (by abuse of notation) which is small and such that $U_{\leq n} \times S$ is as large as it is expected to be.
 
-The probability $\left|U_{\leq n}\right|$ is at least $\varepsilon n$ is, by Markov's inequality, at most $(\varepsilon^2 n/2)/(\varepsilon n) = \varepsilon/2$.
+The probability $\left\vert U_{\leq n}\right\vert $ is at least $\varepsilon n$ is, by Markov's inequality, at most $(\varepsilon^2 n/2)/(\varepsilon n) = \varepsilon/2$.
 
 Next we estimate the probability $U_{\leq n} \times S$ is large.
 
-Write $X$ for the random variable $|(U_{\leq n} \times S) \cap [n]|$. We can't quite guarantee $U_{\leq n}$ is small and that $X$ is at least its mean, but what we can do is guarantee that $X$ can be decently close to its mean.
+Write $X$ for the random variable $\vert (U_{\leq n} \times S) \cap [n]\vert $. We can't quite guarantee $U_{\leq n}$ is small and that $X$ is at least its mean, but what we can do is guarantee that $X$ can be decently close to its mean.
 
 By Markov's inequality applied to $n-X$, we have
 
@@ -166,28 +166,28 @@ Multiply through that inequality by $1-\varepsilon$ and increase the right hand 
 $$\Pr\left(-\varepsilon n + E[X] \leq X\right) \geq \varepsilon$$
 This is where the extra $\varepsilon$ term comes from in the bound we're proving - it's a fudge factor that lets us guarantee that $U_{\leq n}$ can be small and, simultaneously, $U_{\leq n} \times S$ can be large.
 
-The probability that the above inequality in $X$ holds AND $|U_{\leq n}| \leq \varepsilon n$ is at least 
+The probability that the above inequality in $X$ holds AND $\vert U_{\leq n}\vert  \leq \varepsilon n$ is at least 
 
 $$\varepsilon - \varepsilon/2 = \varepsilon/2 > 0$$
 
 Therefore for each $n$, there must be at least one set $U_{\leq n}$ that achieves both inequalities.
 
-So choose each $U_{\leq n}$ such that $|U_{\leq n}| \leq \varepsilon n$ and
+So choose each $U_{\leq n}$ such that $\vert U_{\leq n}\vert  \leq \varepsilon n$ and
 
-$$\left|(U_{\leq n} \times S) \cap [n]\right| \geq n - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
+$$\left\vert (U_{\leq n} \times S) \cap [n]\right\vert  \geq n - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
 
 Next we measure the degree to which $U_{\leq n} \times S$ covers $A$. We'll assume thanks to Lemma 15 that products $a*s$ are unique, where $a \in A$ and $s \in S$.
 
 Let $A'$ be the set $A \cap (U_{\leq n} \times S) \subseteq A$. This has
 
 $$\begin{align*}
-    |A' \cap [n]| &\geq |A \cap [n]| - \left(n - |(V_{\leq n} \times S) \cap [n]|\right)\\
-    &\geq |A \cap [n]| - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
+    \vert A' \cap [n]\vert  &\geq \vert A \cap [n]\vert  - \left(n - \vert (V_{\leq n} \times S) \cap [n]\vert \right)\\
+    &\geq \vert A \cap [n]\vert  - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
 \end{align*}$$
 
 To obtain a bound on the size of $A'$, we'll use the logic from the proof of Lemma 9 to show that it is at most as large as $U$. Suppose, for some $u \in U_{\leq n}$, the set $A' \cap uS$ contains more than one distinct element, say $us_1$ and $us_2$ are both in $A'$. Then $(us_2)s_1 = (us_1)s_2$, which implies $s_1 = s_2$ by the unique products property, so they must have been the same element to start with.
 
-So then since each $A' \cap uS$ has at most one element, and since each element of $A'$ must correspond to at least one $u$ (because $A' \subseteq U_{\leq n} \times S$), we have the inequality $|A' \cap [n]| \leq |U_{\leq n}| \leq \varepsilon n$.
+So then since each $A' \cap uS$ has at most one element, and since each element of $A'$ must correspond to at least one $u$ (because $A' \subseteq U_{\leq n} \times S$), we have the inequality $\vert A' \cap [n]\vert  \leq \vert U_{\leq n}\vert  \leq \varepsilon n$.
 
 Putting this together with the previous inequality and taking $n \to \infty$ gives us the lemma:
 
