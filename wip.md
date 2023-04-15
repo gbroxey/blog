@@ -130,20 +130,20 @@ This actually only accounts for the $O(\varepsilon)$ term. Errors incurred, from
 
 The other small problem we have to get around is that we can't probabilistically construct the entire set $U$, but only prefixes. The same logic above applies, however.
 
-When $\varepsilon$ is chosen optimally this bound behaves roughly like $O\left(\sqrt{\frac{\log(k)}{k}}\right) + \dnat(\N_{\leq k}^S)$.
+When $\varepsilon$ is chosen optimally this bound behaves roughly like $O\left(\sqrt{\frac{\log(k)}{k}}\right) + \dnat(\NN_{\leq k}^S)$.
 
 _Proof._ Write $[n]$ for the set $\{1, 2, \ldots, n\}$, and also assume by Lemma 3 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
 
 Let $U_{\leq n}$ be a a random variable whose values are subsets of $[n]$ with expected size $\frac{\varepsilon^2}{2}n$.  
 More specifically[^1] each integer $x \leq n$ should be independently included with probability $\frac{\varepsilon^2}{2}$.
 
-We can lower bound the expectation $E(\left|(U_{\leq n} \times S) \cap [n]\right|)$ by noticing that among the approximately $(1-\dnat(\N_{\leq k}^S) - o_{k}(1))n$ integers up to $n$ which are divisible by more than $k$ distinct members of $S$, the probability of inclusion in $U_{\leq n} \times S$ is at least $1 - (1-\frac{\varepsilon^2}{2})^{k+1}$.
+We can lower bound the expectation $E(\left|(U_{\leq n} \times S) \cap [n]\right|)$ by noticing that among the approximately $(1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n$ integers up to $n$ which are divisible by more than $k$ distinct members of $S$, the probability of inclusion in $U_{\leq n} \times S$ is at least $1 - (1-\frac{\varepsilon^2}{2})^{k+1}$.
 
 Therefore we have the inequality
 
 $$\begin{align*}
-E(\left|(U_{\leq n} \times S) \cap [n]\right|) &\geq \left[1 - \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}\right](1-\dnat(\N_{\leq k}^S) - o_{k}(1))n\\
-&\geq n - \left(\dnat(\N_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
+E(\left|(U_{\leq n} \times S) \cap [n]\right|) &\geq \left[1 - \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}\right](1-\dnat(\NN_{\leq k}^S) - o_{k}(1))n\\
+&\geq n - \left(\dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
 \end{align*}$$
 
 Now we need to show we can actually choose a specific set $U_{\leq n} \subseteq [n]$ (by abuse of notation) which is small and such that $U_{\leq n} \times S$ is as large as it is expected to be.
@@ -174,7 +174,7 @@ Therefore for each $n$, there must be at least one set $U_{\leq n}$ that achieve
 
 So choose each $U_{\leq n}$ such that $|U_{\leq n}| \leq \varepsilon n$ and
 
-$$\left|(U_{\leq n} \times S) \cap [n]\right| \geq n - \left(\varepsilon + \dnat(\N_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
+$$\left|(U_{\leq n} \times S) \cap [n]\right| \geq n - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
 
 Next we measure the degree to which $U_{\leq n} \times S$ covers $A$. We'll assume thanks to Lemma 15 that products $a*s$ are unique, where $a \in A$ and $s \in S$.
 
@@ -182,7 +182,7 @@ Let $A'$ be the set $A \cap (U_{\leq n} \times S) \subseteq A$. This has
 
 $$\begin{align*}
     |A' \cap [n]| &\geq |A \cap [n]| - \left(n - |(V_{\leq n} \times S) \cap [n]|\right)\\
-    &\geq |A \cap [n]| - \left(\varepsilon + \dnat(\N_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
+    &\geq |A \cap [n]| - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
 \end{align*}$$
 
 To obtain a bound on the size of $A'$, we'll use the logic from the proof of Lemma 9 to show that it is at most as large as $U$. Suppose, for some $u \in U_{\leq n}$, the set $A' \cap uS$ contains more than one distinct element, say $us_1$ and $us_2$ are both in $A'$. Then $(us_2)s_1 = (us_1)s_2$, which implies $s_1 = s_2$ by the unique products property, so they must have been the same element to start with.
@@ -191,14 +191,14 @@ So then since each $A' \cap uS$ has at most one element, and since each element 
 
 Putting this together with the previous inequality and taking $n \to \infty$ gives us the lemma:
 
-$$\dsup(A) \leq 2\varepsilon + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\N_{\leq k}^S)$$
+$$\dsup(A) \leq 2\varepsilon + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\NN_{\leq k}^S)$$
 $\proofqed$
 
 We're now in a position to prove Conjecture 1 in the case $H(B) = \infty$ with $B$ coprime.
 
 > **Theorem 1.** If $A \perp B$, and $B$ is a set of coprime naturals with $H(B) = \infty$, then $\dnat(A) = 0$.
 
-_Proof._ Again let $S$ be large finite subsets of $B$, such that $\dnat(\N_{\leq k}^{S}) \to 0$.
+_Proof._ Again let $S$ be large finite subsets of $B$, such that $\dnat(\NN_{\leq k}^{S}) \to 0$.
 
 Then, using Lemma 16 and letting $H(S) \to \infty$, we have (for any $\varepsilon > 0$ and $k \geq 0$)
 
