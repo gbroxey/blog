@@ -192,6 +192,7 @@ So then since each $A' \cap uS$ has at most one element, and since each element 
 Putting this together with the previous inequality and taking $n \to \infty$ gives us the lemma:
 
 $$\dsup(A) \leq 2\varepsilon + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\NN_{\leq k}^S)$$
+
 $\proofqed$
 
 We're now in a position to prove Conjecture 1 in the case $H(B) = \infty$ with $B$ coprime.
