@@ -103,7 +103,7 @@ we must have $\dnat(\NN_{\leq k}^B) = \dnat(\NN_k^B) = 0$.
 Before we proceed we should make clear a reduction we've used before.
 
 > **Lemma 15.** Suppose $A \perp S$ for some finite $S$.  
-> Then there exists a set $A' \subseteq A$ such that $\dsup(A) = \dsup(A')$.  
+> Then there exists a set $A' \subseteq A$ with $\dsup(A) = \dsup(A')$ such that $A'$ has disjoint $S$-dilations.
 > Therefore if we only care about bounding the upper or lower density of $A$, we are safe to assume that every product $a*s$ for $a \in A$ and $s \in S$ is unique.
 
 _Proof._ The logic we use here was used in Lemma 9. I'll repeat it here.
