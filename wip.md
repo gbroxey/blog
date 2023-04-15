@@ -110,11 +110,11 @@ _Proof._ The logic we use here was used in Lemma 9. I'll repeat it here.
 
 Let $A'$ be the set
 
-$$A' = A - \bigcup_{\substack{v_1, v_2 \in V \\ v_1 \neq v_2}}\frac{1}{v_1}\left(v_1 A \cap v_2 A\right)$$
+$$A' = A - \bigcup_{\substack{u_1, u_2 \in V \\ u_1 \neq u_2}}\frac{1}{u_1}\left(u_1 A \cap u_2 A\right)$$
 
-Intuitively, we look at all of the intersections $v_1 A \cap v_2 A$ and throw out the offending elements of $A$.
+Intuitively, we look at all of the intersections $u_1 A \cap u_2 A$ and throw out the offending elements of $A$.
 
-Since $\dnat(v_1 A \cap v_2 A) = 0$, we have $\dsup(A) = \dsup(A')$. $\proofqed$
+Since $\dnat(u_1 A \cap u_2 A) = 0$, we have $\dsup(A) = \dsup(A')$. $\proofqed$
 
 Now we can come to the most important lemma:
 
@@ -181,7 +181,7 @@ Next we measure the degree to which $U_{\leq n} \times S$ covers $A$. We'll assu
 Let $A'$ be the set $A \cap (U_{\leq n} \times S) \subseteq A$. This has
 
 $$\begin{align*}
-    \vert A' \cap [n]\vert  &\geq \vert A \cap [n]\vert  - \left(n - \vert (V_{\leq n} \times S) \cap [n]\vert \right)\\
+    \vert A' \cap [n]\vert  &\geq \vert A \cap [n]\vert  - \left(n - \vert (U_{\leq n} \times S) \cap [n]\vert \right)\\
     &\geq \vert A \cap [n]\vert  - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
 \end{align*}$$
 
