@@ -258,8 +258,7 @@ The lemma's inequality is simply because every natural up to $k$ is a divisor of
 
 To finish the proof, we need to show that $\dsup(A) \leq \dsup(R_0 \times R_1)$. This is not too hard:
 
-> **Lemma 9.** Suppose $U$ and $V$ are sets of naturals such that $U \times V = \mathbb N$, where $V$ is finite.  
-> Then, if $A \perp V$, we have $\dsup(A) \leq \dsup(U)$.
+> **Lemma 9.** Suppose $U$ and $V$ are sets of naturals such that $U \times V = \mathbb N$, where $V$ is finite. Then, if $A \perp V$, we have $\dsup(A) \leq \dsup(U)$.
 
 _Proof._ First, we reduce to the case where $A$ has fully disjoint $V$-dilations.   
 Let $A'$ be the set
