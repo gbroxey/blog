@@ -243,9 +243,10 @@ Now, for each $1 \leq i \leq m$, let
 
 $$A'_i = A \cap (U_{\leq n} \times S_i)$$
 
-such that $A' \subseteq \bigcup A'_i$.
+such that $A' \subseteq \bigcup A'_i$. Then for the reasons given in Lemma 16, we have 
 
-For the reasons given in Lemma 16, we have $\vert A'_i \cap [n]\vert \leq \vert U_{\leq n}\vert$, so that $\vert A' \cap [n]\vert \leq m \vert U_{\leq n}\vert$.
+$$\vert A'_i \cap [n]\vert \leq \vert U_{\leq n}\vert$$
+so that $\vert A' \cap [n]\vert \leq m \vert U_{\leq n}\vert$.
 
 Since $m \leq \min(S)$ we have $\vert A' \cap [n]\vert \leq \varepsilon n$.  
 The rest of the proof is identical to the one given before. $\proofqed$
