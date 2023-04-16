@@ -207,7 +207,82 @@ $$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
 
 If $\varepsilon$ is fixed and nonzero, we can let $k \to \infty$ to get $\dsup(A) \leq 2\varepsilon$. Now just let $\varepsilon \to 0$. $\proofqed$
 
-## TODO
+So, the proof of this case has ended up conceptually very similar to the previous one, but only technically much more complicated.
+
+One thing we can notice is that, in Lemma 16, we don't really need all of the elements of $S$ to be in a single set. Here's what I mean:
+
+> **Lemma 17.** Suppose we have a collection of $m$ sets, $S_1, \ldots, S_m$, each with $A \perp S_i$.  
+> Write $S = \bigcup S_i$ for their union. Then if $\min S \geq m$, the inequality in Lemma 16 holds.  
+> That is, if $\varepsilon > 0$ and $0 \leq k \leq |S|$ are arbitrary, then
+> 
+$$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\NN_{\leq k}^S)$$
+
+We will have a slightly different construction of $U_{\leq n}$ so that the elements satisfying $u \min S > n$ are not included. This way $U_{\leq n}$ will be much smaller, but $U_{\leq n} \times S$ will still approximately contain $A$.
+
+_Proof._ We will verify the important points of the new definition of $U_{\leq n}$ and the probability computations necessary to ensure its existence.  
+Specifically, for each $u \leq n/\min(S)$, include it with probability $\frac{\varepsilon^2}{2}$.
+
+We have $E\left(\vert U_{\leq n}\vert\right) \leq \frac{\varepsilon^2}{2} \cdot \frac{n}{\min(S)}$, and Markov says
+
+$$\Pr(\vert U_{\leq n}\vert \geq \varepsilon \cdot \frac{n}{\min(S)}) \leq \frac{\varepsilon}{2}$$
+
+Now, the exact same lower bound on the expectation of $\left\vert(U_{\leq n} \times S) \cap [n]\right\vert$ works, since any integer of the form $u \times s$ in the set must necessarily have $u \leq n/\min(S)$.
+
+Following identical Markov considerations, we can produce sets $U_{\leq n} \subseteq [n/\min(S)]$ which satisfy
+
+$$\begin{align*}
+    \vert U_{\leq n}\vert &\leq \varepsilon \cdot \frac{n}{\min(S)}\\
+    \left\vert(U_{\leq n} \times S) \cap [n]\right\vert &\geq n - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)
+\end{align*}$$
+
+Again letting $A' = A \cap (U_{\leq n} \times S)$, we have as before
+
+$$\vert A' \cap [n]\vert \geq \vert A \cap [n]\vert - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
+
+Now, for each $1 \leq i \leq m$, let $A'_i = A \cap (U_{\leq n} \times S_i)$ such that $A' \subseteq \bigcup A'_i$.
+
+Each $A'_i$, for the reasons given in Lemma 16, has $\vert A'_i \cap [n]\vert \leq \vert U_{\leq n}\vert$, so that $\vert A' \cap [n]\vert \leq m \vert U_{\leq n}\vert$.
+
+Since $m \leq \min(S)$ we have $\vert A' \cap [n]\vert \leq \varepsilon n$.  
+The rest of the proof is identical to the one given before. $\proofqed$
+
+I want to put a note here that we can't actually use arbitrary singletons for $S_i$ (for which $A \perp S_i$ vacuously) and expect to produce any sort of meaningful result. The fact that we need $\min(S) \geq m$ means that we'd have $H(S) \leq \log(2)$ or so, which is insufficient to prove $\dnat(\N_{\leq k}^S)$ is close to zero.
+
+This does, however, allow us to prove things entirely out of reach of Lemma 16.
+
+> **Corollary 2.** Suppose $\dsup(A) > 0$.  
+> There are constants $t > 0$ and $K > 0$ so that the following holds.  
+> One may find primes $p < q < p + Kp^{1-t}$ such that $\dsup(pA \cap qA) > 0$.
+
+_Proof._ First note that the sum of $1/p$ over primes in the range $[n, n+Kn^{1-t}]$ in fact tends to zero with $n$, so Lemma 16 is utterly useless here if applied directly.
+
+Suppose $n$ is large and consider the sets $S_n = \mathbb P \cap [n, n^c)$ where $c > 1$ is big.
+
+Elementary considerations show $H(S_n) \to \log(c)$, but using Lemma 16 here is not quite enough to show the primes it produces are as close together as we want them to be.
+
+Instead we split $S_n$ into $n$ sets $S_{n,1}, S_{n,2}, \ldots S_{n,n}$ in the manner
+
+$$S_{n,j} = \mathbb P \cap [n^{c(j-1)/n}, n^{c{j/n}})$$
+
+If $A \perp S_{n,j}$ for all $k$, then by Lemma 17 as $n \to \infty$ we would have
+
+$$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1} + (H(S_n)+1)^k \exp\lbrack-H(S_n)\rbrack$$
+
+Pick $c$ large enough so that $(H(S_n)+1)^k \exp\lbrack-H(S_n)\rbrack <  \varepsilon$ for all large $n$. Then
+
+$$\dsup(A) \leq 3\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
+
+Again here we can let $k \to \infty$ first and then $\varepsilon \to 0$.
+
+Thus for large $n$ there are $k$ and two distinct primes $p < q$ in $S_{n, k}$ with $pA \cap qA \neq \emptyset$.
+
+Now $q/p$ is bounded above by
+
+$$\frac{q}{p} \leq n^{c/n} = 1 + O\left(\frac{\log(n)}{n}\right) = 1 + O\left(\frac{\log(p)}{p^{1/c}}\right)$$
+
+We can write this as $q \leq p + O(p^{1-\frac{1}{c}}\log(p)) = p + O(p^{1-\frac{1}{2c}})$, so we can take $t = \frac{1}{2c}$ in the statement of the theorem, and we're done. $\proofqed$
+
+We should notice that the values of $t$ and $K$ depend on the upper density of $A$.
 
 
 [^1]: Rigorously, define $n$ independent, set valued random variables $x_1, x_2, \ldots, x_n$ such that $x_i = \{i\}$ with probability $\frac{\varepsilon^2}{2}$ and $x_i = \emptyset$ otherwise. Then define $U_{\leq n} = \bigcup_{i \leq n} x_i$.
