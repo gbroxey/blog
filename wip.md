@@ -280,7 +280,7 @@ $$\dsup(A) \leq 3\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
 
 Again here we can let $k \to \infty$ first and then $\varepsilon \to 0$.
 
-Thus for large $n$ there are $k$ and two distinct primes $p < q$ in $S_{n, k}$ with $pA \cap qA \neq \emptyset$.
+Thus for large $n$ there are $j$ and two distinct primes $p < q$ in $S_{n, j}$ with $pA \cap qA \neq \emptyset$.
 
 Now $q/p$ is bounded above by
 
@@ -289,6 +289,10 @@ $$\frac{q}{p} \leq n^{c/n} = 1 + O\left(\frac{\log(n)}{n}\right) = 1 + O\left(\f
 We can write this as $q \leq p + O(p^{1-\frac{1}{c}}\log(p)) = p + O(p^{1-\frac{1}{2c}})$, so we can take $t = \frac{1}{2c}$ in the statement of the theorem, and we're done. $\proofqed$
 
 We should notice that the values of $t$ and $K$ depend on the upper density of $A$.
+
+---
+
+Next time we visit density we'll probably be going into one of the finite cases, such as $A \perp \{1, 2, 3\}$, which require some more careful manual bounding.
 
 
 [^1]: Rigorously, define $n$ independent, set valued random variables $x_1, x_2, \ldots, x_n$ such that $x_i = \{i\}$ with probability $\frac{\varepsilon^2}{2}$ and $x_i = \emptyset$ otherwise. Then define $U_{\leq n} = \bigcup_{i \leq n} x_i$.
