@@ -239,14 +239,18 @@ Again letting $A' = A \cap (U_{\leq n} \times S)$, we have as before
 
 $$\vert A' \cap [n]\vert \geq \vert A \cap [n]\vert - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
 
-Now, for each $1 \leq i \leq m$, let $A{'}_i = A \cap (U_{\leq n} \times S_i)$ such that $A' \subseteq \bigcup A{'}_i$.
+Now, for each $1 \leq i \leq m$, let
 
-Each $A{'}_i$, for the reasons given in Lemma 16, has $\vert A{'}_i \cap [n]\vert \leq \vert U_{\leq n}\vert$, so that $\vert A' \cap [n]\vert \leq m \vert U_{\leq n}\vert$.
+$$A'_i = A \cap (U_{\leq n} \times S_i)$$
+
+such that $A' \subseteq \bigcup A'_i$.
+
+For the reasons given in Lemma 16, we have $\vert A'_i \cap [n]\vert \leq \vert U_{\leq n}\vert$, so that $\vert A' \cap [n]\vert \leq m \vert U_{\leq n}\vert$.
 
 Since $m \leq \min(S)$ we have $\vert A' \cap [n]\vert \leq \varepsilon n$.  
 The rest of the proof is identical to the one given before. $\proofqed$
 
-I want to put a note here that we can't actually use arbitrary singletons for $S_i$ (for which $A \perp S_i$ vacuously) and expect to produce any sort of meaningful result. The fact that we need $\min(S) \geq m$ means that we'd have $H(S) \leq \log(2)$ or so, which is insufficient to prove $\dnat(\N_{\leq k}^S)$ is close to zero.
+I want to put a note here that we can't actually use arbitrary singletons for $S_i$ (for which $A \perp S_i$ vacuously) and expect to produce any sort of meaningful result. The fact that we need $\min(S) \geq m$ means that we'd have $H(S) \leq \log(2)$ or so, which is insufficient to prove $\dnat(\NN_{\leq k}^S)$ is close to zero.
 
 This does, however, allow us to prove things entirely out of reach of Lemma 16.
 
