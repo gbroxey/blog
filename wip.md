@@ -257,7 +257,7 @@ I want to put a note here that we can't actually use arbitrary singletons for $S
 This does, however, allow us to prove things entirely out of reach of Lemma 16.
 
 > **Corollary 2.** Suppose $\dsup(A) > 0$ and fix $\delta > 0$.  
-> Then one may find primes $p < q < p(1+\delta)$ such that $\dsup(pA \cap qA) > 0$.
+> Then one may find arbitrarily large primes $p < q < p(1+\delta)$ such that $\dsup(pA \cap qA) > 0$.
 
 _Proof._ First note that the sum of $1/p$ over primes in the range $[n, n(1+\varepsilon)]$ in fact tends to zero with $n$, so Lemma 16 is utterly useless here if applied directly.
 
