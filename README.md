@@ -8,7 +8,12 @@ Go to [the](https://gbroxey.github.io/blog/) blog
 - meissel lehmer
 - summing multiplicative fns + prime counting with them
 - counting permutation index with fenwick trees
-- density: A perp P, A perp {1, 2, 3}, etc
+- density: A perp {1, 2, 3}, etc
 - translations of cubes problem
 - fast sum of d(n) and circle prob (convex hull / stern brocot)
 - sum of F(n)d(n)
+- number of unlabeled trees on n nodes
+- gamma reflection formula using lattice point counting
+
+### Mostly Finished:
+- density: A perp P

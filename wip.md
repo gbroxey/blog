@@ -132,7 +132,7 @@ The other small problem we have to get around is that we can't probabilistically
 
 When $\varepsilon$ is chosen optimally this bound behaves roughly like $O\left(\sqrt{\frac{\log(k)}{k}}\right) + \dnat(\NN_{\leq k}^S)$.
 
-_Proof._ Write $[n]$ for the set $\{1, 2, \ldots, n\}$, and also assume by Lemma 3 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
+_Proof._ Write $[n]$ for the set $\{1, 2, \ldots, n\}$, and also assume by Lemma 15 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
 
 Let $U_{\leq n}$ be a a random variable whose values are subsets of $[n]$ with expected size $\frac{\varepsilon^2}{2}n$.  
 More specifically[^1] each integer $x \leq n$ should be independently included with probability $\frac{\varepsilon^2}{2}$.
@@ -256,43 +256,36 @@ I want to put a note here that we can't actually use arbitrary singletons for $S
 
 This does, however, allow us to prove things entirely out of reach of Lemma 16.
 
-> **Corollary 2.** Suppose $\dsup(A) > 0$.  
-> There are constants $t > 0$ and $K > 0$ so that the following holds.  
-> One may find primes $p < q < p + Kp^{1-t}$ such that $\dsup(pA \cap qA) > 0$.
+> **Corollary 2.** Suppose $\dsup(A) > 0$ and fix $\delta > 0$.  
+> Then one may find primes $p < q < p(1+\delta)$ such that $\dsup(pA \cap qA) > 0$.
 
-_Proof._ First note that the sum of $1/p$ over primes in the range $[n, n+Kn^{1-t}]$ in fact tends to zero with $n$, so Lemma 16 is utterly useless here if applied directly.
+_Proof._ First note that the sum of $1/p$ over primes in the range $[n, n(1+\varepsilon)]$ in fact tends to zero with $n$, so Lemma 16 is utterly useless here if applied directly.
 
-Suppose $n$ is large and consider the sets $S_n = \mathbb P \cap [n, n^c)$ where $c > 1$ is big.
+Suppose $n$ is large and consider the sets $S_n = \mathbb P \cap [n, n^{\log(n)})$.
 
-Elementary considerations show $H(S_n) \to \log(c)$, but using Lemma 16 here is not quite enough to show the primes it produces are as close together as we want them to be.
+The exponent $\log(n)$ is unimportant other than going to zero slowly.
+
+Elementary considerations show $H(S_n) \to \infty$, but using Lemma 16 here is not quite enough to show the primes it produces are as close together as we want them to be.
 
 Instead we split $S_n$ into $n$ sets $S_{n,1}, S_{n,2}, \ldots S_{n,n}$ in the manner
 
-$$S_{n,j} = \mathbb P \cap [n^{c(j-1)/n}, n^{c{j/n}})$$
+$$\Large S_{n,j} = \mathbb P \cap [n^{\log(n)^{(j-1)/n}}, n^{\log(n)^{j/n}})$$
 
 If $A \perp S_{n,j}$ for all $k$, then by Lemma 17 as $n \to \infty$ we would have
 
-$$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1} + (H(S_n)+1)^k \exp\lbrack-H(S_n)\rbrack$$
-
-Pick $c$ large enough so that $(H(S_n)+1)^k \exp\lbrack-H(S_n)\rbrack <  \varepsilon$ for all large $n$. Then
-
-$$\dsup(A) \leq 3\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
+$$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
 
 Again here we can let $k \to \infty$ first and then $\varepsilon \to 0$.
 
 Thus for large $n$ there are $j$ and two distinct primes $p < q$ in $S_{n, j}$ with $pA \cap qA \neq \emptyset$.
 
-Now $q/p$ is bounded above by
+Now $q/p$ is bounded above by $\frac{q}{p} \leq n^{\log(n) - \log(n)^{1 - 1/n}} \to 1$. 
 
-$$\frac{q}{p} \leq n^{c/n} = 1 + O\left(\frac{\log(n)}{n}\right) = 1 + O\left(\frac{\log(p)}{p^{1/c}}\right)$$
-
-We can write this as $q \leq p + O(p^{1-\frac{1}{c}}\log(p)) = p + O(p^{1-\frac{1}{2c}})$, so we can take $t = \frac{1}{2c}$ in the statement of the theorem, and we're done. $\proofqed$
-
-We should notice that the values of $t$ and $K$ depend on the upper density of $A$.
+So just take $n$ large enough and primes $p < q < p(1+\delta)$ will be produced. $\proofqed$
 
 ---
 
-Next time we visit density we'll probably be going into one of the finite cases, such as $A \perp \{1, 2, 3\}$, which require some more careful manual bounding.
+Next time we visit density we'll probably be going into one of the finite cases, such as $A \perp \lbrace 1, 2, 3\rbrace$, which require some more careful manual bounding.
 
 
 [^1]: Rigorously, define $n$ independent, set valued random variables $x_1, x_2, \ldots, x_n$ such that $x_i = \{i\}$ with probability $\frac{\varepsilon^2}{2}$ and $x_i = \emptyset$ otherwise. Then define $U_{\leq n} = \bigcup_{i \leq n} x_i$.
