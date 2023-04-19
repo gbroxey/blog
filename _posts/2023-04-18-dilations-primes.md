@@ -133,7 +133,7 @@ The other small problem we have to get around is that we can't probabilistically
 
 When $\varepsilon$ is chosen optimally this bound behaves roughly like $O\left(\sqrt{\frac{\log(k)}{k}}\right) + \dnat(\NN_{\leq k}^S)$.
 
-_Proof._ Write $[n]$ for the set $\lbrack 1, 2, \ldots, n\rbrack$, and also assume by Lemma 15 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
+_Proof._ Write $[n]$ for the set $\lbrace 1, 2, \ldots, n\rbrace$, and also assume by Lemma 15 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
 
 Let $U_{\leq n}$ be a a random variable whose values are subsets of $[n]$ with expected size $\frac{\varepsilon^2}{2}n$.  
 More specifically[^1] each integer $x \leq n$ should be independently included with probability $\frac{\varepsilon^2}{2}$.
@@ -289,4 +289,4 @@ So just take $n$ large enough and primes $p < q < p(1+\delta)$ will be produced.
 Next time we visit density we'll probably be going into one of the finite cases, such as $A \perp \lbrace 1, 2, 3\rbrace$, which require some more careful manual bounding.
 
 
-[^1]: Rigorously, define $n$ independent, set valued random variables $x_1, x_2, \ldots, x_n$ such that $x_i = \lbrack i\rbrack$ with probability $\frac{\varepsilon^2}{2}$ and $x_i = \emptyset$ otherwise. Then define $U_{\leq n} = \bigcup_{i \leq n} x_i$.
+[^1]: Rigorously, define $n$ independent, set valued random variables $x_1, x_2, \ldots, x_n$ such that $x_i = \lbrace i\rbrace$ with probability $\frac{\varepsilon^2}{2}$ and $x_i = \emptyset$ otherwise. Then define $U_{\leq n} = \bigcup_{i \leq n} x_i$.
