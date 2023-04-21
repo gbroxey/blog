@@ -62,7 +62,7 @@ The easiest function I've mentioned so far, other than those, is the divisor cou
 Our goal is to compute $D(x) = \sum_{n \leq x} d(n)$, hopefully in time faster than $O(x)$.  
 This is essentially explained in Apostol's book, and enables us to figure out $D(x)$ in $O(\sqrt{x})$ time.
 
-This technique supposes that we have functions $f$ and $g$ so that we want to sum $f*g$. In this first case we have $f=g=u$ so that $f*g = u*u = d$. Now set $\alpha*\beta = x$, and write
+This technique supposes that we have functions $f$ and $g$ so that we want to sum $f\ast g$. In this first case we have $f=g=u$ so that $f\ast g = u\ast u = d$. Now set $\alpha\ast\beta = x$, and write
 
 $$\begin{align*}
 \sum_{n \leq x} (f*g)(n) &= \sum_{n \leq x} \sum_{ab = n} f(a)g(b)\\
