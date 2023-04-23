@@ -136,22 +136,62 @@ We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and comp
 > 1. Set $y \approx x^{2/3}$.  
 >    Set an array `small` of length $y$ to store $D_1(k)$ for $k \leq y$.  
 >    Set an array `big` of length $x/y$ to store $D_1(x / k)$ for $k < x/y$.
-> 2. For $j$ from $2$ to $k$, we'll update our arrays to reflect $D_j$ instead:
->    2a. Update `big` values first, using  
+> 2. For $j$ from $2$ to $k$, we'll update our arrays to reflect $D_j$ instead:  
+>     2a. Update `big` values first, using  
 > 
 $$D_j(v) = \sum_{n \leq \sqrt{v}} D_{j-1}\left(\frac{v}{n}\right) + \sum_{n \leq \sqrt{v}} d_{j-1}(n) \left \lfloor \frac{v}{n} \right \rfloor - D_{j-1}(\sqrt{v})\left\lfloor\sqrt{v}\right\rfloor$$
-> 
->    2b. Update `small` values by sieving in $O(y)$.
+>   
+>     2b. Update `small` values by sieving in $O(y)$.
 
 How much time do we dedicate to updating the big array? They take
 
-$$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{x/k}dk \right) = O\left(x/\sqrt{y}\right)$$
+$$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{\frac{x}{k}}dk \right) = O\left(x/\sqrt{y}\right)$$
 
 If we want to minimize the total time to update both arrays, $O\left(y + x/\sqrt{y}\right)$, we need to pick $y$ to be on the order of $x^{2/3}$. The resulting time (and space) complexity is $O\left(x^{2/3}\right)$. Since we have to update it $k$ times, the runtime is $O\left(kx^{2/3}\right)$ in the end!
 
-Here's a Nim implementation:
+You'll have to poke at the constant coefficient on $y$ in your implementation.
 
+The following is a lazy Nim implementation that doesn't use linear sieving. Because of that, the sieving step takes $O(y \log y)$ time instead of $O(y)$ time, and so we'll pick $y = x^{2/3} / \log(x)^{1/3}$ instead. The final runtime is actually going to be $O\left(k x^{2/3} \log(x)^{1/3}\right)$.
 
+```nim
+proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
+  ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
+  var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
+  var small = newSeq[int64](y+1)
+  var big = newSeq[int64]((x div y) + 1)
+  #initialize them to D_1, sum of u(n) = 1
+  for i in 1..y: small[i] = i mod m
+  for i in 1..(x div y): big[i] = (x div i) mod m
+  #iteration time!
+  for j in 2..k:
+    #update big first
+    for i in 1..(x div y):
+      let v = x div i
+      let vsqrt = isqrt(v)
+      var bigNew = 0'i64
+      for n in 1..vsqrt:
+        #add D_{j-1}(v/n) = D_{j-1}(x/(i*n))
+        if v div n <= y: bigNew += small[v div n]
+        else: bigNew += big[i*n]
+        #add d_{j-1}(n) floor(v/n)
+        #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
+        bigNew += (small[n] - small[n-1]) * (v div n)
+        bigNew = bigNew mod m
+      bigNew -= small[vsqrt]*vsqrt
+      big[i] = bigNew mod m
+    #update small using sieving
+    #be lazy...
+    #convert small from summation to just d_{j-1}, convolve, then convert back
+    for i in countdown(y, 1):
+      small[i] -= small[i-1]
+      for u in 2..(y div i):
+        small[i*u] += small[i]
+        small[i*u] = small[i*u] mod m
+    for i in 1..y:
+      small[i] = (small[i] + small[i-1]) mod m
+  if big[1] < 0: big[1] += m
+  return big[1]
+```
 
 ### Summing $\mu$ and $\varphi$
 

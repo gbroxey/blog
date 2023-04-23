@@ -7,10 +7,44 @@ proc divisorSummatory(x: int64): int64 =
     result += 2*(x div n)
   result -= xsqrt*xsqrt
 
-proc genDivisorSummatory(x: int64, k: int): int64 =
-  ##Computes d_k(1) + ... + d_k(x) in O(k x^(2/3)) time.
-  var y = pow(x.float, 2.0/3.0).int64
-  #todo
+proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
+  ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
+  var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
+  var small = newSeq[int64](y+1)
+  var big = newSeq[int64]((x div y) + 1)
+  #initialize them to D_1, sum of u(n) = 1
+  for i in 1..y: small[i] = i mod m
+  for i in 1..(x div y): big[i] = (x div i) mod m
+  #iteration time!
+  for j in 2..k:
+    #update big first
+    for i in 1..(x div y):
+      let v = x div i
+      let vsqrt = isqrt(v)
+      var bigNew = 0'i64
+      for n in 1..vsqrt:
+        #add D_{j-1}(v/n) = D_{j-1}(x/(i*n))
+        if v div n <= y: bigNew += small[v div n]
+        else: bigNew += big[i*n]
+        #add d_{j-1}(n) floor(v/n)
+        #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
+        bigNew += (small[n] - small[n-1]) * (v div n)
+        bigNew = bigNew mod m
+      bigNew -= small[vsqrt]*vsqrt
+      big[i] = bigNew mod m
+    #update small using sieving
+    #be lazy...
+    #convert small from summation to just d_{j-1}, convolve, then convert back
+    for i in countdown(y, 1):
+      small[i] -= small[i-1]
+      for u in 2..(y div i):
+        small[i*u] += small[i]
+        small[i*u] = small[i*u] mod m
+    for i in 1..y:
+      small[i] = (small[i] + small[i-1]) mod m
+  if big[1] < 0: big[1] += m
+  return big[1]
+    
 
 proc mertens(x: int64): FIarray =
   ##Computes mu(1) + ... + mu(x) in O(x^(3/4)) time.
@@ -102,16 +136,9 @@ proc totientSummatoryFast2(x: int64, m: int64): FIarray =
     Phi[v] = phiV
   return Phi
 
-import ../utils/eutil_timer
-timer:
-  var x = 1e12.int64
-  var m = 1e9.int64
-  var M = totientSummatoryFast1(x, m)
-  echo M
-    
-timer:
-  var x = 1e12.int64
-  var m = 1e9.int64
-  var M = totientSummatoryFast2(x, m)
-  echo M[x]
-    
+# import ../utils/eutil_timer
+# var x = 1e12.int64
+# var m = 1e10.int64
+# timer:
+#   var M = genDivisorSummatory(x, 4, m)
+#   echo M
