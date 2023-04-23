@@ -1,7 +1,7 @@
 ---
 title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
-modified_date: 2023-04-10
+modified_date: 2023-04-23
 tags: [prime counting, number theory, algorithms]
 ---
 
@@ -104,6 +104,7 @@ proc newFIArray(x: int64): FIArray =
 
 proc `[]`(S: FIArray, v: int64): int64 =
   ##Accesses S[v].
+  if v <= 0: return 0
   if v <= S.isqrt: return S.arr[v-1]
   return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
 

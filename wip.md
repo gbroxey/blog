@@ -119,10 +119,11 @@ Now, we know from before that the distinct values of $\lfloor x/n \rfloor$ are a
 
 The algorithm for computing $M(x)$ will proceed as follows:
 
+#### Algorithm (Mertens in $O(x^(3/4))$)
 > 1. Sieve $\mu(n)$ for $n \leq \sqrt{x}$.  
 > 2. For each key value $v$ in increasing order, set
 > 
-$$M(v) = 1 - \sum_{n \leq \sqrt{v}} \mu(v)\left\lfloor \frac{v}{n}\right\rfloor - \sum_{n \leq \sqrt{v}} M\left(\frac{v}{n}\right)$$
+$$M(v) = 1 - \sum_{n \leq \sqrt{v}} \mu(v)\left\lfloor \frac{v}{n}\right\rfloor - \sum_{2 \leq n \leq \sqrt{v}} M\left(\frac{v}{n}\right)$$
 
 The first step takes $O(\sqrt{x})$ time. How about the rest?
 
@@ -157,6 +158,118 @@ proc mertens(x: int64): FIarray =
 ```
 
 This takes 7 seconds to compute $M(10^{12}) = 62366$ on my laptop, which is pretty good!
+
+The way we make this faster is again very similar to how we made the Lucy_Hedgehog prime counting algorithm faster in the [last post][lucyfenwick] - read it if you haven't yet!
+
+We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and compute $M(v)$ for the key values $v \leq y$ by sieving, which will take $O(y)$ time. The rest of them will be done in the way described previously.
+
+How about the remaining key values $v = \lfloor x/k \rfloor > y$? They take
+
+$$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{x/k}dk \right) = O\left(x/\sqrt{y}\right)$$
+
+If we want to minimize the total time $O\left(y + x/\sqrt{y}\right)$, we need to pick $y$ to be on the order of $x^{2/3}$. The resulting time (and space) complexity is $O\left(x^{2/3}\right)$ which is better.
+
+In your implementation, you should try different constants to see which one looks like it works the best. For me, choosing $y = 0.25x^{2/3}$ looked alright. You should also cap it by some limit based on how much memory you have available.
+
+Here's how this could look in Nim:
+
+```nim
+proc mertensFast(x: int64): FIarray =
+  ##Computes mu(1) + ... + mu(x) in O(x^(2/3)) time.
+  var M = newFIArray(x)
+  var y = (0.25*pow(x.float, 2.0/3.0)).int
+  y = min(y, 1e8.int) #adjust this based on how much memory you have
+  var smallM = mobius(y+1)
+  #we're actually going to store mu(1) + ... + mu(k) instead
+  #so accumulate
+  for i in 2..y: smallM[i] += smallM[i-1]
+  #now smallM[i] = mu(1) + ... + mu(i)
+  for v in M.keysInc:
+    if v <= y: 
+      M[v] = smallM[v]
+      continue
+    var muV = 1'i64
+    var vsqrt = isqrt(v)
+    for i in 1..vsqrt:
+      muV -= (smallM[i] - smallM[i-1])*(v div i)
+      muV -= M[v div i]
+    muV += M[vsqrt]*vsqrt
+    M[v] = muV
+  return M
+```
+
+Now we get $M(10^{12})$ in less than 2 seconds on my laptop!
+
+#### Doing It For $\varphi$?
+
+Before, we computed the Mertens function without calling notice to its size - generally it's very small. In the case of the totient summatory function $\Phi(x) = \sum_{n \leq x} \varphi(x)$, it will be quite large. To calculate it then, I'll include a modulus `m` in the functions. If you are using Python or something where you don't have to worry about overflows, then there's no real need for that aside from memory concerns.
+
+Like I said before though, we can compute the totient summatory function $\Phi(x)$ in $O(\sqrt{x})$ further time by using the hyperbola theorem (using $\varphi = \mu * N$) as follows:
+
+```nim
+proc sumN(x: int64, m: int64): int64 =
+  ##Sum of n from 1 to x, mod m.
+  var x = x mod (2*m) #avoid overflows
+  if x mod 2 == 0:
+    return ((x div 2) * (x+1)) mod m
+  else:
+    return (((x+1) div 2) * x) mod m
+
+proc totientSummatoryFast1(x: int64, m: int64): int64 =
+  ##Computes Phi(x) mod m in O(x^(2/3)) time.
+  ##Does NOT compute any other Phi(x/n).
+  var M = mertensFast(x)
+  #phi = mu * N
+  var xsqrt = M.isqrt
+  for n in 1..xsqrt:
+    result += (M[n] - M[n-1]) * sumN(x div n, m)
+    result = result mod m
+    result += n * M[x div n]
+    result = result mod m
+  result -= sumN(xsqrt, m)*M[xsqrt]
+  result = result mod m
+  if result < 0: result += m #this can happen
+```
+
+And just like that we have the totient summatory function in $O(x^{2/3})$ time.  
+It computes $\Phi(10^{12}) \equiv 804025910 \bmod 10^9$ in about 2.9 seconds on my laptop.
+
+Alternatively, we could apply the logic from our Mertens function directly, by using the relation $\varphi * u = N$ and the exact same partial-sieving trick as before. Here's how that looks:
+
+```nim
+proc totientSummatoryFast2(x: int64, m: int64): FIarray =
+  ##Computes phi(1) + ... + phi(x) mod m in O(x^(2/3)) time.
+  var Phi = newFIArray(x)
+  var y = (0.5*pow(x.float, 2.0/3.0)).int
+  y = min(y, 1e8.int) #adjust this based on how much memory you have
+  var smallPhi = totient[int64](y+1)
+  #again store phi(1) + ... + phi(k) instead
+  #so accumulate
+  for i in 2..y: 
+    smallPhi[i] = (smallPhi[i] + smallPhi[i-1]) mod m
+  #now smallPhi[i] = phi(1) + ... + phi(i)
+  for v in Phi.keysInc:
+    if v <= y: 
+      Phi[v] = smallPhi[v]
+      continue
+    var phiV = sumN(v, m)
+    var vsqrt = isqrt(v)
+    for i in 1..vsqrt:
+      phiV -= ((smallPhi[i] - smallPhi[i-1])*(v div i)) mod m
+      phiV -= Phi[v div i]
+      phiV = phiV mod m
+    phiV += Phi[vsqrt]*vsqrt
+    phiV = phiV mod m
+    if phiV < 0: phiV += m
+    Phi[v] = phiV
+  return Phi
+```
+
+This runs barely slower than the method to compute a single $\Phi(x)$ from the Mertens values - probably it's just easier to store the Mertens values because they're so small.  
+It computes $\Phi(10^{12})$ in about 3.5 seconds.
+
+So, this previous method will work nicely whenever we want to sum a function $f$ such that we have easily summable functions $g, h$ with $f*g = h$, and such that $f$ can be sieved in linear (or approximately linear) time. This is a very wide selection of functions, but there are others yet we can't deal with.
+
 
 
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function

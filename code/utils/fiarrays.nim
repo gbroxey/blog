@@ -16,6 +16,7 @@ proc newFIArray*(x: int64): FIArray =
 
 proc `[]`*(S: FIArray, v: int64): int64 =
   ##Accesses S[v].
+  if v <= 0: return 0
   if v <= S.isqrt: return S.arr[v-1]
   return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
 
