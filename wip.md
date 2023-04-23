@@ -193,6 +193,8 @@ proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
   return big[1]
 ```
 
+The important thing to learn from this section is that, when we're dealing with summations of multiplicative functions, we should probably store sieved values up to about $x^{2/3}$ and then the sums up to larger $\lfloor x/k \rfloor$. If we have this data for two functions $f$ and $g$, then we can spend $O(x^{2/3})$ time to generate the same data for $f*g$.
+
 ### Summing $\mu$ and $\varphi$
 
 First notice that $\varphi = \mu * N$ so that if we can sum $\mu$, we can also sum $\varphi$.
@@ -376,6 +378,14 @@ It computes $\Phi(10^{12})$ in about 3.5 seconds.
 
 So, this previous method will work nicely whenever we want to sum a function $f$ such that we have easily summable functions $g, h$ with $f*g = h$, and such that $f$ can be sieved in linear (or approximately linear) time. This is a very wide selection of functions, but there are others yet we can't deal with.
 
+### Min-25 Sieve
+
+### Black Algorithm
+
+### Powerful Number Trick
+
+
+
 
 
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
@@ -383,6 +393,4 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 [zeta]: https://en.wikipedia.org/wiki/Riemann_zeta_function
 [characters]: https://en.wikipedia.org/wiki/Dirichlet_character
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
-
-[^1]: We'll get to linear sieving in a section or so.
-[^2]: This can be done in linear time, but we're going to keep things as simple as possible here.
+[baihacker]: https://baihacker.github.io/main/
