@@ -75,7 +75,7 @@ This manipulation can be explained by noticing that we are summing $f(a)g(b)$ ov
 
 _**No picture yet.**_
 
-This idea was also used in [my post](/blog/2023/04/09/lucy-fenwick.html) about the Lucy\_Hedgehog algorithm. We will usually pick $\alpha = \beta = \sqrt{x}$ but sometimes it helps to be able to balance the break point based on how hard $f$ and $g$ are to sum individually. Let's see what happens for $u*u = d$.
+This idea was also used in [my post][lucyfenwick] about the Lucy\_Hedgehog algorithm. We will usually pick $\alpha = \beta = \sqrt{x}$ but sometimes it helps to be able to balance the break point based on how hard $f$ and $g$ are to sum individually. Let's see what happens for $u*u = d$.
 
 In this case, we have $F(x) = G(x) = \lfloor x \rfloor$, so pick $\alpha = \beta = \sqrt{x}$.
 
@@ -86,7 +86,81 @@ $$\begin{align*}
 
 Immediately we have an algorithm to compute $D(x)$ in $O(\sqrt{x})$ time!
 
+For $D(x)$, it's possible to do it in about $O(x^{1/3})$ time, but I'll cover that in a later post because it's much more complicated and uses a very different technique.
+
+So with this, if we're able to sum $f$ and $g$ in a reasonable amount of time, we're able to sum $f*g$ as well. This will be a crucial feature of the more complex methods.
+
+### Summing $\mu$ and $\varphi$
+
+First notice that $\varphi = \mu * N$ so that if we can sum $\mu$, we can also sum $\varphi$.
+
+The summatory function of $\mu$ is called the Mertens function. It's been studied in detail by a lot of people because it's a very important function. We write it as $M(x) = \sum_{n \leq x} \mu(n)$. The prime number theorem is equivalent to $M(x)/x \to 0$ as $x$ goes to infinity (read Apostol's book if you want to see why).
+
+The first thing we should do is review sieving methods. If you're familiar, skip to [the next section](#computing-in-sublinear-time)
+
+#### Sieving $\mu$
+
+#### Computing $M(x)$ in Sublinear Time
+
+The key idea here is similar to the one in [my post about prime counting][lucyfenwick], in that we'll use the "square root trick" again. 
+
+Let's start with the formula $\mu*u = I$, which when plugged into the hyperbola method gives the following for all $y \geq 0$:
+
+$$\sum_{n \leq \sqrt{y}} \mu(n)\left \lfloor \frac{y}{n}\right\rfloor + \sum_{n \leq \sqrt{y}} M\left(\frac{y}{n}\right) = 1$$
+
+We can suppose we've sieved at least the first $\sqrt{x}$ values of $\mu$. Let's also assume we've computed $M\left(\frac{x}{n}\right)$ for $n > 1$. Then we'd have
+
+$$M(x) = 1 - \sum_{n \leq \sqrt{x}} \mu(n)\left \lfloor \frac{x}{n}\right\rfloor - \sum_{2 \leq n \leq \sqrt{x}} M\left(\frac{x}{n}\right)$$
+
+So then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in about $O(\sqrt{x})$ time.  
+This sort of structure is going to be very similar for a lot of the functions we'll sum.
+
+Now, we know from before that the distinct values of $\lfloor x/n \rfloor$ are all of the integers up to $\sqrt{x}$ and then every $\lfloor x/n \rfloor$ for $n > \sqrt{x}$. This means that we can use the `FIArray` from the [last post][lucyfenwick] to store these values easily. It's just a container - read the relevant section of that post if you want clarification.
+
+The algorithm for computing $M(x)$ will proceed as follows:
+
+> 1. Sieve $\mu(n)$ for $n \leq \sqrt{x}$.  
+> 2. For each key value $v$ in increasing order, set
+> 
+$$M(v) = 1 - \sum_{n \leq \sqrt{v}} \mu(v)\left\lfloor \frac{v}{n}\right\rfloor - \sum_{n \leq \sqrt{v}} M\left(\frac{v}{n}\right)$$
+
+The first step takes $O(\sqrt{x})$ time. How about the rest?
+
+The lower key values take a total time of
+
+$$O\left(\sum_{v \leq \sqrt{x}} \sqrt{v}\right) = O\left(\sqrt{x} \sqrt{\sqrt{x}}\right) = O\left(x^{3/4}\right)$$
+
+The upper key values $v = \lfloor x/k \rfloor$ for $k < \sqrt{x}$ contribute about
+
+$$O\left(\sum_{k \leq \sqrt{x}} \sqrt{\frac{x}{k}}\right) = O\left(\int_1^{\sqrt{x}} \sqrt{\frac{x}{k}}dk\right) = O\left(x^{3/4}\right)$$
+
+So this easy algorithm only takes $O(x^{3/4})$ time and $O(x^{1/2})$ space.  
+Here's a Nim implementation:
+
+```nim
+proc mertens(x: int64): FIarray =
+  ##Computes mu(1) + ... + mu(x) in O(x^(3/4)) time.
+  var M = newFIArray(x)
+  var mu = mobius(x.isqrt.int+1)
+  for v in M.keysInc:
+    if v == 1:
+      M[v] = 1
+      continue
+    var muV = 1'i64
+    var vsqrt = isqrt(v)
+    for i in 1..vsqrt:
+      muV -= mu[i]*(v div i)
+      muV -= M[v div i]
+    muV += M[vsqrt]*vsqrt
+    M[v] = muV
+  return M
+```
+
+This takes 7 seconds to compute $M(10^{12}) = 62366$ on my laptop, which is pretty good!
+
+
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
 [mobius]: https://en.wikipedia.org/wiki/M%C3%B6bius_function
 [zeta]: https://en.wikipedia.org/wiki/Riemann_zeta_function
 [characters]: https://en.wikipedia.org/wiki/Dirichlet_character
+[lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
