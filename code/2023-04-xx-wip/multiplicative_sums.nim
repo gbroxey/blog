@@ -1,5 +1,17 @@
 import ../utils/[iops, fiarrays, sieves], math
 
+proc divisorSummatory(x: int64): int64 =
+  ##Computes d(1) + ... + d(x) in O(x^(1/2)) time.
+  var xsqrt = isqrt(x)
+  for n in 1..xsqrt:
+    result += 2*(x div n)
+  result -= xsqrt*xsqrt
+
+proc genDivisorSummatory(x: int64, k: int): int64 =
+  ##Computes d_k(1) + ... + d_k(x) in O(k x^(2/3)) time.
+  var y = pow(x.float, 2.0/3.0).int64
+  #todo
+
 proc mertens(x: int64): FIarray =
   ##Computes mu(1) + ... + mu(x) in O(x^(3/4)) time.
   var M = newFIArray(x)

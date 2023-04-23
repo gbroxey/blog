@@ -2,6 +2,8 @@
 title: "Summing Multiplicative Functions"
 ---
 
+> **Abstract.** I'll exhibit a ton of different method for computing partial sums of multiplicative functions. Knowledge of how to sum more basic functions is assumed. We'll use the square root trick constantly, as well as some basic number theory. This is another long one.
+
 A function $f(n)$ which maps the naturals to the set of complex numbers is called "multiplicative" if $f(mn) = f(m)f(n)$ for any $m, n$ such that $\gcd(m, n) = 1$. There are a few obvious examples and a few less obvious examples:
 
 - $I(1) = 1$ and $I(n) = 0$ for $n > 1$
@@ -84,11 +86,72 @@ $$\begin{align*}
 &= 2\sum_{n \leq \sqrt{x}} \left \lfloor \frac{x}{n} \right \rfloor - \left \lfloor \sqrt{x} \right \rfloor^2
 \end{align*}$$
 
-Immediately we have an algorithm to compute $D(x)$ in $O(\sqrt{x})$ time!
+Immediately we have an algorithm to compute $D(x)$ in $O(\sqrt{x})$ time! Here it is in Nim.
+
+```nim
+proc divisorSummatory(x: int64): int64 =
+  ##Computes d(1) + ... + d(x) in O(x^(1/2)) time.
+  var xsqrt = isqrt(x)
+  for n in 1..xsqrt:
+    result += 2*(x div n)
+  result -= xsqrt*xsqrt
+```
 
 For $D(x)$, it's possible to do it in about $O(x^{1/3})$ time, but I'll cover that in a later post because it's much more complicated and uses a very different technique.
 
 So with this, if we're able to sum $f$ and $g$ in a reasonable amount of time, we're able to sum $f*g$ as well. This will be a crucial feature of the more complex methods.
+
+### Tangent: Linear Sieving
+
+TODO :)
+
+### Summing Generalized Divisor Functions
+
+This section is about a function we haven't yet seen. Here's how it's defined.
+
+The generalized divisor function $d_k(n)$ is the function with the Dirichlet series $\zeta(s)^k$.  
+In other words, $d_1(n) = u(n) = 1$ for all $n$, and $d_k = u * d_{k-1}$, so $d_k(n) = \sum_{a \mid n} d_{k-1}(a)$.
+
+In the previous section we figured out how to sum $d = d_2$ quickly, but how about.. $d_5$ for example?
+
+If we attempted to just use the hyperbola method over and over again with no modifications we would get worse and worse runtime, as follows.
+
+We know $d_1$ can be summed (with summatory function $D_1$) in constant time, and that $d_2$ can be summed in $O(x^{1/2})$ time. How about $d_3$?
+
+Brainlessly apply the hyperbola method. We obtain
+
+$$D_3(x) = \sum_{n \leq \alpha} D_2\left(\frac{x}{n}\right) + \sum_{n \leq \beta} d_2(n) \left\lfloor \frac{x}{n}\right\rfloor - \left\lfloor\alpha\right\rfloor D_2(\beta)$$
+
+The last term takes $O(\beta^{1/2})$ time of course. The first one takes $O\left(\sqrt{x*\alpha}\right)$ time, and the second takes $O(\beta)$ time if we sieve $d_2$ in linear time. If we optimize $\alpha$ and $\beta$ we choose $\alpha = x^{1/3}$ and $\beta = x^{2/3}$, for a total runtime of $O(x^{2/3})$.
+
+If we repeat this analysis for $D_4$ you'll end up choosing $\alpha = x^{1/4}$ and $\beta = x^{3/4}$ for a total runtime of $x^{3/4}$. Also notice that we also require $x^{3/4}$ space for this, which is getting pretty large.
+
+By induction, we can compute $D_k(x)$ in about $x^{1 - 1/k}$ time, which as $k$ gets large is probably even worse than linear just due to a growing constant factor which I've ignored. Here we're going to show how we can cap the runtime to $O(k x^{2/3})$ while using $O(x^{2/3})$ space.
+
+The key idea here is essentially from [my last post][lucyfenwick].
+
+We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and compute $D_k(v)$ for the key values $v \leq y$ by linear sieving, which will take $O(y)$ time. The rest of them will be done using the hyperbola method, using $\alpha = \beta = \sqrt{x}$. Here's a slightly more specific layout of the ideas:
+
+#### Algorithm (Computing $D_k$(x) Iteratively)
+> 1. Set $y \approx x^{2/3}$.  
+>    Set an array `small` of length $y$ to store $D_1(k)$ for $k \leq y$.  
+>    Set an array `big` of length $x/y$ to store $D_1(x / k)$ for $k < x/y$.
+> 2. For $j$ from $2$ to $k$, we'll update our arrays to reflect $D_j$ instead:
+>    2a. Update `big` values first, using  
+> 
+$$D_j(v) = \sum_{n \leq \sqrt{v}} D_{j-1}\left(\frac{v}{n}\right) + \sum_{n \leq \sqrt{v}} d_{j-1}(n) \left \lfloor \frac{v}{n} \right \rfloor - D_{j-1}(\sqrt{v})\left\lfloor\sqrt{v}\right\rfloor$$
+> 
+>    2b. Update `small` values by sieving in $O(y)$.
+
+How much time do we dedicate to updating the big array? They take
+
+$$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{x/k}dk \right) = O\left(x/\sqrt{y}\right)$$
+
+If we want to minimize the total time to update both arrays, $O\left(y + x/\sqrt{y}\right)$, we need to pick $y$ to be on the order of $x^{2/3}$. The resulting time (and space) complexity is $O\left(x^{2/3}\right)$. Since we have to update it $k$ times, the runtime is $O\left(kx^{2/3}\right)$ in the end!
+
+Here's a Nim implementation:
+
+
 
 ### Summing $\mu$ and $\varphi$
 
@@ -102,24 +165,26 @@ The first thing we should do is review sieving methods. If you're familiar, skip
 
 #### Computing $M(x)$ in Sublinear Time
 
-The key idea here is similar to the one in [my post about prime counting][lucyfenwick], in that we'll use the "square root trick" again. 
+The key idea here is again similar to the one in [my post about prime counting][lucyfenwick], in that we'll use the "square root trick" again. 
 
-Let's start with the formula $\mu*u = I$, which when plugged into the hyperbola method gives the following for all $y \geq 0$:
+Let's start with the formula $\mu*u = I$, which when plugged into the hyperbola method gives the following for all $v \geq 0$:
 
-$$\sum_{n \leq \sqrt{y}} \mu(n)\left \lfloor \frac{y}{n}\right\rfloor + \sum_{n \leq \sqrt{y}} M\left(\frac{y}{n}\right) = 1$$
+$$\sum_{n \leq \sqrt{v}} \mu(n)\left \lfloor \frac{v}{n}\right\rfloor + \sum_{n \leq \sqrt{v}} M\left(\frac{v}{n}\right) - \lfloor \sqrt{v} \rfloor M\left(\sqrt{v}\right) = 1$$
 
 We can suppose we've sieved at least the first $\sqrt{x}$ values of $\mu$. Let's also assume we've computed $M\left(\frac{x}{n}\right)$ for $n > 1$. Then we'd have
 
-$$M(x) = 1 - \sum_{n \leq \sqrt{x}} \mu(n)\left \lfloor \frac{x}{n}\right\rfloor - \sum_{2 \leq n \leq \sqrt{x}} M\left(\frac{x}{n}\right)$$
+$$M(x) = 1 - \sum_{n \leq \sqrt{x}} \mu(n)\left \lfloor \frac{x}{n}\right\rfloor - \sum_{2 \leq n \leq \sqrt{x}} M\left(\frac{x}{n}\right) + \lfloor \sqrt{x} \rfloor M\left(\sqrt{x}\right)$$
 
-So then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in about $O(\sqrt{x})$ time.  
+Notice that if we plug in $x = 1$ we get $M(x)$ again in the right hand side, so we should just set $M(1) = 1$ manually to avoid issues.
+
+Then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in about $O(\sqrt{x})$ time.  
 This sort of structure is going to be very similar for a lot of the functions we'll sum.
 
 Now, we know from before that the distinct values of $\lfloor x/n \rfloor$ are all of the integers up to $\sqrt{x}$ and then every $\lfloor x/n \rfloor$ for $n > \sqrt{x}$. This means that we can use the `FIArray` from the [last post][lucyfenwick] to store these values easily. It's just a container - read the relevant section of that post if you want clarification.
 
 The algorithm for computing $M(x)$ will proceed as follows:
 
-#### Algorithm (Mertens in $O(x^(3/4))$)
+#### Algorithm (Mertens in $O(x^{3/4})$)
 > 1. Sieve $\mu(n)$ for $n \leq \sqrt{x}$.  
 > 2. For each key value $v$ in increasing order, set
 > 
@@ -159,8 +224,9 @@ proc mertens(x: int64): FIarray =
 
 This takes 7 seconds to compute $M(10^{12}) = 62366$ on my laptop, which is pretty good!
 
-The way we make this faster is again very similar to how we made the Lucy_Hedgehog prime counting algorithm faster in the [last post][lucyfenwick] - read it if you haven't yet!
+The way we make this faster is yet again very similar to how we made the Lucy_Hedgehog prime counting algorithm faster in the [last post][lucyfenwick] - read it if you haven't yet!
 
+TODO TODO REMOVE
 We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and compute $M(v)$ for the key values $v \leq y$ by sieving, which will take $O(y)$ time. The rest of them will be done in the way described previously.
 
 How about the remaining key values $v = \lfloor x/k \rfloor > y$? They take
@@ -277,3 +343,6 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 [zeta]: https://en.wikipedia.org/wiki/Riemann_zeta_function
 [characters]: https://en.wikipedia.org/wiki/Dirichlet_character
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
+
+[^1]: We'll get to linear sieving in a section or so.
+[^2]: This can be done in linear time, but we're going to keep things as simple as possible here.
