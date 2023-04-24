@@ -325,6 +325,15 @@ If we want to minimize the total time $O\left(y + x/\sqrt{y}\right)$, we need to
 
 In your implementation, you should try different constants to see which one looks like it works the best. For me, choosing $y = 0.25x^{2/3}$ looked alright. You should also cap it by some limit based on how much memory you have available.
 
+#### Algorithm (Mertens in $O(x^{2/3})$)
+> 1. Pick $y$ on the order of $x^{2/3}$.
+> 2. Sieve $\mu(n)$ for $n \leq y$. 
+> 3. Accumulate this array, so that you store $M(v)$ for all $v \leq y$.  
+>    The value $\mu(v)$ can be recovered by $M(v) - M(v-1)$ when needed.
+> 4. For each key value $v > y$ in increasing order, set
+> 
+$$M(v) = 1 - \sum_{n \leq \sqrt{v}} \mu(v)\left\lfloor \frac{v}{n}\right\rfloor - \sum_{2 \leq n \leq \sqrt{v}} M\left(\frac{v}{n}\right)$$
+
 Here's how this could look in Nim:
 
 ```nim

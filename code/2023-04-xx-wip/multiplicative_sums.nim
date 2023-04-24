@@ -136,9 +136,3 @@ proc totientSummatoryFast2(x: int64, m: int64): FIarray =
     Phi[v] = phiV
   return Phi
 
-# import ../utils/eutil_timer
-# var x = 1e12.int64
-# var m = 1e10.int64
-# timer:
-#   var M = genDivisorSummatory(x, 4, m)
-#   echo M
