@@ -51,6 +51,15 @@ Very frequently things will be expressed in terms of the [Riemann zeta function]
 
 A computational problem which pops up a lot is computing the partial sum $F(x) = \sum_{n \leq x} f(n)$ for a given multiplicative function $f$. In general this is difficult, but there are techniques we can use depending on the function given to us.
 
+### Contents
+- [Hyperbola Method](#dirichlet-hyperbola-method)
+- [Tangent: Linear Sieving](#tangent-linear-sieving)
+- [Summing Generalized Divisor Functions](#summing-generalized-divisor-functions)
+- [Summing $\mu$ and $\varphi$](#summing-and)
+- [Min-25 Sieve](#min-25-sieve)
+- [Black Algorithm](#black-algorithm)
+- [Powerful Numbers Trick](#powerful-numbers-trick)
+
 ---
 
 ## Techniques
@@ -247,10 +256,6 @@ First notice that $\varphi = \mu * N$ so that if we can sum $\mu$, we can also s
 
 The summatory function of $\mu$ is called the Mertens function. It's been studied in detail by a lot of people because it's a very important function. We write it as $M(x) = \sum_{n \leq x} \mu(n)$. The prime number theorem is equivalent to $M(x)/x \to 0$ as $x$ goes to infinity (read Apostol's book if you want to see why).
 
-The first thing we should do is review sieving methods. If you're familiar, skip to [the next section](#computing-in-sublinear-time)
-
-#### Sieving $\mu$
-
 #### Computing $M(x)$ in Sublinear Time
 
 The key idea here is again similar to the one in [my post about prime counting][lucyfenwick], in that we'll use the "square root trick" again. 
@@ -437,7 +442,7 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 
 ### Black Algorithm
 
-### Powerful Number Trick
+### Powerful Numbers Trick
 
 
 
