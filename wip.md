@@ -196,7 +196,7 @@ We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and comp
 > 
 $$D_j(v) = \sum_{n \leq \sqrt{v}} D_{j-1}\left(\frac{v}{n}\right) + \sum_{n \leq \sqrt{v}} d_{j-1}(n) \left \lfloor \frac{v}{n} \right \rfloor - D_{j-1}(\sqrt{v})\left\lfloor\sqrt{v}\right\rfloor$$
 >   
->     2b. Update `small` values by sieving in $O(y)$.
+>    2b. Update `small` values by sieving in $O(y)$.
 
 How much time do we dedicate to updating the big array? They take
 
@@ -456,7 +456,8 @@ In the following, we let
 - $p_k$ be the $k$-th prime number (so $p_1 = 2$, $p_2 = 3$, ...)
 - $\newcommand{lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
 - $F_{\text{prime}}(x) := \sum_{p \leq x} f(p)$ is the sum of $f(p)$ over primes up to $x$
-- $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$ is the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
+- $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$   
+  In other words, the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
 
 Notice that $F_1(x) = \sum_{n \leq x} f(n)$ is the sum we're after.
 
@@ -481,13 +482,15 @@ TODO write about this
 
 This is perhaps a more specialized technique.
 
-Suppose we want to sum the multiplicative function $f(n)$, and we have an easily summable multiplicative function $g(n)$ so that $f(n) = g(n)$ for any squarefree $n$. It's sufficient that $f(p) = g(p)$ for primes.
+Suppose we want to sum the multiplicative function $f(n)$, and we have an easily summable multiplicative function $g(n)$ so that $f(n) = g(n)$ for any squarefree $n$.  
+It's sufficient that $f(p) = g(p)$ for primes.
 
 I like to think of this as an approximation of $f$ to first prime order. The choice of $g$ is probably very subjective, and some ingenuity may be required to find the perfect choice. In general if $f(p)$ is simple, the choice for $g$ will be obvious.
 
 Whenever we have such a situation, the function $f/g = h$ (division being in terms of Dirichlet inverses) will have the nice property that $h(n) = 0$ for all $n$ that are not "powerful".
 
-By "powerful", I mean that if a prime $p$ divides $n$, then $p^2$ also divides $n$. So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them.
+By "powerful", I mean that if a prime $p$ divides $n$, then $p^2$ also divides $n$.  
+So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them.
 
 Why is $h(n) = 0$ for non-powerful integers $n$?
 
@@ -501,7 +504,8 @@ Our example here will be summing $f(n) = d(n^2)$.
 
 Let's see how it looks at primes.. $f(p) = d(p^2) = 3$. What function do we know of, which we can already sum relatively quickly, such that $g(p) = 3$?
 
-One may have the creative insight that $3 = 1+1+1$ and come to the conclusion that setting $g(n) = d_3(n)$ is a good idea. We know from the [generalized divisor function](#summing-generalized-divisor-functions) section that we can sum this in $O(x^{2/3})$ time if we're careful, which is not so bad. As a reminder we'll write $D_3(x)$ for the sum of $d_3(n)$ over $n \leq x$.
+One may have the creative insight that $3 = 1+1+1$ and come to the conclusion that setting $g(n) = d_3(n)$ is a good idea. We know from the [generalized divisor function](#summing-generalized-divisor-functions) section that we can sum this in $O(x^{2/3})$ time if we're careful, which is not so bad.  
+As a reminder we'll write $D_3(x)$ for the sum of $d_3(n)$ over $n \leq x$.
 
 Now let's find out what sort of function $h = f / d_3$ is.
 
@@ -611,7 +615,7 @@ Here's a table.
 
 One pattern that is evident from definitions is that $(f*g)(p) = f(p) + g(p)$. So if we desire some form for $g(p)$ and we can break it up into a sum of ones that we know, we can just use the Dirichlet convolution of those parts.
 
-For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both functions are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
+For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both $N$ and $\sigma_1$ are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
 
 TODO outro
 
