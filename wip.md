@@ -609,6 +609,11 @@ Here's a table.
 |$d_k$|$k$|
 |$\sigma_\alpha$|$p^\alpha+1$|
 
+One pattern that is evident from definitions is that $(f*g)(p) = f(p) + g(p)$. So if we desire some form for $g(p)$ and we can break it up into a sum of ones that we know, we can just use the Dirichlet convolution of those parts.
+
+For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both functions are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
+
+TODO outro
 
 
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
