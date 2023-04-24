@@ -103,7 +103,53 @@ So with this, if we're able to sum $f$ and $g$ in a reasonable amount of time, w
 
 ### Tangent: Linear Sieving
 
-TODO :)
+In the future we're going to use what I think are generally referred to as "sieving techniques" to compute the values of arithmetic functions $f(n)$ over short intervals $n \leq y$.
+
+Let's try doing this for the function $f(n) = d(n)$.
+
+The most naive method for doing it looks like this:
+
+```nim
+var d = newSeq[int](y+1)
+#indexed from 0 to y, but just ignore 0
+for n in 1..y:
+  for k in 1..n:
+    if n mod k == 0: #k is a divisor of n
+      inc d[n] #increment
+  #now d[n] is correct
+```
+
+This runs in $O(y^2)$ time which is awful. The reason why is that it's hard to pick out the divisors of an integer without knowing anything about it. So instead what we can do is iterate over the divisors `k` first, and then over all `n` divisible by `k`. Here's how that looks:
+
+```nim
+var d = newSeq[int](y+1)
+for k in 1..y:
+  #increment d[k*j] for all multiples k*j <= y
+  for j in 1..(y div k):
+    inc d[k*j]
+```
+
+Now this runs in about $O\left(\sum_{k \leq y} \frac{y}{k}\right) = O\left(y \log y\right)$ time, which is just barely above linear. For most purposes this will be perfectly fine.
+
+Let's take a look at how it looks if we do a very basic sieve for $\varphi$.
+
+The idea here is that, if $p$ is a prime not dividing $m$, then $\varphi(m p^e) = \varphi(m) p^{e-1}(p-1)$. So what we're going to do is initialize `phi[n] = n` for all `n`, and then fix the contribution of each prime factor separately.
+
+To recognize when we have a prime, we're going to check whether `phi[n]` has been modified yet. We can just check if `phi[p] == p` - if it is, `p` is a prime, and we fix the contributions of `p`.
+
+```nim
+var phi = newSeq[int](y+1)
+for k in 1..y: phi[k] = k
+#initialized
+for p in 2..y:
+  if phi[p] == p:
+    for k in 1..(y div p):
+      phi[p*k] = (phi[p*k] div p) * (p-1)
+```
+
+Nice and easy! This now takes $O\left(\sum_{p \leq y} \frac{y}{p}\right)$ time, which is $O\left(y \log \log y\right)$, so slightly faster than the basic one for the divisor function. Generally those functions that only need their prime factor contributions fixed can be done in this way.
+
+Along this line of thinking, for basically any multiplicative function, we can do this calculation in a flat $O(y)$ time. This generally offers a good speedup to the summation methods I'll be detailing later. The best explanation I've found on this is in [this CodeForces blog post][linearsieve] by Nisiyama_Suzune. I am going to refrain from explaining how it works in depth because the implementation of this subroutine doesn't intersect the implementation of the later methods much at all. That is, I can use this as a black box which we will just avoid looking at for too long. So let's move on!
 
 ### Summing Generalized Divisor Functions
 
@@ -394,3 +440,4 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 [characters]: https://en.wikipedia.org/wiki/Dirichlet_character
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
 [baihacker]: https://baihacker.github.io/main/
+[linearsieve]: https://codeforces.com/blog/entry/54090
