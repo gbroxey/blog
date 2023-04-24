@@ -484,11 +484,11 @@ $$\begin{align*} F_{\pi(\sqrt[3]{x})}(v) &= 1\\
   &+ \sum_{q \leq p \leq \sqrt{v}} \left(f(p^2) + f(p)\cdot\left(F_{\text{prime}}(v/p) - F_{\text{prime}}(p)\right)\right)
   \end{align*}$$  
 > 
-> and so we can calculate it in $O(\pi(\sqrt{m}))$ time.  
-<!-- > 
+> and so we can calculate it in $O(\pi(\sqrt{m}))$ time.
+
 > **Case** $q \leq v < q^2$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1 + F_{\text{prime}}(v) - F_{\text{prime}}(q-1)$ and so we can calculate it in $O(1)$ time.  
-> 
-> **Case** $1 \leq v < q$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1$. -->
+
+> **Case** $1 \leq v < q$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1$.
 
 TODO write about this
 
