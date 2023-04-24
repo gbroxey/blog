@@ -192,11 +192,10 @@ We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and comp
 >    Set an array `small` of length $y$ to store $D_1(k)$ for $k \leq y$.  
 >    Set an array `big` of length $x/y$ to store $D_1(x / k)$ for $k < x/y$.
 > 2. For $j$ from $2$ to $k$, we'll update our arrays to reflect $D_j$ instead:  
->     2a. Update `big` values first, using  
+>     2a. Update `big` values first, then update `small` values by sieving in $O(y)$.  
+>     The `big` values can be updated by the formula
 > 
 $$D_j(v) = \sum_{n \leq \sqrt{v}} D_{j-1}\left(\frac{v}{n}\right) + \sum_{n \leq \sqrt{v}} d_{j-1}(n) \left \lfloor \frac{v}{n} \right \rfloor - D_{j-1}(\sqrt{v})\left\lfloor\sqrt{v}\right\rfloor$$
->   
->    2b. Update `small` values by sieving in $O(y)$.
 
 How much time do we dedicate to updating the big array? They take
 
