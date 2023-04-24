@@ -477,11 +477,11 @@ Set $q := p_{\pi(\sqrt[3]{x})} + 1$. We'll assume $q > \sqrt[3]{x}$ here.
 
 Now, if we're calculating $F_{\pi(\sqrt[3]{x})}(v)$, we'll do it differently depending on the size of $v$.
 
-- Case $q^2 \leq v \leq x$. We have
+- Case $q^2 \leq v \leq x$. We have  
   $$\begin{align*} F_{\pi(\sqrt[3]{x})}(v) &= 1\\
   &+ F_{\text{prime}}(v) - F_{\text{prime}}(q-1)\\
   &+ \sum_{q \leq p \leq \sqrt{v}} \left(f(p^2) + f(p)\cdot\left(F_{\text{prime}}(v/p) - F_{\text{prime}}(p)\right)\right)
-  \end{align*}$$
+  \end{align*}$$  
   and so we can calculate it in $O(\pi(\sqrt{m}))$ time.
 - Case bla
 
