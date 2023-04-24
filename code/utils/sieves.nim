@@ -39,3 +39,12 @@ proc totient*[T: SomeInteger](n:int): seq[T] =
         break
       else:
         result[i*prime[j]] = result[i]*(prime[j]-1)
+
+proc eratosthenes*(n: int): seq[int] =
+  ##Basic sieve of Eratosthenes.
+  result = @[]
+  var composite = newSeq[bool](n+1)
+  for p in 2..n:
+    if not composite[p]:
+      result.add p
+      for i in 1..(n div p): composite[p*i] = true

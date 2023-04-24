@@ -7,9 +7,10 @@ proc divisorSummatory(x: int64): int64 =
     result += 2*(x div n)
   result -= xsqrt*xsqrt
 
-proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
+proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
   ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
   var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
+  y = max(y, isqrt(x))
   var small = newSeq[int64](y+1)
   var big = newSeq[int64]((x div y) + 1)
   #initialize them to D_1, sum of u(n) = 1
@@ -42,8 +43,12 @@ proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
         small[i*u] = small[i*u] mod m
     for i in 1..y:
       small[i] = (small[i] + small[i-1]) mod m
-  if big[1] < 0: big[1] += m
-  return big[1]
+  #shove them all into an FIArray for easy use
+  var Dk = newFIArray(x)
+  for v in Dk.keysInc:
+    if v <= y: Dk[v] = small[v]
+    else: Dk[v] = big[x div v]
+  return Dk
     
 
 proc mertens(x: int64): FIarray =
@@ -136,3 +141,56 @@ proc totientSummatoryFast2(x: int64, m: int64): FIarray =
     Phi[v] = phiV
   return Phi
 
+proc sumDn2(x: int64, m: int64): int64 =
+  ##Computes d(1^2) + d(2^2) + d(3^2) + ... + d(x^2) in O(x^(2/3)) time.
+  var D3 = genDivisorSummatory(x, 3, m)
+  var xsqrt = D3.isqrt.int #isqrt(x)
+  var mu = mobius(xsqrt+1)
+  for n in 1..xsqrt:
+    result += mu[n]*D3[x div (n*n)]
+    result = result mod m
+  if result < 0: result += m
+  return result
+
+iterator powerfulExt*(x: int64, h: proc (p, e: int64): int64): (int64, int64) =
+  ##Returns (n, h(n)) where n are the O(sqrt x) powerful numbers up to x, 
+  ##and h is any multiplicative function.
+  var nrt = isqrt(x).int
+  var res = @[(1'i64, 1'i64)]
+  for p in eratosthenes(nrt):
+    var resultNext = newSeq[(int64, int64)]()
+    while res.len > 0:
+      var (n, hn) = res.pop
+      if p*p > x div n:
+        yield (n, hn)
+        continue
+      resultNext.add (n, hn)
+      var pp = p*p
+      var e = 2
+      while pp <= x div n:
+        resultNext.add (n*pp, hn*h(p, e))
+        if pp > (x div n) div p: break
+        pp *= p
+        e += 1
+    res = resultNext
+  #yield any we haven't given yet
+  for (n, hn) in res:
+    yield (n, hn)
+
+proc sumPowerfulPart(x: int64, m: int64): int64 =
+  ##Sums the function f(p) = 1 and f(p^e) = p^e for e > 1.
+  #make function h to pass forward
+  proc h(p, e: int64): int64 =
+    if e == 0: return 1
+    if e == 1: return 0
+    if e == 2: return (p*p - 1) mod m
+    return (powMod(p, e, m) - powMod(p, e-1, m) + m) mod m
+  for (n, hn) in powerfulExt(x, h):
+    result += hn * ((x div n) mod m)
+    result = result mod m
+
+
+
+
+import ../utils/eutil_timer
+timer: echo sumPowerfulPart(1e12.int64, 1e9.int64)

@@ -208,10 +208,13 @@ You'll have to poke at the constant coefficient on $y$ in your implementation.
 
 The following is a lazy Nim implementation that doesn't use linear sieving. Because of that, the sieving step takes $O(y \log y)$ time instead of $O(y)$ time, and so we'll pick $y = x^{2/3} / \log(x)^{1/3}$ instead. The final runtime is actually going to be $O\left(k x^{2/3} \log(x)^{1/3}\right)$.
 
+TODO MENTION FIARRAY
+
 ```nim
-proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
+proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
   ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
   var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
+  y = max(y, isqrt(x)) #if y < sqrt(x) there can be issues
   var small = newSeq[int64](y+1)
   var big = newSeq[int64]((x div y) + 1)
   #initialize them to D_1, sum of u(n) = 1
@@ -244,8 +247,12 @@ proc genDivisorSummatory(x: int64, k: int, m: int64): int64 =
         small[i*u] = small[i*u] mod m
     for i in 1..y:
       small[i] = (small[i] + small[i-1]) mod m
-  if big[1] < 0: big[1] += m
-  return big[1]
+  #shove them all into an FIArray for easy use
+  var Dk = newFIArray(x)
+  for v in Dk.keysInc:
+    if v <= y: Dk[v] = small[v]
+    else: Dk[v] = big[x div v]
+  return Dk
 ```
 
 The important thing to learn from this section is that, when we're dealing with summations of multiplicative functions, we should probably store sieved values up to about $x^{2/3}$ and then the sums up to larger $\lfloor x/k \rfloor$. If we have this data for two functions $f$ and $g$, then we can spend $O(x^{2/3})$ time to generate the same data for $f*g$.
@@ -440,11 +447,167 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 
 ### Min-25 Sieve
 
+This method is specialized to summing multiplicative $f(n)$, taking the value $f(p^k) = g(p, k)$ at prime powers, such that $f(p) = g(p, 1)$ is a polynomial of low degree, and so that we can calculate each $g(p, k)$ in $O(1)$ time. This [CodeForces article by box][box-min-25] gives a good exposition of this. There's also [this article][min-25-chinese] which happens to be in Chinese, but probably the best reference is Min-25's original blog post which has unfortunately been deleted. Fortunately it exists on the Internet Archive [here][min-25-original], and this is what we're going to be following. If you know Japanese you can follow their post, but I've done my best to explain it in English here.
+
+Following Min-25's notation let's write $g(p, 1) = g(p)$ as well. This algorithm will produce $F(x) = \sum_{n \leq x} f(n)$ in $O(x^{2/3})$ time and $O(x^{1/2})$ space.
+
+In the following, we let
+- $\pi(x)$ be the number of primes up to $x$
+- $p_k$ be the $k$-th prime number (so $p_1 = 2$, $p_2 = 3$, ...)
+- $\newcommand{lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
+- $F_{\text{prime}}(x) := \sum_{p \leq x} f(p)$ is the sum of $f(p)$ over primes up to $x$
+- $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$ is the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
+
+Notice that $F_1(x) = \sum_{n \leq x} f(n)$ is the sum we're after.
+
+In Min-25's article, they define $V(f, x)$ to be essentially the set of all pairs $(v, f(v))$ over all distinct $v = \lfloor x/n \rfloor$. This is just being very explicit about using the square root trick discussed previously. Using the same language in [my Lucy_Hedgehog post][lucyfenwick], we're going to refer to these values $v$ as the "key values" from now on.
+
+The strategy as described by Min-25 is as follows:
+1. Determine $F_{\text{prime}}(v)$ for all key values $v$ in $O(x^{2/3})$ time.
+2. Determine $F_{\pi(\sqrt[3]{n})+1}(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
+3. Determine $F_{\pi(\sqrt[6]{n})+1}(v)$ for all key values $v$ in a further $O(x^{2/3})$ time.
+4. Finally determine $F_1(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
+
+The total time complexity would be $O(x^{2/3})$.
+
+TODO write about this
+
+
 ### Black Algorithm
+
+TODO write about this
 
 ### Powerful Numbers Trick
 
+This is perhaps a more specialized technique.
 
+Suppose we want to sum the multiplicative function $f(n)$, and we have an easily summable multiplicative function $g(n)$ so that $f(n) = g(n)$ for any squarefree $n$. It's sufficient that $f(p) = g(p)$ for primes.
+
+I like to think of this as an approximation of $f$ to first prime order. The choice of $g$ is probably very subjective, and some ingenuity may be required to find the perfect choice. In general if $f(p)$ is simple, the choice for $g$ will be obvious.
+
+Whenever we have such a situation, the function $f/g = h$ (division being in terms of Dirichlet inverses) will have the nice property that $h(n) = 0$ for all $n$ that are not "powerful".
+
+By "powerful", I mean that if a prime $p$ divides $n$, then $p^2$ also divides $n$. So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them.
+
+Why is $h(n) = 0$ for non-powerful integers $n$?
+
+Suppose $p$ divides $n$ and $p^2$ does not. Then if $n = pk$, we have $h(n) = h(pk) = h(p)h(k)$. But since $h*g=f$, we have $h(p)g(1) + h(1)g(p) = f(p)$, so that $h(p) + g(p) = f(p)$. Then since $f(p) = g(p)$ we have to have $h(p) = 0$, so that $h(n) = 0$ as well.
+
+So think of $h$ as a correction to $f$. The fact that $h(n)$ is usually zero reflects that $g$ is a pretty decent approximation to $f$, only really needing to be nudged at very highly composite $n$.
+
+Then since $f = g*h$, we have $F(x) = \sum_{n \leq x} h(n)G(x/n)$ over powerful $n \leq x$. Since $h$ is also multiplicative, you can generate the powerful numbers along with their corresponding values of $h$, making this a pretty fast summation algorithm.
+
+Our example here will be summing $f(n) = d(n^2)$.
+
+Let's see how it looks at primes.. $f(p) = d(p^2) = 3$. What function do we know of, which we can already sum relatively quickly, such that $g(p) = 3$?
+
+One may have the creative insight that $3 = 1+1+1$ and come to the conclusion that setting $g(n) = d_3(n)$ is a good idea. We know from the [generalized divisor function](#summing-generalized-divisor-functions) section that we can sum this in $O(x^{2/3})$ time if we're careful, which is not so bad. As a reminder we'll write $D_3(x)$ for the sum of $d_3(n)$ over $n \leq x$.
+
+Now let's find out what sort of function $h = f / d_3$ is.
+
+For this, I like to use Bell series. Read about them in Apostol's book or skip this paragraph straight to the closed form for $h(p^e)$.
+
+We compute
+
+$$\begin{align*}
+h_p(z) &= \frac{\sum_{e \geq 0} (2e+1)x^e}{\left(\sum_{e \geq 0} x^e\right)^3}\\
+&= \frac{(1-x)^3(1+x)}{(1-x)^2} = (1-x)(1+x) = 1-x^2
+\end{align*}$$
+
+So we know $h(p) = 0$, $h(p^2) = -1$, and $h(p^e) = 0$ for $e > 2$. We're actually quite lucky in this case, as we can now write
+
+$$\sum_{n \leq x} d(n^2) = \sum_{n \leq \sqrt{x}} \mu(n) D_3\left(\frac{x}{n^2}\right)$$
+
+We can simply compute $D_3(v)$ for all key values $v$, sieve $\mu$ up to $\sqrt{x}$, and compute the sum. The total runtime is $O(x^{2/3})$, and it looks like this:
+
+```nim
+proc sumDn2(x: int64, m: int64): int64 =
+  ##Computes d(1^2) + d(2^2) + d(3^2) + ... + d(x^2) in O(x^(2/3)) time.
+  var D3 = genDivisorSummatory(x, 3, m)
+  var xsqrt = D3.isqrt.int #isqrt(x)
+  var mu = mobius(xsqrt+1)
+  for n in 1..xsqrt:
+    result += mu[n]*D3[x div (n*n)]
+    result = result mod m
+  if result < 0: result += m
+  return result
+```
+
+This takes about 17s to compute $\sum_{n \leq 10^{12}} d(n^2)$ on my laptop.
+
+We got lucky here in that $h = f/g$ was zero even more often than we'd expect it to be.  
+Let's try a case which does not work out quite that way.
+
+Suppose we define $f(n)$ to be the largest powerful divisor of $n$.
+In other words, $f$ is the multiplicative function with $f(p) = 1$ and $f(p^e) = p^e$ for $e > 1$.
+
+Clearly here we'll choose $g(n) = u(n) = 1$ for all $n$, and then $h = f/g$ has $h(p) = 0$, $h(p^2) = p^2 - 1$, and $h(p^e) = p^e - p^{e-1}$ for $e > 2$. Now, when it comes to generating all the powerful $n \leq x$ along with their values $h(p^e)$, we'll store pairs $(n, h(n))$ and factor in each prime iteratively. We can loop over the primes $p \leq \sqrt{x}$ using a simple Eratosthenes sieve, and for each $(n, h(n))$ we have stored, calculate $(p^en, h(n)h(p^e))$. If $pn > x$ we'll stop storing $(n, h(n))$ because we won't be adding any more prime factors to it.
+
+It helps to have a generic iterator to do this. I pass in $h(n)$ as represented by a two variable function `h(p, e)` in my implementation. Here's how this could look:
+
+```nim
+iterator powerfulExt*(x: int64, h: proc (p, e: int64): int64): (int64, int64) =
+  ##Returns (n, h(n)) where n are the O(sqrt x) powerful numbers up to x, 
+  ##and h is any multiplicative function.
+  var nrt = isqrt(x).int
+  var res = @[(1'i64, 1'i64)]
+  for p in eratosthenes(nrt):
+    var resultNext = newSeq[(int64, int64)]()
+    while res.len > 0:
+      var (n, hn) = res.pop
+      if p*p > x div n:
+        yield (n, hn)
+        continue
+      resultNext.add (n, hn)
+      var pp = p*p
+      var e = 2
+      while pp <= x div n:
+        resultNext.add (n*pp, hn*h(p, e))
+        if pp > (x div n) div p: break
+        pp *= p
+        e += 1
+    res = resultNext
+  #yield any we haven't given yet
+  for (n, hn) in res:
+    yield (n, hn)
+```
+
+So now when we want to use our powerful numbers trick we can call on this.
+
+In our case, the remaining work is easy:
+
+```nim
+proc sumPowerfulPart(x: int64, m: int64): int64 =
+  ##Sums the function f(p) = 1 and f(p^e) = p^e for e > 1.
+  #make function h to pass forward
+  proc h(p, e: int64): int64 =
+    if e == 0: return 1
+    if e == 1: return 0
+    if e == 2: return (p*p - 1) mod m
+    return (powMod(p, e, m) - powMod(p, e-1, m) + m) mod m
+  for (n, hn) in powerfulExt(x, h):
+    result += hn * ((x div n) mod m)
+    result = result mod m
+```
+
+Here, `x div n` is the summatory function of $g(n) = 1$ up to $x/n$. This can sum up to $10^{15}$ in about 5s on my laptop, and uses a very modest amount of memory.
+
+When $G(x)$ can be computed in exactly $O(\sqrt{x})$ time, the runtime for $F(x)$ will be about $O(\sqrt{x} \log(x))$. If $G(x)$ can be computed faster, then iterating on the powerful numbers will dominate the runtime and it'll be about $O(\sqrt{x})$. When $G(x)$ is slower, then the runtime of $F(x)$ will basically match that of $G(x)$.
+
+#### Note on Picking $g$
+
+It helps, here, to be well versed on the values of many multiplicative functions at primes.  
+Here's a table.
+
+|Function $g$|Value $g(p)$|
+|:---:|:---:|
+|$N$|$p$|
+|$u$|$1$|
+|$\mu$|$-1$|
+|$\varphi = N*\mu$|$p-1$|
+|$d=u*u$|$2$|
+|$d_k$|$k$|
+|$\sigma_\alpha$|$p^\alpha+1$|
 
 
 
@@ -455,3 +618,6 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
 [baihacker]: https://baihacker.github.io/main/
 [linearsieve]: https://codeforces.com/blog/entry/54090
+[box-min-25]: https://codeforces.com/blog/entry/92703
+[min-25-chinese]: https://oi-wiki.org/math/number-theory/min-25/
+[min-25-original]: https://web.archive.org/web/20211009144526/https://min-25.hatenablog.com/entry/2018/11/11/172216
