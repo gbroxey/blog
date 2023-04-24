@@ -325,10 +325,9 @@ This takes 7 seconds to compute $M(10^{12}) = 62366$ on my laptop, which is pret
 
 The way we make this faster is yet again very similar to how we made the Lucy_Hedgehog prime counting algorithm faster in the [last post][lucyfenwick] - read it if you haven't yet!
 
-TODO TODO REMOVE
-We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and compute $M(v)$ for the key values $v \leq y$ by sieving, which will take $O(y)$ time. The rest of them will be done in the way described previously.
+We're going to do the same thing as for our generalized divisor function sums, and pick some $\sqrt{x} \leq y \leq x$ to be specified later. We will compute $M(v)$ for the key values $v \leq y$ by sieving, which will take $O(y)$ time. The rest of them will be done in the way described previously.
 
-How about the remaining key values $v = \lfloor x/k \rfloor > y$? They take
+How much time do the remaining key values $v = \lfloor x/k \rfloor > y$ take?
 
 $$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{x/k}dk \right) = O\left(x/\sqrt{y}\right)$$
 
@@ -448,7 +447,7 @@ So, this previous method will work nicely whenever we want to sum a function $f$
 
 This method is specialized to summing multiplicative $f(n)$, taking the value $f(p^k) = g(p, k)$ at prime powers, such that $f(p) = g(p, 1)$ is a polynomial of low degree, and so that we can calculate each $g(p, k)$ in $O(1)$ time. This [CodeForces article by box][box-min-25] gives a good exposition of this. There's also [this article][min-25-chinese] which happens to be in Chinese, but probably the best reference is Min-25's original blog post which has unfortunately been deleted. Fortunately it exists on the Internet Archive [here][min-25-original], and this is what we're going to be following. If you know Japanese you can follow their post, but I've done my best to explain it in English here.
 
-Following Min-25's notation let's write $g(p, 1) = g(p)$ as well. This algorithm will produce $F(x) = \sum_{n \leq x} f(n)$ in $O(x^{2/3})$ time and $O(x^{1/2})$ space.
+Following Min-25's notation let's write $g(p, 1) = g(p)$ as well. They claim the algorithm will produce $F(x) = \sum_{n \leq x} f(n)$ in $O(x^{2/3})$ time and $O(x^{1/2})$ space. I think it's easier to do it in $O(x^{2/3} \log(x)^{1/3})$ time and about $O(x^{2/3} / \log(x)^{2/3})$ space. This is basically because the first step of the algorithm is to use a Fenwick tree based Lucy_Hedgehog algorithm as described in [my last post][lucyfenwick] which, if you haven't read it already, is still extremely relevant.
 
 In the following, we let
 - $\pi(x)$ be the number of primes up to $x$
@@ -464,11 +463,27 @@ In Min-25's article, they define $V(f, x)$ to be essentially the set of all pair
 
 The strategy as described by Min-25 is as follows:
 1. Determine $F_{\text{prime}}(v)$ for all key values $v$ in $O(x^{2/3})$ time.
-2. Determine $F_{\pi(\sqrt[3]{n})+1}(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
-3. Determine $F_{\pi(\sqrt[6]{n})+1}(v)$ for all key values $v$ in a further $O(x^{2/3})$ time.
+2. Determine $F_{\pi(\sqrt[3]{x})+1}(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
+3. Determine $F_{\pi(\sqrt[6]{x})+1}(v)$ for all key values $v$ in a further $O(x^{2/3})$ time.
 4. Finally determine $F_1(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
 
 The total time complexity would be $O(x^{2/3})$.
+
+The first step is achieved using the extended Lucy_Hedgehog algorithm as described in [my post I've referenced maybe 100 times so far][lucyfenwick]. If you haven't read that, and you want to implement the Min-25 sieve, you're going to have to learn how to do the fast Lucy_Hedgehog algorithm first, because the Min-25 sieve is basically an extension of it. Because of this, Min-25 just chooses not to explain this section of the algorithm. So we'll continue with
+
+#### Step 2
+
+Set $q := p_{\pi(\sqrt[3]{x})} + 1$. We'll assume $q > \sqrt[3]{x}$ here.
+
+Now, if we're calculating $F_{\pi(\sqrt[3]{x})}(v)$, we'll do it differently depending on the size of $v$.
+
+- Case $q^2 \leq v \leq x$. We have
+  $$\begin{align*} F_{\pi(\sqrt[3]{x})}(v) &= 1\\
+  &+ F_{\text{prime}}(v) - F_{\text{prime}}(q-1)\\
+  &+ \sum_{q \leq p \leq \sqrt{v}} \left(f(p^2) + f(p)\cdot\left(F_{\text{prime}}(v/p) - F_{\text{prime}}(p)\right)\right)
+  \end{align*}$$
+  and so we can calculate it in $O(\pi(\sqrt{m}))$ time.
+- Case bla
 
 TODO write about this
 
