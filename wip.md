@@ -485,10 +485,10 @@ $$\begin{align*} F_{\pi(\sqrt[3]{x})}(v) &= 1\\
   \end{align*}$$  
 > 
 > and so we can calculate it in $O(\pi(\sqrt{m}))$ time.  
-> 
+<!-- > 
 > **Case** $q \leq v < q^2$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1 + F_{\text{prime}}(v) - F_{\text{prime}}(q-1)$ and so we can calculate it in $O(1)$ time.  
 > 
-> **Case** $1 \leq v < q$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1$.
+> **Case** $1 \leq v < q$. We have $F_{\pi(\sqrt[3]{x})}(v) = 1$. -->
 
 TODO write about this
 
