@@ -56,9 +56,9 @@ A computational problem which pops up a lot is computing the partial sum $F(x) =
 - [Tangent: Linear Sieving](#tangent-linear-sieving)
 - [Summing Generalized Divisor Functions](#summing-generalized-divisor-functions)
 - [Summing $\mu$ and $\varphi$](#summing-and)
+- [Powerful Numbers Trick](#powerful-numbers-trick)
 - [Min-25 Sieve](#min-25-sieve)
 - [Black Algorithm](#black-algorithm)
-- [Powerful Numbers Trick](#powerful-numbers-trick)
 
 ---
 
