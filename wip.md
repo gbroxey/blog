@@ -479,8 +479,8 @@ For this, I like to use Bell series. Read about them in Apostol's book or skip t
 We compute
 
 $$\begin{align*}
-h_p(z) &= \frac{\sum_{e \geq 0} (2e+1)x^e}{\left(\sum_{e \geq 0} x^e\right)^3}\\
-&= \frac{(1-x)^3(1+x)}{(1-x)^2} = (1-x)(1+x) = 1-x^2
+h_p(z) &= \frac{\sum_{e \geq 0} (2e+1)z^e}{\left(\sum_{e \geq 0} z^e\right)^3}\\
+&= \frac{(1-z)^3(1+z)}{(1-z)^2} = (1-z)(1+z) = 1-z^2
 \end{align*}$$
 
 So we know $h(p) = 0$, $h(p^2) = -1$, and $h(p^e) = 0$ for $e > 2$. We're actually quite lucky in this case, as we can now write
