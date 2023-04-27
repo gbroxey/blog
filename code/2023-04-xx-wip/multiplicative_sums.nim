@@ -189,8 +189,33 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
     result += hn * ((x div n) mod m)
     result = result mod m
 
-
-
+iterator generateClasses*(x: int64): (int64, int64) =
+  ##Returns (t, q) where tq <= x and q is the greatest prime factor of t.
+  #looks very similar to powerfulExt!
+  var nrt = isqrt(x).int
+  var res = @[(1'i64, 1'i64)]
+  for p in eratosthenes(nrt):
+    var resultNext = newSeq[(int64, int64)]()
+    while res.len > 0:
+      var (t, q) = res.pop
+      #if we were to add further prime factors (say p),
+      #we would have (tp)(p) <= x so p^2 <= x div t
+      if q*q > x div t:
+        yield (t, q)
+        continue
+      resultNext.add (t, q)
+      var pp = p
+      while p*pp <= x div t:
+        resultNext.add (t*pp, p.int64)
+        pp *= p
+    res = resultNext
+  #yield any we haven't given yet
+  for (n, hn) in res:
+    yield (n, hn)
 
 import ../utils/eutil_timer
-timer: echo sumPowerfulPart(1e12.int64, 1e9.int64)
+timer:
+  var cnt = 0
+  for (t, q) in generateClasses(1e10.int64):
+    inc cnt
+  echo cnt

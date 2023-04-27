@@ -620,7 +620,9 @@ This is related to Min-25's algorithm in that it uses prime factor structure.
 
 Break all the integers up to $x$ into classes by factorizing them as $n = tp$, where $p$ is the greatest prime factor of $n$. It turns out there are not so many possible values of $t$ for $n \leq x$, so the idea is to iterate over those and add in the contribution of just the last prime factor. Again this relies in being able to compute sums of $f(p)$ over primes! Many of our algorithms have relied on this being possible.
 
-TODO demonstration
+Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
+
+
 
 
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
