@@ -189,13 +189,15 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
     result += hn * ((x div n) mod m)
     result = result mod m
 
+import heapqueue
 iterator generateClasses*(x: int64): (int64, int64) =
   ##Returns (t, q) where tq <= x and q is the greatest prime factor of t.
   #looks very similar to powerfulExt!
   var nrt = isqrt(x).int
-  var res = @[(1'i64, 1'i64)]
+  var res = initHeapQueue[(int64, int64)]()
+  res.push (1'i64, 1'i64)
   for p in eratosthenes(nrt):
-    var resultNext = newSeq[(int64, int64)]()
+    var resultNext = initHeapQueue[(int64, int64)]()
     while res.len > 0:
       var (t, q) = res.pop
       #if we were to add further prime factors (say p),
@@ -203,19 +205,37 @@ iterator generateClasses*(x: int64): (int64, int64) =
       if q*q > x div t:
         yield (t, q)
         continue
-      resultNext.add (t, q)
+      resultNext.push (t, q)
       var pp = p
       while p*pp <= x div t:
-        resultNext.add (t*pp, p.int64)
+        resultNext.push (t*pp, p.int64)
         pp *= p
-    res = resultNext
+    while resultNext.len > 0:
+      res.push resultNext.pop
   #yield any we haven't given yet
-  for (n, hn) in res:
-    yield (n, hn)
+  while res.len > 0:
+    yield res.pop
 
+proc numClasses(x: int64): int64 =
+  #[
+    let Psi(x, p) be the number of p-smooth numbers up to x
+    then this is 1 + sum Psi(x/p, p) over p<=sqrt x
+  ]#
+  var dat = newFIArray(x)
+  for v in dat.keysInc:
+    dat[v] = 1 #1-smooth numbers
+  for p in eratosthenes(isqrt(x).int + 1):
+    for v in dat.keysInc:
+      if v < p: continue
+      if v > (x div (p*p)): break
+      dat[v] = dat[v] + dat[v div p]
+    result += dat[x div (p*p)]
+  inc result #for t = 1
 import ../utils/eutil_timer
-timer:
-  var cnt = 0
-  for (t, q) in generateClasses(1e10.int64):
-    inc cnt
-  echo cnt
+timer: echo numClasses(1e12.int64)
+
+# timer:
+#   var cnt = 0
+#   for (t, q) in generateClasses(1e6.int64):
+#     inc cnt
+#   echo cnt
