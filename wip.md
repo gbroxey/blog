@@ -57,8 +57,8 @@ A computational problem which pops up a lot is computing the partial sum $F(x) =
 - [Summing Generalized Divisor Functions](#summing-generalized-divisor-functions)
 - [Summing $\mu$ and $\varphi$](#summing-and)
 - [Powerful Numbers Trick](#powerful-numbers-trick)
-- [Min-25 Sieve](#min-25-sieve)
 - [Black Algorithm](#black-algorithm)
+- [Min-25 Sieve](#min-25-sieve)
 
 ---
 
@@ -582,6 +582,14 @@ One pattern that is evident from definitions is that $(f*g)(p) = f(p) + g(p)$. S
 
 For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both $N$ and $\sigma_1$ are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
 
+### Black Algorithm
+
+This is related to Min-25's algorithm in that it uses prime factor structure.
+
+Break all the integers up to $x$ into classes by factorizing them as $n = tp$, where $p$ is the greatest prime factor of $n$. It turns out there are not so many possible values of $t$ for $n \leq x$, so the idea is to iterate over those and add in the contribution of just the last prime factor. Again this relies in being able to compute sums of $f(p)$ over primes! Many of our algorithms have relied on this being possible.
+
+Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
+
 ### Min-25 Sieve
 
 This method is specialized to summing multiplicative $f(n)$, taking the value $f(p^k) = g(p, k)$ at prime powers, such that $f(p) = g(p, 1)$ is a polynomial of low degree, and so that we can calculate each $g(p, k)$ in $O(1)$ time. This [CodeForces article by box][box-min-25] gives a good exposition of this. There's also [this article][min-25-chinese] which happens to be in Chinese, but probably the best reference is Min-25's original blog post which has unfortunately been deleted. Fortunately it exists on the Internet Archive [here][min-25-original], and this is what you should follow if you want to try implementing it. I'll just be giving a short overview here.
@@ -601,7 +609,7 @@ Notice that $F_1(x) = \sum_{n \leq x} f(n)$ is the sum we're after.
 In Min-25's article, they define $V(f, x)$ to be essentially the set of all pairs $(v, f(v))$ over all distinct $v = \lfloor x/n \rfloor$. This is just being very explicit about using the square root trick discussed previously. Using the same language in [my Lucy_Hedgehog post][lucyfenwick], we're going to refer to these values $v$ as the "key values" from now on.
 
 The strategy as described by Min-25 is as follows:
-1. Determine $F_{\text{prime}}(v)$ for all key values $v$ in $O(x^{2/3})$ time.
+1. Determine $F_{\text{prime}}(v)$ for all key values $v$ in $O(x^{2/3})$ (?) time.
 2. Determine $F_{\pi(\sqrt[3]{x})+1}(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
 3. Determine $F_{\pi(\sqrt[6]{x})+1}(v)$ for all key values $v$ in a further $O(x^{2/3})$ time.
 4. Finally determine $F_1(v)$ for all key values $v$ in a further $O(x^{2/3}/\log(x))$ time.
@@ -614,13 +622,6 @@ The rest of the algorithm proceeds by factoring all of the missing prime factors
 
 For step 3, Min-25 recommends the use of a Fenwick tree but I don't think they say exactly how to use it. Referencing the [CodeForces article][box-min-25] and my explanation on how to use Fenwick trees in this context I think it should be not impossible to work out how to apply them here. We can get away with avoiding the use of a Fenwick tree though if we only want $O(x^{3/4})$ ish runtime. Check out that CodeForces article for how to do this, they set up a nice recurrence there that works fine.
 
-### Black Algorithm
-
-This is related to Min-25's algorithm in that it uses prime factor structure.
-
-Break all the integers up to $x$ into classes by factorizing them as $n = tp$, where $p$ is the greatest prime factor of $n$. It turns out there are not so many possible values of $t$ for $n \leq x$, so the idea is to iterate over those and add in the contribution of just the last prime factor. Again this relies in being able to compute sums of $f(p)$ over primes! Many of our algorithms have relied on this being possible.
-
-Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
 
 
 

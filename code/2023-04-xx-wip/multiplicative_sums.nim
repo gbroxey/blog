@@ -246,7 +246,9 @@ proc numClasses2(x: int64): int64 =
       for v in dat.keysInc:
         if v < p: continue
         if v > (x div (p*p)): break
-        dat[v] = dat[v] + dat[v div p]
+        dat[v] = dat[v] + 2*dat[v div p]
+    #seeds for this round are t = u*p for u being p-smooth and such that tp <= x
+    #we will include u*p*q for all primes q >= p
     result += dat[x div (p*p)]
   
   inc result #for t = 1
@@ -265,3 +267,8 @@ timer: echo numClasses2(n)
 #   for (t, q) in generateClasses(1e6.int64):
 #     inc cnt
 #   echo cnt
+
+#[
+  suppose we have F_P(x) = sum f(p) over p<=x for key values 
+  F_{
+]#
