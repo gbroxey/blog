@@ -231,11 +231,78 @@ proc numClasses(x: int64): int64 =
       dat[v] = dat[v] + dat[v div p]
     result += dat[x div (p*p)]
   inc result #for t = 1
-import ../utils/eutil_timer
-timer: echo numClasses(1e12.int64)
 
+
+# proc numClassesFast(x: int64): int64 =
+#   #[
+#     let Psi(x, p) be the number of p-smooth numbers up to x
+#     then this is 1 + sum Psi(x/p, p) over p<=sqrt x
+#   ]#
+#   var dat = newFIArray(x)
+#   for v in dat.keysInc:
+#     dat[v] = 1 #1-smooth numbers
+#   var xsqrt = isqrt(x).int
+#   for p in eratosthenes(xsqrt + 1):
+#     for v in dat.keysDec:
+#       if v < p: break
+#       var u = v div p
+#       while u > 0:
+#         dat[v] = dat[v] + dat[u]
+#         u = u div p
+#     result += dat[x div (p*p)]
+#   inc result #for t = 1
+
+# import ../utils/fenwick
+
+# proc numClassesFaster(x: int64): int64 =
+#   var S = newFIArray(x)
+#   #compute y
+#   var xf = x.float64
+#   var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+#   y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+#   y = max(S.isqrt.int+1, y) #necessary lower bound
+#   if x <= 10000:
+#     y = x.int #if x is too small, easier to sieve the whole thing
+
+#   var sieveRaw = newSeq[bool](y+1)
+#   var sieve = newFenwick[int](y+1) #initialized to 0
+#   sieve[1] = 1
+  
+#   for v in S.keysInc:
+#     S[v] = 1
+
+#   proc S0(v: int64): int64 =
+#     #returns sieve.sum(v) if v <= y, otherwise S[v].
+#     if v<=y: return sieve.sum(v.int)
+#     return S[v]
+#   result = 1
+#   for p in 2..S.isqrt:
+#     if not sieveRaw[p]:
+#       #right now: sieveRaw contains true if it has been removed before sieving out p
+#       var lim = min(x div y, x div (p*p))
+#       for i in 1..lim:
+#         S.arr[^i.int] += S0(x div (i*p))
+#         #here, S.arr[^i] = S[x div i] is guaranteed due to the size of i.
+#       for j in 1..(y div p):
+#         if sieveRaw[j]:
+#           sieveRaw[j*p] = true
+#           sieve.addTo(j*p, 1)
+#       result += S0(x div (p*p))
+
+# import ../utils/eutil_timer
+
+# const n = 1e8.int64
 # timer:
-#   var cnt = 0
-#   for (t, q) in generateClasses(1e6.int64):
-#     inc cnt
-#   echo cnt
+#   var c = 0
+#   for (v, q) in generateClasses(n):
+#     inc c
+#   echo c
+# timer: echo numClasses(n)
+# timer: echo numClassesFast(n)
+# timer: echo numClassesFaster(n)
+
+# # timer:
+# #   var cnt = 0
+# #   for (t, q) in generateClasses(1e6.int64):
+# #     inc cnt
+# #   echo cnt
