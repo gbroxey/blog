@@ -194,10 +194,10 @@ iterator generateClasses*(x: int64): (int64, int64) =
   ##Returns (t, q) where tq <= x and q is the greatest prime factor of t.
   #looks very similar to powerfulExt!
   var nrt = isqrt(x).int
-  var res = initHeapQueue[(int64, int64)]()
-  res.push (1'i64, 1'i64)
+  var res = newSeq[(int64, int64)]()
+  res.add (1'i64, 1'i64)
   for p in eratosthenes(nrt):
-    var resultNext = initHeapQueue[(int64, int64)]()
+    var resultNext = newSeq[(int64, int64)]()
     while res.len > 0:
       var (t, q) = res.pop
       #if we were to add further prime factors (say p),
@@ -205,22 +205,17 @@ iterator generateClasses*(x: int64): (int64, int64) =
       if q*q > x div t:
         yield (t, q)
         continue
-      resultNext.push (t, q)
+      resultNext.add (t, q)
       var pp = p
       while p*pp <= x div t:
-        resultNext.push (t*pp, p.int64)
+        resultNext.add (t*pp, p.int64)
         pp *= p
     while resultNext.len > 0:
-      res.push resultNext.pop
+      res.add resultNext.pop
   #yield any we haven't given yet
-  while res.len > 0:
-    yield res.pop
+  for (t, p) in res: yield (t, p)
 
 proc numClasses(x: int64): int64 =
-  #[
-    let Psi(x, p) be the number of p-smooth numbers up to x
-    then this is 1 + sum Psi(x/p, p) over p<=sqrt x
-  ]#
   var dat = newFIArray(x)
   for v in dat.keysInc:
     dat[v] = 1 #1-smooth numbers
@@ -231,27 +226,7 @@ proc numClasses(x: int64): int64 =
       dat[v] = dat[v] + dat[v div p]
     result += dat[x div (p*p)]
   inc result #for t = 1
-
-
-proc numClasses2(x: int64): int64 =
-  #[
-    let Psi(x, p) be the number of p-smooth numbers up to x
-    then this is 1 + sum Psi(x/p, p) over p<=sqrt x
-  ]#
-  var dat = newFIArray(x)
-  for v in dat.keysInc:
-    dat[v] = 1 #1-smooth numbers
-  for p in eratosthenes(isqrt(x).int + 1):
-    if p <= (x div (p*p)):
-      for v in dat.keysInc:
-        if v < p: continue
-        if v > (x div (p*p)): break
-        dat[v] = dat[v] + 2*dat[v div p]
-    #seeds for this round are t = u*p for u being p-smooth and such that tp <= x
-    #we will include u*p*q for all primes q >= p
-    result += dat[x div (p*p)]
   
-  inc result #for t = 1
 import ../utils/eutil_timer
 
 const n = 1e14.int64
@@ -260,7 +235,7 @@ const n = 1e14.int64
 #   for (v, q) in generateClasses(n):
 #     inc c
 #   echo c
-timer: echo numClasses2(n)
+timer: echo numClasses(n)
 
 # timer:
 #   var cnt = 0
