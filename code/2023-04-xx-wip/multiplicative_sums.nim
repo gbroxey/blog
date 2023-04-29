@@ -229,13 +229,13 @@ proc numClasses(x: int64): int64 =
   
 import ../utils/eutil_timer
 
-const n = 1e14.int64
+const n = 1e12.int64
 # timer:
 #   var c = 0
 #   for (v, q) in generateClasses(n):
 #     inc c
 #   echo c
-timer: echo numClasses(n)
+timer: echo mertensFast(n)[n]
 
 # timer:
 #   var cnt = 0

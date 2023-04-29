@@ -27,7 +27,7 @@ This convolution has some nice properties:
 - $\mu$ and $u$ are inverses: $u*\mu = I$
 - If $f$ and $g$ are multiplicative, then so is $f*g$
 
-For more context about this convolution and its properties read the first few chapters of Apostol's book Intro to Analytic Number Theory.
+For more context about this convolution and its properties read the first few chapters of Tom Apostol's book _Introduction to Analytic Number Theory_.
 
 We'll treat these functions as coefficients of a Dirichlet series:
 
@@ -50,7 +50,7 @@ L_d(s) &= \zeta(s)^2
 
 Very frequently things will be expressed in terms of the [Riemann zeta function][zeta] as you can see. Other times, especially when there is some sort of dependence on remainders mod a small value, you'll see the series for [Dirichlet characters][characters] pop up as well.
 
-A computational problem which pops up a lot is computing the partial sum $F(x) = \sum_{n \leq x} f(n)$ for a given multiplicative function $f$. In general this is difficult, but there are techniques we can use depending on the function given to us.
+A common computational problem is computing the partial sum $F(x) = \sum_{n \leq x} f(n)$ for a given multiplicative function $f$ and large $x$. In general this is difficult, but there are techniques we can use depending on the function given to us.
 
 ### Contents
 - [Hyperbola Method](#dirichlet-hyperbola-method)
@@ -64,16 +64,56 @@ A computational problem which pops up a lot is computing the partial sum $F(x) =
 
 ## Techniques
 
-I'm going to avoid spending time on explaining how to compute summations of functions like $u$ or $N$, since those are doable in constant time. If you don't know how to do those you should look that up elsewhere first before moving forward.
+I'm going to avoid spending time on explaining how to compute summations of functions like $u$ or $N$, since those are doable in constant time. If you don't know how to do those you should look [that up elsewhere][triangular-numbers] first before moving forward.
 
-The easiest function I've mentioned so far, other than those, is the divisor count $d(n)$.
+The simplest non-trivial function to start with, then, is $d(n)$.
+
+We'll write $D(x) = \sum_{n \leq x} d(n)$.
+
+### Naive Method
+
+Perhaps the first instinct of someone unfamiliar with this sort of problem would be to simply iterate over all of the integers $n \leq x$, compute $d(n)$, and add the result to a sum.
+
+The first iteration could look like this:
+
+```nim
+proc D(x: int64): int64 =
+  var sum = 0'i64
+  for n in 1..x:
+    for d in 1..n:
+      if n mod d == 0: #d is a divisor of n
+        sum += 1
+  return sum
+```
+
+This works, but one can quickly see that the runtime is $O(\sum_{n \leq x} n) = O(x^2)$, and so for $x$ much larger than $10^4$ we can't hope for this to be of much use. The clear bottleneck here is finding the divisors of each $n$, since right now we're just blindly searching for them which takes a lot of time.
+
+The idea here is to, instead of iterating over $n$ first, is to iterate over the potential divisors $d$.
+
+For such a number $d$, which $n$ are divisible by it? Clearly $d$, $2d$, $3d$, so on. Instead, even, of iterating over these $n$, we can merely count them - each one will add $1$ to the sum we're computing.
+
+If we write $n = kd$ for some $k \geq 1$, we have $k \leq x/d$, so the number of $n$ is $\lfloor x/d \rfloor$.
+
+So the refined version then is
+
+```nim
+proc D(x: int64): int64 =
+  var sum = 0'i64
+  for d in 1..x:
+    sum += (x div d)
+  return sum
+```
+
+Now it's been reduced to $O(x)$ runtime which is reasonable up to $10^9$ or so.
+
+We can shave down the runtime further from here by noticing that `x div d` is constant for large ranges of `d` - this is the "square root trick" mentioned in [my post on Lucy's algorithm][lucyfenwick] which will come up many times. Instead of doing this immediately, we'll treat it in a more general setting.
 
 ### Dirichlet Hyperbola Method
 
-Our goal is to compute $D(x) = \sum_{n \leq x} d(n)$, hopefully in time faster than $O(x)$.  
-This is essentially explained in Apostol's book, and enables us to figure out $D(x)$ in $O(\sqrt{x})$ time.
+This is completely explained in Apostol's book, and enables us to figure out $D(x)$ in $O(\sqrt{x})$ time.
 
-This technique supposes that we have functions $f$ and $g$ so that we want to sum $f\ast g$. In this first case we have $f=g=u$ so that $f\ast g = u\ast u = d$. Now set $\alpha\ast\beta = x$, and write
+This technique supposes that we have functions $f$ and $g$ so that we want to sum $f\ast g$. In this first case we have $f=g=u$ so that $f\ast g = u\ast u = d$.  
+Now choose two positive numbers $\alpha$ and $\beta$ so that $\alpha \cdot \beta = x$, and write
 
 $$\begin{align*}
 \sum_{n \leq x} (f*g)(n) &= \sum_{n \leq x} \sum_{ab = n} f(a)g(b)\\
@@ -84,7 +124,28 @@ $$\begin{align*}
 
 This manipulation can be explained by noticing that we are summing $f(a)g(b)$ over all points $(a, b)$ under the hyperbola $ab = x$. We sum over $a \leq \alpha$ first, then over $b \leq \beta$, and then we have to subtract the sum over any points we've double counted. This is illustrated in the following picture:
 
-_**No picture yet.**_
+<!-- Show[RegionPlot[
+  1 <= x && 1 <= y && x y <= 10, {x, 1/2, 10 + 1/2}, {y, 1/2, 
+   10 + 1/2}, FrameTicks -> {{2 Range[5], None}, {2 Range[5], None}}, 
+  PlotStyle -> Opacity[.5, LightBlue], BoundaryStyle -> Dashed, 
+  GridLines -> {Range[10], Range[10]}],
+ Plot[10/x, {x, 1, 10}, PlotRange -> All],
+ RegionPlot[
+  1 <= x && 1 <= y && x <= 2.3 && y <= 10/2.3, {x, 1/2, 10 + 1/2}, {y,
+    1/2, 10 + 1/2}, PlotStyle -> Opacity[0.5, LightRed], 
+  BoundaryStyle -> None],
+ ContourPlot[(x - 2.3) (y - 10/2.3) == 0, {x, 1, 10}, {y, 1, 10/x}, 
+  ContourStyle -> Directive[Dashed, Opacity[0.9, Red]]],
+ ListPlot[Flatten[Table[{x, y}, {x, 1, 10}, {y, 1, 10/x}], 1], 
+  PlotStyle -> Directive[Black, PointSize -> 0.015]]] -->
+
+<center><img src="/blog/docs/assets/images/2023-04-xx-hyperbola.png" width="75%" height="75%"></center>
+
+Here we have $x = 10$, $\alpha = 2.3$ and $\beta = x/\alpha \approx 4.3$.
+
+The black points are those $(a, b)$ for which we have a term $f(a)g(b)$ in the sum.
+
+The first term $\sum_{a \leq \alpha} f(a)G(x/a)$ in the sum computes the sum over all the points $(a, b)$ in the left section (all points for which $a \leq \alpha$). The second term likewise computes the sum over all the points in the lower section, for which $b \leq \beta$. The red highlighted rectangle is summed by $F(\alpha)G(\beta)$, and it is the set of points we have added to the sum twice.
 
 This idea was also used in [my post][lucyfenwick] about the Lucy\_Hedgehog algorithm. We will usually pick $\alpha = \beta = \sqrt{x}$ but sometimes it helps to be able to balance the break point based on how hard $f$ and $g$ are to sum individually. Let's see what happens for $u*u = d$.
 
@@ -112,23 +173,11 @@ So with this, if we're able to sum $f$ and $g$ in a reasonable amount of time, w
 
 ### Tangent: Linear Sieving
 
-In the future we're going to use what I think are generally referred to as "sieving techniques" to compute the values of arithmetic functions $f(n)$ over short intervals $n \leq y$.
+In the future we're going to use what I think are generally referred to as "sieving techniques" to compute **all values** of given arithmetic functions $f(n)$ over short intervals $n \leq y$.
 
 Let's try doing this for the function $f(n) = d(n)$.
 
-The most naive method for doing it looks like this:
-
-```nim
-var d = newSeq[int](y+1)
-#indexed from 0 to y, but just ignore 0
-for n in 1..y:
-  for k in 1..n:
-    if n mod k == 0: #k is a divisor of n
-      inc d[n] #increment
-  #now d[n] is correct
-```
-
-This runs in $O(y^2)$ time which is awful. The reason why is that it's hard to pick out the divisors of an integer without knowing anything about it. So instead what we can do is iterate over the divisors `k` first, and then over all `n` divisible by `k`. Here's how that looks:
+As before, we'll be smart and iterate over the potential divisors $k$ of $n$ and then noting that the integers $n$ divisible by $k$ are simply $k, 2k, 3k$, etc.
 
 ```nim
 var d = newSeq[int](y+1)
@@ -138,11 +187,14 @@ for k in 1..y:
     inc d[k*j]
 ```
 
-Now this runs in about $O\left(\sum_{k \leq y} \frac{y}{k}\right) = O\left(y \log y\right)$ time, which is just barely above linear. For most purposes this will be perfectly fine.
+Now this runs in about $O\left(\sum_{k \leq y} \frac{y}{k}\right) = O\left(y \log y\right)$ time, which is just barely above linear.  
+For most purposes this will be perfectly fine.
 
 Let's take a look at how it looks if we do a very basic sieve for $\varphi$.
 
-The idea here is that, if $p$ is a prime not dividing $m$, then $\varphi(m p^e) = \varphi(m) p^{e-1}(p-1)$. So what we're going to do is initialize `phi[n] = n` for all `n`, and then fix the contribution of each prime factor separately.
+The idea here is to exploit the multiplicativity of $\varphi$.  
+If $p$ is a prime not dividing $m$, then $\varphi(m p^e) = \varphi(m) p^{e-1}(p-1)$.  
+So what we're going to do is initialize `phi[n] = n` for all `n`, and then fix the contribution of each prime factor separately.
 
 To recognize when we have a prime, we're going to check whether `phi[n]` has been modified yet. We can just check if `phi[p] == p` - if it is, `p` is a prime, and we fix the contributions of `p`.
 
@@ -177,7 +229,7 @@ Brainlessly apply the hyperbola method. We obtain
 
 $$D_3(x) = \sum_{n \leq \alpha} D_2\left(\frac{x}{n}\right) + \sum_{n \leq \beta} d_2(n) \left\lfloor \frac{x}{n}\right\rfloor - \left\lfloor\alpha\right\rfloor D_2(\beta)$$
 
-The last term takes $O(\beta^{1/2})$ time of course. The first one takes $O\left(\sqrt{x*\alpha}\right)$ time, and the second takes $O(\beta)$ time if we sieve $d_2$ in linear time. If we optimize $\alpha$ and $\beta$ we choose $\alpha = x^{1/3}$ and $\beta = x^{2/3}$, for a total runtime of $O(x^{2/3})$.
+The last term takes $O(\beta^{1/2})$ time of course. The first one takes $O\left(\sqrt{x\cdot\alpha}\right)$ time, and the second takes $O(\beta)$ time if we sieve $d_2$ in linear time. If we optimize $\alpha$ and $\beta$ we choose $\alpha = x^{1/3}$ and $\beta = x^{2/3}$, for a total runtime of $O(x^{2/3})$.
 
 If we repeat this analysis for $D_4$ you'll end up choosing $\alpha = x^{1/4}$ and $\beta = x^{3/4}$ for a total runtime of $x^{3/4}$. Also notice that we also require $x^{3/4}$ space for this, which is getting pretty large.
 
@@ -208,6 +260,8 @@ You'll have to poke at the constant coefficient on $y$ in your implementation.
 The following is a lazy Nim implementation that doesn't use linear sieving. Because of that, the sieving step takes $O(y \log y)$ time instead of $O(y)$ time, and so we'll pick $y = x^{2/3} / \log(x)^{1/3}$ instead. The final runtime is actually going to be $O\left(k x^{2/3} \log(x)^{1/3}\right)$.
 
 TODO MENTION FIARRAY
+
+TODO ACTUALLY DO LINEAR SIEVING
 
 ```nim
 proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
@@ -601,7 +655,7 @@ If you're interested in learning about them on your own in the mean time please 
 Until then however the methods I've gone over in detail should be enough to kill some complicated multiplicative functions fairly completely. Next time we'll go over the Min-25 stuff and next next time (or next next next time or some other future time) I'll go over one of the fastest methods known to compute the partial sums of the divisor function.
 
 
-
+[triangular-numbers]: https://en.wikipedia.org/wiki/Triangular_number
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
 [mobius]: https://en.wikipedia.org/wiki/M%C3%B6bius_function
 [zeta]: https://en.wikipedia.org/wiki/Riemann_zeta_function
