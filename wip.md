@@ -3,7 +3,7 @@ title: "Summing Multiplicative Functions (Pt. 1)"
 tags: [number theory, algorithms]
 ---
 
-> **Abstract.** I'll exhibit a ton of different method for computing partial sums of multiplicative functions. Knowledge of how to sum more basic functions is assumed. We'll use the square root trick constantly, as well as some basic number theory.
+> **Abstract.** I'll exhibit some methods for computing partial sums of multiplicative functions. Knowledge of how to sum more basic functions is assumed. We'll use the square root trick constantly, as well as some basic number theory.
 
 A function $f(n)$ which maps the naturals to the set of complex numbers is called "multiplicative" if $f(mn) = f(m)f(n)$ for any $m, n$ such that $\gcd(m, n) = 1$. There are a few obvious examples and a few less obvious examples:
 
@@ -139,7 +139,7 @@ This manipulation can be explained by noticing that we are summing $f(a)g(b)$ ov
  ListPlot[Flatten[Table[{x, y}, {x, 1, 10}, {y, 1, 10/x}], 1], 
   PlotStyle -> Directive[Black, PointSize -> 0.015]]] -->
 
-<center><img src="/blog/docs/assets/images/2023-04-xx-hyperbola.png" width="75%" height="75%"></center>
+<!-- <center><img src="/blog/docs/assets/images/2023-04-xx-hyperbola.png" width="75%" height="75%"></center> -->
 
 Here we have $x = 10$, $\alpha = 2.3$ and $\beta = x/\alpha \approx 4.3$.
 
@@ -638,13 +638,13 @@ For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $
 
 ### Black Algorithm and Min-25 Sieve
 
-The algorithms here reduce the problem of summing multiplicative functions to the problem of summing easier functions _over primes_. The "Black Algorithm" is perhaps the easiest to understand.
+The algorithms here reduce the problem of summing multiplicative functions to the problem of summing easier functions _over primes_. The "Black Algorithm" may be the easiest to understand.
 
 The idea in all algorithms of this type (?) is that the function we want to sum, say $f(n)$, has a simpler form at primes, $f(p) = g(p)$, where perhaps $g(n)$ is a polynomial of low degree. In this way, we can use (for example) the methods in [my post about Lucy's algorithm][lucyfenwick] to compute the partial sums of $f(p)$ over primes in some semi-reasonable amount of time.
 
-The next step is then to do essentially the reverse of the sieving process used to obtain those sums, but rather than undoing our progress we instead steer a different direction and sieve back values in a way to obtain the partial sums of $f(n)$ rather than of $g(n)$, the ones we started with.
+The next step is then to do essentially the reverse of the sieving process used to obtain those sums. But rather than undoing our progress, we instead steer a different direction and sieve back values in a way to obtain the partial sums of $f(n)$ rather than of $g(n)$, the ones we started with.
 
-The details here are not so easy to fill in mindlessly, I think. Because of that, while writing this section I've come to believe that I need to pay more care to this topic. Therefore I'm cutting this section off here and writing a second post at a later time dedicated specifically to these techniques.
+The details here are not so easy to fill in, I think. Because of that, while writing this section I've come to believe that I need to pay more care to this topic. Therefore I'm cutting this section off here and writing a second post at a later time dedicated specifically to these techniques.
 
 If you're interested in learning about them on your own in the mean time please check out
 - [This lovely post][black-baihacker] by baihacker about the Black Algorithm, which itself contains reference to [a post][bohang] by Bohang Zhang, in Chinese, describing another summation algorithm,
@@ -652,7 +652,7 @@ If you're interested in learning about them on your own in the mean time please 
 - [This post][min-25-chinese] on a Chinese wiki about some version of Min-25's algorithm, and
 - [This CodeForces blog post][box-min-25] by box, also explaining a version of Min-25's sieve. This one is maybe the easiest to follow, especially for those who don't speak Chinese or Japanese.
 
-Until then however the methods I've gone over in detail should be enough to kill some complicated multiplicative functions fairly completely. Next time we'll go over the Min-25 stuff and next next time (or next next next time or some other future time) I'll go over one of the fastest methods known to compute the partial sums of the divisor function.
+Until then, the methods I've gone over in detail should be enough to kill some complicated multiplicative functions fairly thoroughly. Next time we'll go over the Min-25 stuff and next next time (or next next next time or some other future time) I'll go over one of the fastest methods known to compute the partial sums of the divisor function.
 
 
 [triangular-numbers]: https://en.wikipedia.org/wiki/Triangular_number
