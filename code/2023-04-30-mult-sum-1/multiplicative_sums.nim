@@ -192,9 +192,9 @@ proc sumDn2(x: int64, m: int64): int64 =
 iterator powerfulExt(x: int64, h: proc (p, e: int64): int64, m: int64): (int64, int64) =
   ##Returns (n, h(n) mod m) where n are the O(sqrt x) powerful numbers up to x, 
   ##and h is any multiplicative function.
-  var nrt = isqrt(x).int
+  var xrt = isqrt(x).int
   var res = @[(1'i64, 1'i64, 0)]
-  var ps = eratosthenes(nrt+1)
+  var ps = eratosthenes(xrt+1)
   while res.len > 0:
     var (n, hn, i) = res.pop
     let p = ps[i].int64
@@ -221,13 +221,17 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
   for (n, hn) in powerfulExt(x, h, m):
     result += hn * ((x div n) mod m)
     result = result mod m
+  return result
 
-proc linearCoefficient*(inputs, outputs: seq[int64], m: int64): int64 =
+proc linearCoefficient(inputs, outputs: seq[int64], m: int64): int64 =
   var p0 = outputs
   var p1 = newSeq[int64](inputs.len)
+  #(refer to wikipedia)
+  #here, p0[j] stores the constant coefficient of p_{j,j}(x)
+  #and p1[j] stores the linear coefficient
   for i in 1..inputs.high:
+    #now we will make p0[j] and p1[j] refer to p_{j,i+j}(x)
     for j in 0..inputs.high - i:
-      #p_{j, j+i}
       p0[j] = (inputs[j]*p0[j+1]-inputs[j+i]*p0[j]) mod m
       p0[j] = (p0[j]*modInv(m - inputs[j+i] + inputs[j], m)) mod m
       p1[j] = (p0[j] - inputs[j+i]*p1[j] - p0[j+1] + inputs[j]*p1[j+1]) mod m
