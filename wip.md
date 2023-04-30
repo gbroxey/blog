@@ -716,7 +716,7 @@ F_k(x) &= \sum_{e \geq 0} \sum_{\substack{n \leq x \\ \Omega(n) = e}} k^e\\
 \end{align*}$$
 
 Here I'm writing $\pi_e(x)$ for the number of integers up to $x$ with exactly $e$ prime factors.  
-Clearly since the integer with the most prime factors up to $x$ is just $2^{\lfloor \log_2(x) \rfloor}$, we only actually need to consider the terms in the sum with $e \leq \log_2(x)$. Then it becomes clear that, if $x$ is fixed, the function $F_k(x)$ is actually a polynomial in $k$, and moreover the linear coefficient is $\pi(x)$.
+Clearly since the integer with the most prime factors up to $x$ is just $2^{\lfloor \log_2(x) \rfloor}$, we only actually need to consider the terms in the sum with $e \leq \log_2(x)$. Then it becomes clear that, if $x$ is fixed, the function $F_k(x)$ is actually a polynomial in $k$ of degree $\lfloor \log_2(x) \rfloor$, and the linear coefficient is $\pi(x)$.
 
 The strategy then is to compute about $\log_2(x)+1$ values of $F_k(x)$ and then to use polynomial interpolation to solve for the missing coefficients. The interpolation takes negligible time.
 
