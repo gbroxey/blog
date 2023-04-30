@@ -53,11 +53,12 @@ Very frequently things will be expressed in terms of the [Riemann zeta function]
 A common computational problem is computing the partial sum $F(x) = \sum_{n \leq x} f(n)$ for a given multiplicative function $f$ and large $x$. In general this is difficult, but there are techniques we can use depending on the function given to us.
 
 ### Contents
-- [Hyperbola Method](#dirichlet-hyperbola-method)
+- [Dirichlet Hyperbola Method](#dirichlet-hyperbola-method)
 - [Tangent: Linear Sieving](#tangent-linear-sieving)
 - [Summing Generalized Divisor Functions](#summing-generalized-divisor-functions)
 - [Summing $\mu$ and $\varphi$](#summing-and)
 - [Powerful Numbers Trick](#powerful-numbers-trick)
+- [Tangent: How Not To Count Primes](#how-not-to-count-primes)
 - [Black Algorithm and Min-25 Sieve](#black-algorithm-and-min-25-sieve)
 
 ---
@@ -686,9 +687,175 @@ One pattern that is evident from definitions is that $(f*g)(p) = f(p) + g(p)$. S
 
 For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both $N$ and $\sigma_1$ are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
 
-### How Not To Count Primes
+### Tangent: How Not To Count Primes
 
-TODO
+In my [prime counting post][lucyfenwick] we developed an algorithm to compute $\pi(x)$, the number of primes up to $x$, in something like $O(x^{2/3} (\log x \log \log x)^{1/3})$ time using Fenwick trees and Lucy's algorithm.  
+
+This time we're going to be doing something no one should actually do, and use sums of multiplicative functions to develop an algorithm to compute $\pi(x)$ in about $O(x^{2/3} \log(x))$ time. Really, it's not actually so bad asymptotically, but it is worse. Don't use this.
+
+The setup here will rely on the following functions:
+
+$$\begin{align*}
+f_k(n) &:= k^{\Omega(n)}\\
+F_k(x) &:= \sum_{n \leq x} f_k(n)
+\end{align*}$$
+
+Here, $\Omega(n)$ is the number of prime factors of $n$ _with multiplicity_.
+
+First, notice that $\Omega(n) + \Omega(m) = \Omega(nm)$, so that $f_k(n)f_k(m) = f_k(nm)$, and $f_k$ is not only multiplicative, but completely multiplicative.  
+
+Okay, so let's suppose we can compute every $F_k(x)$ that we wish. How do we get $\pi(x)$?
+
+That this is possible was first noted, I think, by Project Euler user asaelr.
+
+Suppose we group the integers $n$ up to $x$ based on the value of $\Omega(n)$. We have
+
+$$\begin{align*}
+F_k(x) &= \sum_{e \geq 0} \sum_{\substack{n \leq x \\ \Omega(n) = e}} k^e\\
+&= \sum_{e \geq 0} k^e \pi_e(x)
+\end{align*}$$
+
+Here I'm writing $\pi_e(x)$ for the number of integers up to $x$ with exactly $e$ prime factors.  
+Clearly since the integer with the most prime factors up to $x$ is just $2^{\lfloor \log_2(x) \rfloor}$, we only actually need to consider the terms in the sum with $e \leq \log_2(x)$. Then it becomes clear that, if $x$ is fixed, the function $F_k(x)$ is actually a polynomial in $k$, and moreover the linear coefficient is $\pi(x)$.
+
+The strategy then is to compute about $\log_2(x)+1$ values of $F_k(x)$ and then to use polynomial interpolation to solve for the missing coefficients. The interpolation takes negligible time.
+
+Let's try to use the Powerful Numbers Trick here and examine the form of $f_k(p)$.  
+Clearly it's $f_k(p) = k$, and so the best option we have for $g$ is $d_k$, which we have figured out how to sum in $O(x^{2/3})$ time. Moreover though, our algorithm already goes through all $k$ up to some limit, so all we have to do is, at each step, use the trick to compute $F_k(x)$ and save it to an array.
+
+What does $h_k = f_k / d_k$ look like? Not very nice unfortunately.
+
+The Bell series is
+
+$$(h_k)_p(z) = \frac{\sum_{e \geq 0} k^e x^e}{\left(\sum_{e \geq 0} x^e\right)^k} = \frac{(1-x)^k}{1-kx}$$
+
+From this, the Binomial theorem, and looking at the generating function,
+
+$$h_k(p^e) = \sum_{i=0}^e \binom{k}{i}(-1)^i k^{e-i}$$
+
+Thankfully for us, this doesn't depend on $p$, so one option is to compute a small table of binomial coefficients and then values of $h_k(p^e)$ in time $O(\log(x)^2)$ or something.
+
+One other option that I think works fine, especially if $h_k(p^e)$ _does_ depend on $p$, or even if you want to build a fully generic implementation of this idea, is to create a memoized recursive function.
+
+If you want to get the values of $h = f/g$, you could just use
+
+$$\begin{align*}
+(h*g)(p^e) &= f(p^e)\\
+\sum_{i=0}^e h(p^i)g(p^{e-i}) &= f(p^e)\\
+h(p^e) + \sum_{i=0}^{e-1} h(p^i)g(p^{e-i}) &= f(p^e)\\
+h(p^e) &= f(p^e) - \sum_{i=0}^{e-1} h(p^i)g(p^{e-i})
+\end{align*}$$
+
+I don't really care to do a runtime analysis on this technique but it seems fine.
+
+Anyways, I'm going to choose the binomial expression mentioned earlier because it's more straightforward in this case. Do what you want depending on your situation.
+
+The last step here, given the values of a polynomial, is to interpolate the coefficients mod $m$. This is something that's honestly a little annoying to do, but we only need the linear coefficient. To get that we can basically modify [Neville's algorithm][neville] a little bit as follows:
+
+```nim
+proc linearCoefficient(inputs, outputs: seq[int64], m: int64): int64 =
+  var p0 = outputs
+  var p1 = newSeq[int64](inputs.len)
+  #(refer to wikipedia)
+  #here, p0[j] stores the constant coefficient of p_{j,j}(x)
+  #and p1[j] stores the linear coefficient
+  for i in 1..inputs.high:
+    #now we will make p0[j] and p1[j] refer to p_{j,i+j}(x)
+    for j in 0..inputs.high - i:
+      p0[j] = (inputs[j]*p0[j+1]-inputs[j+i]*p0[j]) mod m
+      p0[j] = (p0[j]*modInv(m - inputs[j+i] + inputs[j], m)) mod m
+      p1[j] = (p0[j] - inputs[j+i]*p1[j] - p0[j+1] + inputs[j]*p1[j+1]) mod m
+      p1[j] = (p1[j]*modInv(m - inputs[j+i] + inputs[j], m)) mod m
+  return p1[0]
+```
+
+This isn't what I'm here to talk about though so we're going to move on.
+
+Here's how the algorithm looks, put together:
+
+```nim
+proc primePi(x: int64, m: int64): int64 =
+  ##Computes pi(x) mod m in O(x^(2/3) log x) time.
+  ##See genDivisorSummatory.
+
+  var y = (0.55*pow(x.float, 2.0/3.0)).int64
+  y = max(y, isqrt(x))
+  var small = newSeq[int64](y+1)
+  var big = newSeq[int64]((x div y) + 1)
+  #initialize them to D_1, sum of u(n) = 1
+  for i in 1..y: small[i] = i mod m
+  for i in 1..(x div y): big[i] = (x div i) mod m
+
+  var k = 1
+  while (1'i64 shl (k+1)) <= x: inc k
+  #we need F_j(x) for j from 0 to k
+  var F = newSeq[int64](k+1)
+  F[0] = 1
+  F[1] = (x mod m)
+  #we need binomial coefficients up to k
+  var binoms = newSeq[seq[int64]](k+1)
+  binoms[0] = @[1'i64]
+  for i in 1..k:
+    binoms[i] = newSeq[int64](k+1)
+    binoms[i][0] = 1
+    binoms[i][i] = 1
+    for j in 1..i-1:
+      binoms[i][j] = (binoms[i-1][j] + binoms[i-1][j-1]) mod m
+  #now compute all of the h_j(p^e).
+  #only need them for j >= 2.
+  var hVals = newSeq[seq[int64]](k+1)
+  for j in 2..k:
+    hVals[j] = newSeq[int64](k+1)
+    for i in 0..j:
+      var jPow = 1'i64
+      if i mod 2 == 1: jPow = -1
+      for e in i..k:
+        #jPow = (-1)^i j^(e-i)
+        hVals[j][e] += binoms[j][i] * jPow
+        hVals[j][e] = hVals[j][e] mod m
+        jPow = (j * jPow) mod m
+  #iteration time!
+  for j in 2..k:
+    #update big first
+    for i in 1..(x div y):
+      let v = x div i
+      let vsqrt = isqrt(v)
+      var bigNew = 0'i64
+      for n in 1..vsqrt:
+        #add D_{j-1}(v/n) = D_{j-1}(x/(i*n))
+        if v div n <= y: bigNew += small[v div n]
+        else: bigNew += big[i*n]
+        #add d_{j-1}(n) floor(v/n)
+        #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
+        bigNew += (small[n] - small[n-1]) * ((v div n) mod m)
+        bigNew = bigNew mod m
+      bigNew -= small[vsqrt]*vsqrt
+      big[i] = bigNew mod m
+    #update small using sieving
+    #be lazy...
+    #convert small from summation to just d_{j-1}, convolve, then convert back
+    for i in countdown(y, 1):
+      small[i] -= small[i-1]
+    small = linearSieveProdUnit(small, m)
+    for i in 1..y:
+      small[i] = (small[i] + small[i-1]) mod m
+    #new part starts here - we need to use the powerful numbers trick
+    #create h(p, e) to pass on
+    proc h(p, e: int64): int64 = hVals[j][e]
+    for (n, hn) in powerfulExt(x, h, m):
+      if (x div n) <= y:
+        F[j] += hn * small[x div n]
+      else:
+        F[j] += hn * big[n]
+      F[j] = F[j] mod m
+  var inputs = newSeq[int64](k+1)
+  for i in 0..k: inputs[i] = i
+  result = linearCoefficient(inputs, F, m)
+  if result < 0: result += m
+```
+
+This is a little hacked together but it serves its purpose, whatever that is.  
+It's much slower than Lucy's algorithm, computing $\pi(10^{10})$ in about 5 seconds instead of the 0.25 seconds that the plain Lucy algorthm takes, or the 0.06 seconds that the extended Lucy's algorithm takes. It's just worse in basically every way, especially in that you have to worry about overflow issues which no doubt plague this thing because I didn't try very hard to avoid them. And even *then*, if there are no overflow issues, $\pi(x)$ gets larger than your modulus fairly quickly, and I guess the best way to get the exact value is maybe to use multiple moduli + CRT or to get an analytic estimate of $\pi(x)$ and use the congruence obtained using this algorithm. Or maybe (this is the correct answer) you just shouldn't use this algorithm. But it *does work!*
 
 ### Black Algorithm and Min-25 Sieve
 
@@ -717,6 +884,7 @@ Until then, the methods I've gone over in detail should be enough to kill some c
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
 [baihacker]: https://baihacker.github.io/main/
 [linearsieve]: https://codeforces.com/blog/entry/54090
+[neville]: https://en.wikipedia.org/wiki/Neville%27s_algorithm
 [box-min-25]: https://codeforces.com/blog/entry/92703
 [min-25-chinese]: https://oi-wiki.org/math/number-theory/min-25/
 [min-25-original]: https://web.archive.org/web/20211009144526/https://min-25.hatenablog.com/entry/2018/11/11/172216

@@ -221,3 +221,94 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
   for (n, hn) in powerfulExt(x, h, m):
     result += hn * ((x div n) mod m)
     result = result mod m
+
+proc linearCoefficient*(inputs, outputs: seq[int64], m: int64): int64 =
+  var p0 = outputs
+  var p1 = newSeq[int64](inputs.len)
+  for i in 1..inputs.high:
+    for j in 0..inputs.high - i:
+      #p_{j, j+i}
+      p0[j] = (inputs[j]*p0[j+1]-inputs[j+i]*p0[j]) mod m
+      p0[j] = (p0[j]*modInv(m - inputs[j+i] + inputs[j], m)) mod m
+      p1[j] = (p0[j] - inputs[j+i]*p1[j] - p0[j+1] + inputs[j]*p1[j+1]) mod m
+      p1[j] = (p1[j]*modInv(m - inputs[j+i] + inputs[j], m)) mod m
+  return p1[0]
+
+proc primePi(x: int64, m: int64): int64 =
+  ##Computes pi(x) mod m in O(x^(2/3) log x) time.
+  ##See genDivisorSummatory.
+
+  var y = (0.55*pow(x.float, 2.0/3.0)).int64
+  y = max(y, isqrt(x))
+  var small = newSeq[int64](y+1)
+  var big = newSeq[int64]((x div y) + 1)
+  #initialize them to D_1, sum of u(n) = 1
+  for i in 1..y: small[i] = i mod m
+  for i in 1..(x div y): big[i] = (x div i) mod m
+
+  var k = 1
+  while (1'i64 shl (k+1)) <= x: inc k
+  #we need F_j(x) for j from 0 to k
+  var F = newSeq[int64](k+1)
+  F[0] = 1
+  F[1] = (x mod m)
+  #we need binomial coefficients up to k
+  var binoms = newSeq[seq[int64]](k+1)
+  binoms[0] = @[1'i64]
+  for i in 1..k:
+    binoms[i] = newSeq[int64](k+1)
+    binoms[i][0] = 1
+    binoms[i][i] = 1
+    for j in 1..i-1:
+      binoms[i][j] = (binoms[i-1][j] + binoms[i-1][j-1]) mod m
+  #now compute all of the h_j(p^e).
+  #only need them for j >= 2.
+  var hVals = newSeq[seq[int64]](k+1)
+  for j in 2..k:
+    hVals[j] = newSeq[int64](k+1)
+    for i in 0..j:
+      var jPow = 1'i64
+      if i mod 2 == 1: jPow = -1
+      for e in i..k:
+        #jPow = (-1)^i j^(e-i)
+        hVals[j][e] += binoms[j][i] * jPow
+        hVals[j][e] = hVals[j][e] mod m
+        jPow = (j * jPow) mod m
+  #iteration time!
+  for j in 2..k:
+    #update big first
+    for i in 1..(x div y):
+      let v = x div i
+      let vsqrt = isqrt(v)
+      var bigNew = 0'i64
+      for n in 1..vsqrt:
+        #add D_{j-1}(v/n) = D_{j-1}(x/(i*n))
+        if v div n <= y: bigNew += small[v div n]
+        else: bigNew += big[i*n]
+        #add d_{j-1}(n) floor(v/n)
+        #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
+        bigNew += (small[n] - small[n-1]) * ((v div n) mod m)
+        bigNew = bigNew mod m
+      bigNew -= small[vsqrt]*vsqrt
+      big[i] = bigNew mod m
+    #update small using sieving
+    #be lazy...
+    #convert small from summation to just d_{j-1}, convolve, then convert back
+    for i in countdown(y, 1):
+      small[i] -= small[i-1]
+    small = linearSieveProdUnit(small, m)
+    for i in 1..y:
+      small[i] = (small[i] + small[i-1]) mod m
+    #new part starts here - we need to use the powerful numbers trick
+    #create h(p, e) to pass on
+    proc h(p, e: int64): int64 = hVals[j][e]
+    for (n, hn) in powerfulExt(x, h, m):
+      if (x div n) <= y:
+        F[j] += hn * small[x div n]
+      else:
+        F[j] += hn * big[n]
+      F[j] = F[j] mod m
+  var inputs = newSeq[int64](k+1)
+  for i in 0..k: inputs[i] = i
+  result = linearCoefficient(inputs, F, m)
+  if result < 0: result += m
