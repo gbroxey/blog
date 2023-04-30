@@ -878,7 +878,7 @@ The next step is then to do essentially the reverse of the sieving process used 
 The details here are not so easy to fill in, I think. Because of that, while writing this section I've come to believe that I need to pay more care to this topic. Therefore I'm cutting this section off here and writing a second post at a later time dedicated specifically to these techniques.
 
 If you're interested in learning about them on your own in the mean time please check out
-- [This lovely post][black-baihacker] by baihacker about the Black Algorithm, which itself contains reference to [a post][bohang] by Bohang Zhang, in Chinese, describing another summation algorithm,
+- [This post][black-baihacker] by baihacker about the Black Algorithm, which itself contains reference to [a post][bohang] by Bohang Zhang, in Chinese, describing another summation algorithm,
 - [This post][min-25-original] from Min-25's blog, in Japanese, encased in amber (the internet archive) due to its having been deleted a while back,
 - [This post][min-25-chinese] on a Chinese wiki about some version of Min-25's algorithm, and
 - [This CodeForces blog post][box-min-25] by box, also explaining a version of Min-25's sieve. This one is maybe the easiest to follow, especially for those who don't speak Chinese or Japanese.
