@@ -65,7 +65,7 @@ A common computational problem is computing the partial sum $F(x) = \sum_{n \leq
 
 ## Techniques
 
-I'm going to avoid spending time on explaining how to compute summations of functions like $u$ or $N$, since those are doable in constant time. If you don't know how to do those you should look [that up elsewhere][triangular-numbers] first before moving forward.
+I'm going to avoid spending time on explaining how to compute summations of functions like $u$ or $N$, since those are doable in constant time. If you don't know how to do those you should [look that up elsewhere][triangular-numbers] first before moving forward.
 
 The simplest non-trivial function to start with, then, is $d(n)$.
 
@@ -122,6 +122,8 @@ $$\begin{align*}
 &= \sum_{a \leq \alpha} \sum_{b \leq x/a} f(a)g(b) + \sum_{b \leq \beta} \sum_{a \leq x/b} f(a)g(b) - \sum_{\substack{a \leq \alpha\\ b \leq \beta}} f(a)g(b)\\
 &= \sum_{a \leq \alpha} f(a)G(x/a) + \sum_{b \leq \beta} F(x/b)g(b) - F(\alpha)G(\beta)
 \end{align*}$$
+
+where we're using $F(x) = \sum_{n \leq x} f(n)$ and $G(x) = \sum_{n \leq x} g(n)$.
 
 This manipulation can be explained by noticing that we are summing $f(a)g(b)$ over all points $(a, b)$ under the hyperbola $ab = x$. We sum over $a \leq \alpha$ first, then over $b \leq \beta$, and then we have to subtract the sum over any points we've double counted. This is illustrated in the following picture:
 
