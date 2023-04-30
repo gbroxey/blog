@@ -530,7 +530,7 @@ I like to think of this as an approximation of $f$ to first prime order. The cho
 Whenever we have such a situation, the function $f/g = h$ (division being in terms of Dirichlet inverses) will have the nice property that $h(n) = 0$ for all $n$ that are not "powerful".
 
 By "powerful", I mean that if a prime $p$ divides $n$, then $p^2$ also divides $n$.  
-So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them.
+So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them (see [this Wikipedia article](https://en.wikipedia.org/wiki/Powerful_number#Mathematical_properties)).
 
 Why is $h(n) = 0$ for non-powerful integers $n$?
 
