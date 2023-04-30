@@ -163,7 +163,7 @@ In the future we're going to use what I think are generally referred to as "siev
 
 Let's try doing this for the function $f(n) = d(n)$.
 
-As before, we'll be smart and iterate over the potential divisors $k$ of $n$ and then noting that the integers $n$ divisible by $k$ are simply $k, 2k, 3k$, etc.
+As before, we'll be smart, iterating over the potential divisors $k$ of $n$ and then noting that the integers $n$ divisible by $k$ are simply $k, 2k, 3k$, etc.
 
 ```nim
 var d = newSeq[int](y+1)
