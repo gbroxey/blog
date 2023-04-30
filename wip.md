@@ -5,6 +5,8 @@ tags: [number theory, algorithms, prime counting]
 
 > **Abstract.** I'll exhibit some methods for computing partial sums of multiplicative functions. Knowledge of how to sum more basic functions is assumed. We'll use the square root trick constantly, as well as some basic number theory.
 
+---
+
 A function $f(n)$ which maps the naturals to the set of complex numbers is called "multiplicative" if $f(mn) = f(m)f(n)$ for any $m, n$ such that $\gcd(m, n) = 1$. There are a few obvious examples and a few less obvious examples:
 
 - $I(1) = 1$ and $I(n) = 0$ for $n > 1$
