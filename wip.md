@@ -727,7 +727,7 @@ What does $h_k = f_k / d_k$ look like? Not very nice unfortunately.
 
 The Bell series is
 
-$$(h_k)_p(z) = \frac{\sum_{e \geq 0} k^e x^e}{\left(\sum_{e \geq 0} x^e\right)^k} = \frac{(1-x)^k}{1-kx}$$
+$$(h_k)_p(z) = \frac{\sum_{e \geq 0} k^e z^e}{\left(\sum_{e \geq 0} z^e\right)^k} = \frac{(1-z)^k}{1-kz}$$
 
 From this, the Binomial theorem, and looking at the generating function,
 
