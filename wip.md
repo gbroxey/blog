@@ -1,6 +1,6 @@
 ---
 title: "Summing Multiplicative Functions (Pt. 1)"
-tags: [number theory, algorithms]
+tags: [number theory, algorithms, prime counting]
 ---
 
 > **Abstract.** I'll exhibit some methods for computing partial sums of multiplicative functions. Knowledge of how to sum more basic functions is assumed. We'll use the square root trick constantly, as well as some basic number theory.
@@ -240,6 +240,8 @@ proc linearSieveProdUnit(f: seq[int64], m: int64): seq[int64] =
         result[i*prime[j]] = result[i]*result[prime[j]]
         pow[i*prime[j]] = prime[j]
 ```
+
+---
 
 ### Summing Generalized Divisor Functions
 
@@ -517,6 +519,8 @@ This runs barely slower than the method to compute a single $\Phi(x)$ from the M
 It computes $\Phi(10^{12})$ in about 3.5 seconds.
 
 So, this previous method will work nicely whenever we want to sum a function $f$ such that we have easily summable functions $g, h$ with $f*g = h$, and such that $f$ can be sieved in linear (or approximately linear) time. This is a very wide selection of functions, but there are others yet we can't deal with.
+
+---
 
 ### Powerful Numbers Trick
 
@@ -875,6 +879,14 @@ If you're interested in learning about them on your own in the mean time please 
 
 Until then, the methods I've gone over in detail should be enough to kill some complicated multiplicative functions fairly thoroughly. Next time we'll go over the Min-25 stuff and next next time (or next next next time or some other future time) I'll go over one of the fastest methods known to compute the partial sums of the divisor function.
 
+---
+
+## Code
+
+The code for this blog post is available [here on GitHub][code].
+
+---
+
 
 [triangular-numbers]: https://en.wikipedia.org/wiki/Triangular_number
 [totient]: https://en.wikipedia.org/wiki/Euler%27s_totient_function
@@ -890,5 +902,6 @@ Until then, the methods I've gone over in detail should be enough to kill some c
 [min-25-original]: https://web.archive.org/web/20211009144526/https://min-25.hatenablog.com/entry/2018/11/11/172216
 [black-baihacker]: http://baihacker.github.io/main/2020/The_prefix-sum_of_multiplicative_function_the_black_algorithm.html
 [bohang]: https://zhuanlan.zhihu.com/p/33544708
+[code]: TODO
 
 [^1]: Technically if you only want $D_k(x)$ at the end and don't want to have every intermediate $D_j(x)$ for $j \leq k$, then you can do this in a way sort of similar to binary exponentiation to obtain $D_k(x)$ in time $O(\log(k)x^{2/3})$ instead of $O(k x^{2/3})$.
