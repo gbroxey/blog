@@ -196,24 +196,66 @@ for p in 2..y:
 
 Nice and easy! This now takes $O\left(\sum_{p \leq y} \frac{y}{p}\right)$ time, which is $O\left(y \log \log y\right)$, so slightly faster than the basic one for the divisor function. Generally those functions that only need their prime factor contributions fixed can be done in this way.
 
-Along this line of thinking, for basically any multiplicative function, we can do this calculation in a flat $O(y)$ time. This generally offers a good speedup to the summation methods I'll be detailing later. The best explanation I've found on this is in [this CodeForces blog post][linearsieve] by Nisiyama_Suzune. I am going to refrain from explaining how it works in depth because the implementation of this subroutine doesn't intersect the implementation of the later methods much at all. That is, I can use this as a black box which we will just avoid looking at for too long. So let's move on!
+Along this line of thinking, for basically any multiplicative function, we can do this calculation in a flat $O(y)$ time. This generally offers a good speedup to the summation methods I'll be detailing later. The best explanation I've found on this is in [this CodeForces blog post][linearsieve] by Nisiyama_Suzune. I am going to refrain from explaining how it works in depth because the implementation of this subroutine doesn't intersect the implementation of the later methods much at all. That is, I can use this as a black box which we will just avoid looking at for too long. Read that post! Here's code I'll be using to produce the values of $f*u$ given the values of $f$ in linear time, using an extra $O(y)$ space. It could be easily modified to produce the values of $f*g$ given any multiplicative $f, g$.
+
+```nim
+proc linearSieveProdUnit*(f: seq[int64], m: int64): seq[int64] =
+  #Returns the dirichlet product of f and u in linear time.
+  #Assumes f[1] = 1 and that f is multiplicative.
+  #m is modulus.
+  #linear sieves - https://codeforces.com/blog/entry/54090
+  let y = f.len
+  newSeq(result, y)
+  var composite: seq[bool]
+  var pow = newSeq[int](y) #power of leastprimefactor(n) in n
+  newSeq(composite, y)
+  var prime = newSeq[int]()
+  result[1] = 1
+  for i in 2..<y:
+    if not composite[i]:
+      prime.add i
+      result[i] = f[i] + 1 #i is prime
+      pow[i] = i
+    for j in 0..<prime.len:
+      if i*prime[j]>=y: break
+      composite[i*prime[j]] = true
+      if i mod prime[j] == 0:
+        pow[i*prime[j]] = pow[i] * prime[j]
+        var v = i div pow[i]
+        if v != 1:
+          result[i*prime[j]] = (result[v] * result[prime[j] * pow[i]]) mod m
+        else:
+          var coef = 0'i64
+          var A = 1
+          var B = pow[i] * prime[j]
+          while B > 0:
+            coef += f[A]
+            coef = coef mod m
+            A *= prime[j]
+            B = B div prime[j]
+          result[i*prime[j]] = coef
+        break
+      else:
+        result[i*prime[j]] = result[i]*result[prime[j]]
+        pow[i*prime[j]] = prime[j]
+```
 
 ### Summing Generalized Divisor Functions
 
 This section is about a function we haven't yet seen. Here's how it's defined.
 
-The generalized divisor function $d_k(n)$ is the function with the Dirichlet series $\zeta(s)^k$.  
+The generalized divisor function $d_k(n)$ is the number of ways to write $n$ as a product of $k$ naturals. It's the function with the Dirichlet series $\zeta(s)^k$.  
 In other words, $d_1(n) = u(n) = 1$ for all $n$, and $d_k = u * d_{k-1}$, so $d_k(n) = \sum_{a \mid n} d_{k-1}(a)$.
 
-In the previous section we figured out how to sum $d = d_2$ quickly, but how about.. $d_5$ for example?
+Clearly $d_1(n) = u(n) = 1$ for all $n$, since there is only one way to write $n$ as the product of only a single integer. For $d_2(n)$, we're counting the representations $n = ab$, and since $b$ is determined completely by $n$ and $a$, this is just the number of divisors of $n$. That is, $d_2(n) = d(n)$. In the previous section we figured out how to sum this quickly, but how about.. $d_5$ for example?
 
 If we attempted to just use the hyperbola method over and over again with no modifications we would get worse and worse runtime, as follows.
 
-We know $d_1$ can be summed (with summatory function $D_1$) in constant time, and that $d_2$ can be summed in $O(x^{1/2})$ time. How about $d_3$?
+We know $d_1$ can be summed in constant time, and that $d_2$ can be summed in $O(x^{1/2})$ time. How about $d_3$?
 
 Brainlessly apply the hyperbola method. We obtain
 
-$$D_3(x) = \sum_{n \leq \alpha} D_2\left(\frac{x}{n}\right) + \sum_{n \leq \beta} d_2(n) \left\lfloor \frac{x}{n}\right\rfloor - \left\lfloor\alpha\right\rfloor D_2(\beta)$$
+$$D_3(x) = \sum_{n \leq x} d_3(n) = \sum_{n \leq \alpha} D_2\left(\frac{x}{n}\right) + \sum_{n \leq \beta} d_2(n) \left\lfloor \frac{x}{n}\right\rfloor - \left\lfloor\alpha\right\rfloor D_2(\beta)$$
 
 The last term takes $O(\beta^{1/2})$ time of course. The first one takes $O\left(\sqrt{x\cdot\alpha}\right)$ time, and the second takes $O(\beta)$ time if we sieve $d_2$ in linear time. If we optimize $\alpha$ and $\beta$ we choose $\alpha = x^{1/3}$ and $\beta = x^{2/3}$, for a total runtime of $O(x^{2/3})$.
 
@@ -221,12 +263,12 @@ If we repeat this analysis for $D_4$ you'll end up choosing $\alpha = x^{1/4}$ a
 
 By induction, we can compute $D_k(x)$ in about $x^{1 - 1/k}$ time, which as $k$ gets large is probably even worse than linear just due to a growing constant factor which I've ignored. Here we're going to show how we can cap the runtime to $O(k x^{2/3})$ while using $O(x^{2/3})$ space.
 
-The key idea here is essentially from [my last post][lucyfenwick].
+The key idea here is again essentially from [my last post][lucyfenwick].
 
 We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and compute $D_k(v)$ for the key values $v \leq y$ by linear sieving, which will take $O(y)$ time. The rest of them will be done using the hyperbola method, using $\alpha = \beta = \sqrt{x}$. Here's a slightly more specific layout of the ideas:
 
 #### Algorithm (Computing $D_k$(x) Iteratively)
-> 1. Set $y \approx x^{2/3}$.  
+> 1. Set $y \propto x^{2/3}$.  
 >    Set an array `small` of length $y$ to store $D_1(k)$ for $k \leq y$.  
 >    Set an array `big` of length $x/y$ to store $D_1(x / k)$ for $k < x/y$.
 > 2. For $j$ from $2$ to $k$, we'll update our arrays to reflect $D_j$ instead:  
@@ -235,25 +277,21 @@ We're going to pick some $\sqrt{x} \leq y \leq x$ to be specified later and comp
 > 
 $$D_j(v) = \sum_{n \leq \sqrt{v}} D_{j-1}\left(\frac{v}{n}\right) + \sum_{n \leq \sqrt{v}} d_{j-1}(n) \left \lfloor \frac{v}{n} \right \rfloor - D_{j-1}(\sqrt{v})\left\lfloor\sqrt{v}\right\rfloor$$
 
-How much time do we dedicate to updating the big array? They take
+How much time do we dedicate to updating the big array? It takes
 
 $$O\left(\sum_{k < x/y} \sqrt{x/k}\right) = O\left(\int_1^{x/y} \sqrt{\frac{x}{k}}dk \right) = O\left(x/\sqrt{y}\right)$$
 
-If we want to minimize the total time to update both arrays, $O\left(y + x/\sqrt{y}\right)$, we need to pick $y$ to be on the order of $x^{2/3}$. The resulting time (and space) complexity is $O\left(x^{2/3}\right)$. Since we have to update it $k$ times, the runtime is $O\left(kx^{2/3}\right)$ in the end!
+If we want to minimize the total time to update both arrays, $O\left(y + x/\sqrt{y}\right)$, we need to pick $y$ to be on the order of $x^{2/3}$. The resulting time (and space) complexity is $O\left(x^{2/3}\right)$. Since we have to update it $k$ times, the runtime is $O\left(kx^{2/3}\right)$ in the end![^1]
 
 You'll have to poke at the constant coefficient on $y$ in your implementation.
 
-The following is a lazy Nim implementation that doesn't use linear sieving. Because of that, the sieving step takes $O(y \log y)$ time instead of $O(y)$ time, and so we'll pick $y = x^{2/3} / \log(x)^{1/3}$ instead. The final runtime is actually going to be $O\left(k x^{2/3} \log(x)^{1/3}\right)$.
-
-TODO MENTION FIARRAY
-
-TODO ACTUALLY DO LINEAR SIEVING
+Very short note here - I'm reusing the `FIArray` container from [last time][lucyfenwick]. Read the relevant section of the linked post if you want some context, but here it's just an easy container for our data. The following is a Nim implementation of this algorithm.
 
 ```nim
-proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
+proc genDivisorSummatory2(x: int64, k: int, m: int64): FIArray =
   ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
-  var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
-  y = max(y, isqrt(x)) #if y < sqrt(x) there can be issues
+  var y = (0.55*pow(x.float, 2.0/3.0)).int64
+  y = max(y, isqrt(x))
   var small = newSeq[int64](y+1)
   var big = newSeq[int64]((x div y) + 1)
   #initialize them to D_1, sum of u(n) = 1
@@ -281,9 +319,7 @@ proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
     #convert small from summation to just d_{j-1}, convolve, then convert back
     for i in countdown(y, 1):
       small[i] -= small[i-1]
-      for u in 2..(y div i):
-        small[i*u] += small[i]
-        small[i*u] = small[i*u] mod m
+    small = linearSieveProdUnit(small, m)
     for i in 1..y:
       small[i] = (small[i] + small[i-1]) mod m
   #shove them all into an FIArray for easy use
@@ -654,3 +690,5 @@ Until then, the methods I've gone over in detail should be enough to kill some c
 [min-25-original]: https://web.archive.org/web/20211009144526/https://min-25.hatenablog.com/entry/2018/11/11/172216
 [black-baihacker]: http://baihacker.github.io/main/2020/The_prefix-sum_of_multiplicative_function_the_black_algorithm.html
 [bohang]: https://zhuanlan.zhihu.com/p/33544708
+
+[^1]: Technically if you only want $D_k(x)$ at the end and don't want to have every intermediate $D_j(x)$ for $j \leq k$, then you can do this in a way sort of similar to binary exponentiation to obtain $D_k(x)$ in time $O(\log(k)x^{2/3})$ instead of $O(k x^{2/3})$.
