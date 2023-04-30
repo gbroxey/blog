@@ -69,7 +69,7 @@ proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
         else: bigNew += big[i*n]
         #add d_{j-1}(n) floor(v/n)
         #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
-        bigNew += (small[n] - small[n-1]) * (v div n)
+        bigNew += (small[n] - small[n-1]) * ((v div n) mod m)
         bigNew = bigNew mod m
       bigNew -= small[vsqrt]*vsqrt
       big[i] = bigNew mod m
