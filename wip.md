@@ -199,7 +199,7 @@ Nice and easy! This now takes $O\left(\sum_{p \leq y} \frac{y}{p}\right)$ time, 
 Along this line of thinking, for basically any multiplicative function, we can do this calculation in a flat $O(y)$ time. This generally offers a good speedup to the summation methods I'll be detailing later. The best explanation I've found on this is in [this CodeForces blog post][linearsieve] by Nisiyama_Suzune. I am going to refrain from explaining how it works in depth because the implementation of this subroutine doesn't intersect the implementation of the later methods much at all. That is, I can use this as a black box which we will just avoid looking at for too long. Read that post! Here's code I'll be using to produce the values of $f*u$ given the values of $f$ in linear time, using an extra $O(y)$ space. It could be easily modified to produce the values of $f*g$ given any multiplicative $f, g$.
 
 ```nim
-proc linearSieveProdUnit*(f: seq[int64], m: int64): seq[int64] =
+proc linearSieveProdUnit(f: seq[int64], m: int64): seq[int64] =
   #Returns the dirichlet product of f and u in linear time.
   #Assumes f[1] = 1 and that f is multiplicative.
   #m is modulus.
@@ -288,7 +288,7 @@ You'll have to poke at the constant coefficient on $y$ in your implementation.
 Very short note here - I'm reusing the `FIArray` container from [last time][lucyfenwick]. Read the relevant section of the linked post if you want some context, but here it's just an easy container for our data. The following is a Nim implementation of this algorithm.
 
 ```nim
-proc genDivisorSummatory2(x: int64, k: int, m: int64): FIArray =
+proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
   ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
   var y = (0.55*pow(x.float, 2.0/3.0)).int64
   y = max(y, isqrt(x))
@@ -353,9 +353,7 @@ $$M(x) = 1 - \sum_{n \leq \sqrt{x}} \mu(n)\left \lfloor \frac{x}{n}\right\rfloor
 Notice that if we plug in $x = 1$ we get $M(x)$ again in the right hand side, so we should just set $M(1) = 1$ manually to avoid issues.
 
 Then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in about $O(\sqrt{x})$ time.  
-This sort of structure is going to be very similar for a lot of the functions we'll sum.
-
-Now, we know from before that the distinct values of $\lfloor x/n \rfloor$ are all of the integers up to $\sqrt{x}$ and then every $\lfloor x/n \rfloor$ for $n > \sqrt{x}$. This means that we can use the `FIArray` from the [last post][lucyfenwick] to store these values easily. It's just a container - read the relevant section of that post if you want clarification.
+This sort of structure is going to be very similar for a lot of the functions we'll sum, so again we're going to be using the old `FIArray` as a container here.
 
 The algorithm for computing $M(x)$ will proceed as follows:
 
@@ -591,30 +589,26 @@ Clearly here we'll choose $g(n) = u(n) = 1$ for all $n$, and then $h = f/g$ has 
 It helps to have a generic iterator to do this. I pass in $h(n)$ as represented by a two variable function `h(p, e)` in my implementation. Here's how this could look:
 
 ```nim
-iterator powerfulExt*(x: int64, h: proc (p, e: int64): int64): (int64, int64) =
-  ##Returns (n, h(n)) where n are the O(sqrt x) powerful numbers up to x, 
+iterator powerfulExt(x: int64, h: proc (p, e: int64): int64, m: int64): (int64, int64) =
+  ##Returns (n, h(n) mod m) where n are the O(sqrt x) powerful numbers up to x, 
   ##and h is any multiplicative function.
   var nrt = isqrt(x).int
-  var res = @[(1'i64, 1'i64)]
-  for p in eratosthenes(nrt):
-    var resultNext = newSeq[(int64, int64)]()
-    while res.len > 0:
-      var (n, hn) = res.pop
-      if p*p > x div n:
-        yield (n, hn)
-        continue
-      resultNext.add (n, hn)
-      var pp = p*p
-      var e = 2
-      while pp <= x div n:
-        resultNext.add (n*pp, hn*h(p, e))
-        if pp > (x div n) div p: break
-        pp *= p
-        e += 1
-    res = resultNext
-  #yield any we haven't given yet
-  for (n, hn) in res:
-    yield (n, hn)
+  var res = @[(1'i64, 1'i64, 0)]
+  var ps = eratosthenes(nrt+1)
+  while res.len > 0:
+    var (n, hn, i) = res.pop
+    let p = ps[i].int64
+    if i >= ps.len or p*p > x div n:
+      yield (n, hn)
+      continue
+    res.add (n, hn, i+1)
+    var pp = p*p
+    var e = 2
+    while pp <= x div n:
+      res.add (n*pp, (hn*h(p, e)) mod m, i+1)
+      if pp > (x div n) div p: break
+      pp *= p
+      e += 1
 ```
 
 So now when we want to use our powerful numbers trick we can call on this.

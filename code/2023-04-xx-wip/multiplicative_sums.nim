@@ -7,50 +7,7 @@ proc divisorSummatory(x: int64): int64 =
     result += 2*(x div n)
   result -= xsqrt*xsqrt
 
-proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
-  ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
-  var y = (0.55*pow(x.float, 2.0/3.0) / pow(ln(x.float), 1.0/3.0)).int64
-  y = max(y, isqrt(x))
-  var small = newSeq[int64](y+1)
-  var big = newSeq[int64]((x div y) + 1)
-  #initialize them to D_1, sum of u(n) = 1
-  for i in 1..y: small[i] = i mod m
-  for i in 1..(x div y): big[i] = (x div i) mod m
-  #iteration time!
-  for j in 2..k:
-    #update big first
-    for i in 1..(x div y):
-      let v = x div i
-      let vsqrt = isqrt(v)
-      var bigNew = 0'i64
-      for n in 1..vsqrt:
-        #add D_{j-1}(v/n) = D_{j-1}(x/(i*n))
-        if v div n <= y: bigNew += small[v div n]
-        else: bigNew += big[i*n]
-        #add d_{j-1}(n) floor(v/n)
-        #to do so, grab d_{j-1}(n) from small = sum d_{j-1}
-        bigNew += (small[n] - small[n-1]) * (v div n)
-        bigNew = bigNew mod m
-      bigNew -= small[vsqrt]*vsqrt
-      big[i] = bigNew mod m
-    #update small using sieving
-    #be lazy...
-    #convert small from summation to just d_{j-1}, convolve, then convert back
-    for i in countdown(y, 1):
-      small[i] -= small[i-1]
-      for u in 2..(y div i):
-        small[i*u] += small[i]
-        small[i*u] = small[i*u] mod m
-    for i in 1..y:
-      small[i] = (small[i] + small[i-1]) mod m
-  #shove them all into an FIArray for easy use
-  var Dk = newFIArray(x)
-  for v in Dk.keysInc:
-    if v <= y: Dk[v] = small[v]
-    else: Dk[v] = big[x div v]
-  return Dk
-
-proc linearSieveProdUnit*(f: seq[int64], m: int64): seq[int64] =
+proc linearSieveProdUnit(f: seq[int64], m: int64): seq[int64] =
   #Returns the dirichlet product of f and u in linear time.
   #Assumes f[1] = 1 and that f is multiplicative.
   #m is modulus.
@@ -90,7 +47,7 @@ proc linearSieveProdUnit*(f: seq[int64], m: int64): seq[int64] =
         result[i*prime[j]] = result[i]*result[prime[j]]
         pow[i*prime[j]] = prime[j]
     
-proc genDivisorSummatory2(x: int64, k: int, m: int64): FIArray =
+proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
   ##Computes d_k(1) + ... + d_k(x) mod m in O(k x^(2/3)) time.
   var y = (0.55*pow(x.float, 2.0/3.0)).int64
   y = max(y, isqrt(x))
@@ -232,30 +189,26 @@ proc sumDn2(x: int64, m: int64): int64 =
   if result < 0: result += m
   return result
 
-iterator powerfulExt*(x: int64, h: proc (p, e: int64): int64): (int64, int64) =
-  ##Returns (n, h(n)) where n are the O(sqrt x) powerful numbers up to x, 
+iterator powerfulExt(x: int64, h: proc (p, e: int64): int64, m: int64): (int64, int64) =
+  ##Returns (n, h(n) mod m) where n are the O(sqrt x) powerful numbers up to x, 
   ##and h is any multiplicative function.
   var nrt = isqrt(x).int
-  var res = @[(1'i64, 1'i64)]
-  for p in eratosthenes(nrt):
-    var resultNext = newSeq[(int64, int64)]()
-    while res.len > 0:
-      var (n, hn) = res.pop
-      if p*p > x div n:
-        yield (n, hn)
-        continue
-      resultNext.add (n, hn)
-      var pp = p*p
-      var e = 2
-      while pp <= x div n:
-        resultNext.add (n*pp, hn*h(p, e))
-        if pp > (x div n) div p: break
-        pp *= p
-        e += 1
-    res = resultNext
-  #yield any we haven't given yet
-  for (n, hn) in res:
-    yield (n, hn)
+  var res = @[(1'i64, 1'i64, 0)]
+  var ps = eratosthenes(nrt+1)
+  while res.len > 0:
+    var (n, hn, i) = res.pop
+    let p = ps[i].int64
+    if i >= ps.len or p*p > x div n:
+      yield (n, hn)
+      continue
+    res.add (n, hn, i+1)
+    var pp = p*p
+    var e = 2
+    while pp <= x div n:
+      res.add (n*pp, (hn*h(p, e)) mod m, i+1)
+      if pp > (x div n) div p: break
+      pp *= p
+      e += 1
 
 proc sumPowerfulPart(x: int64, m: int64): int64 =
   ##Sums the function f(p) = 1 and f(p^e) = p^e for e > 1.
@@ -265,7 +218,7 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
     if e == 1: return 0
     if e == 2: return (p*p - 1) mod m
     return (powMod(p, e, m) - powMod(p, e-1, m) + m) mod m
-  for (n, hn) in powerfulExt(x, h):
+  for (n, hn) in powerfulExt(x, h, m):
     result += hn * ((x div n) mod m)
     result = result mod m
 
@@ -308,14 +261,14 @@ proc numClasses(x: int64): int64 =
   
 import ../utils/eutil_timer
 
-const n = 1e12.int64
+const n = 1e15.int64
 const m = 1e9.int64
 # timer:
 #   var c = 0
 #   for (v, q) in generateClasses(n):
 #     inc c
 #   echo c
-timer: echo sumDn2(n, m)
+timer: echo sumPowerfulPart(n, m)
 
 # timer:
 #   var cnt = 0
