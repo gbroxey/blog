@@ -58,7 +58,7 @@ A common computational problem is computing the partial sum $F(x) = \sum_{n \leq
 - [Summing Generalized Divisor Functions](#summing-generalized-divisor-functions)
 - [Summing $\mu$ and $\varphi$](#summing-and)
 - [Powerful Numbers Trick](#powerful-numbers-trick)
-- [Tangent: How Not To Count Primes](#how-not-to-count-primes)
+- [Tangent: How Not To Count Primes](#tangent-how-not-to-count-primes)
 - [Black Algorithm and Min-25 Sieve](#black-algorithm-and-min-25-sieve)
 
 ---
