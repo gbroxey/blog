@@ -865,6 +865,8 @@ proc primePi(x: int64, m: int64): int64 =
 This is a little hacked together but it serves its purpose, whatever that is.  
 It's much slower than Lucy's algorithm, computing $\pi(10^{10})$ in about 5 seconds instead of the 0.25 seconds that the plain Lucy algorthm takes, or the 0.06 seconds that the extended Lucy's algorithm takes. It's just worse in basically every way, especially in that you have to worry about overflow issues which no doubt plague this thing because I didn't try very hard to avoid them. And even *then*, if there are no overflow issues, $\pi(x)$ gets larger than your modulus fairly quickly, and I guess the best way to get the exact value is maybe to use multiple moduli + CRT or to get an analytic estimate of $\pi(x)$ and use the congruence obtained using this algorithm. Or maybe (this is the correct answer) you just shouldn't use this algorithm. But it *does work!*
 
+---
+
 ### Black Algorithm and Min-25 Sieve
 
 The algorithms here reduce the problem of summing multiplicative functions to the problem of summing easier functions _over primes_. The "Black Algorithm" may be the easiest to understand.
