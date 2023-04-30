@@ -75,7 +75,7 @@ We'll write $D(x) = \sum_{n \leq x} d(n)$.
 
 Perhaps the first instinct of someone unfamiliar with this sort of problem would be to simply iterate over all of the integers $n \leq x$, compute $d(n)$, and add the result to a sum.
 
-The first iteration could look like this:
+Here's a simple Nim implementation:
 
 ```nim
 proc D(x: int64): int64 =
@@ -156,7 +156,7 @@ proc divisorSummatory(x: int64): int64 =
   result -= xsqrt*xsqrt
 ```
 
-For $D(x)$, it's possible to do it in about $O(x^{1/3})$ time, but I'll cover that in a later post because it's much more complicated and uses a very different technique.
+For $D(x)$, it's possible to do it in something like $O(x^{1/3})$ time, but I'll cover that in a later post because it's much more complicated and uses a very different technique.
 
 So with this, if we're able to sum $f$ and $g$ in a reasonable amount of time, we're able to sum $f*g$ as well. This will be a crucial feature of the more complex methods.
 
@@ -256,7 +256,8 @@ Clearly $d_1(n) = u(n) = 1$ for all $n$, since there is only one way to write $n
 
 If we attempted to just use the hyperbola method over and over again with no modifications we would get worse and worse runtime, as follows.
 
-We know $d_1$ can be summed in constant time, and that $d_2$ can be summed in $O(x^{1/2})$ time. How about $d_3$?
+We know $d_1$ can be summed in constant time, and that $d_2$ can be summed in $O(x^{1/2})$ time.  
+How about $d_3$?
 
 Brainlessly apply the hyperbola method. We obtain
 
@@ -264,9 +265,10 @@ $$D_3(x) = \sum_{n \leq x} d_3(n) = \sum_{n \leq \alpha} D_2\left(\frac{x}{n}\ri
 
 The last term takes $O(\beta^{1/2})$ time of course. The first one takes $O\left(\sqrt{x\cdot\alpha}\right)$ time, and the second takes $O(\beta)$ time if we sieve $d_2$ in linear time. If we optimize $\alpha$ and $\beta$ we choose $\alpha = x^{1/3}$ and $\beta = x^{2/3}$, for a total runtime of $O(x^{2/3})$.
 
-If we repeat this analysis for $D_4$ you'll end up choosing $\alpha = x^{1/4}$ and $\beta = x^{3/4}$ for a total runtime of $x^{3/4}$. Also notice that we also require $x^{3/4}$ space for this, which is getting pretty large.
+If we repeat this for $D_4$ you'll end up choosing $\alpha = x^{1/4}$ and $\beta = x^{3/4}$ for a total runtime of $O(x^{3/4})$.  
+Also notice that we also require $O(x^{3/4})$ space for this, which is getting pretty large.
 
-By induction, we can compute $D_k(x)$ in about $x^{1 - 1/k}$ time, which as $k$ gets large is probably even worse than linear just due to a growing constant factor which I've ignored. Here we're going to show how we can cap the runtime to $O(k x^{2/3})$ while using $O(x^{2/3})$ space.
+By induction, we can compute $D_k(x)$ in $O(x^{1 - 1/k})$ time, which as $k$ gets large is probably even worse than linear just due to a growing constant factor which I've ignored. Here we're going to show how we can cap the runtime to $O(k x^{2/3})$ while using $O(x^{2/3})$ space.
 
 The key idea here is again essentially from [my last post][lucyfenwick].
 
@@ -290,7 +292,7 @@ If we want to minimize the total time to update both arrays, $O\left(y + x/\sqrt
 
 You'll have to poke at the constant coefficient on $y$ in your implementation.
 
-Very short note here - I'm reusing the `FIArray` container from [last time][lucyfenwick]. Read the relevant section of the linked post if you want some context, but here it's just an easy container for our data. The following is a Nim implementation of this algorithm.
+Very short note here - I'm reusing the `FIArray` container from [last time][lucyfenwick]. Read the relevant section of the linked post if you want some context, but here it's just an easy container for our data. The following is an implementation of this algorithm.
 
 ```nim
 proc genDivisorSummatory(x: int64, k: int, m: int64): FIArray =
@@ -357,7 +359,7 @@ $$M(x) = 1 - \sum_{n \leq \sqrt{x}} \mu(n)\left \lfloor \frac{x}{n}\right\rfloor
 
 Notice that if we plug in $x = 1$ we get $M(x)$ again in the right hand side, so we should just set $M(1) = 1$ manually to avoid issues.
 
-Then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in about $O(\sqrt{x})$ time.  
+Then if we know the values of $M(x/n)$ for $n > 1$, we can compute $M(x)$ in $O(\sqrt{x})$ time.  
 This sort of structure is going to be very similar for a lot of the functions we'll sum, so again we're going to be using the old `FIArray` as a container here.
 
 The algorithm for computing $M(x)$ will proceed as follows:
@@ -374,12 +376,12 @@ The lower key values take a total time of
 
 $$O\left(\sum_{v \leq \sqrt{x}} \sqrt{v}\right) = O\left(\sqrt{x} \sqrt{\sqrt{x}}\right) = O\left(x^{3/4}\right)$$
 
-The upper key values $v = \lfloor x/k \rfloor$ for $k < \sqrt{x}$ contribute about
+The upper key values $v = \lfloor x/k \rfloor$ for $k < \sqrt{x}$ contribute
 
 $$O\left(\sum_{k \leq \sqrt{x}} \sqrt{\frac{x}{k}}\right) = O\left(\int_1^{\sqrt{x}} \sqrt{\frac{x}{k}}dk\right) = O\left(x^{3/4}\right)$$
 
 So this easy algorithm only takes $O(x^{3/4})$ time and $O(x^{1/2})$ space.  
-Here's a Nim implementation:
+Here's an implementation:
 
 ```nim
 proc mertens(x: int64): FIarray =
@@ -536,7 +538,7 @@ I like to think of this as an approximation of $f$ to first prime order. The cho
 Whenever we have such a situation, the function $f/g = h$ (division being in terms of Dirichlet inverses) will have the nice property that $h(n) = 0$ for all $n$ that are not "powerful".
 
 By "powerful", I mean that if a prime $p$ divides $n$, then $p^2$ also divides $n$.  
-So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, about $O(\sqrt{x})$ of them (see [this Wikipedia article](https://en.wikipedia.org/wiki/Powerful_number#Mathematical_properties)).
+So for example $2^3 5^2$ is powerful, but $2^7 5^1 7^3$ is not powerful. As it turns out, there are vanishingly many powerful integers up to $x$, actually $O(\sqrt{x})$ of them (see [this Wikipedia article](https://en.wikipedia.org/wiki/Powerful_number#Mathematical_properties)).
 
 Why is $h(n) = 0$ for non-powerful integers $n$?
 
@@ -672,7 +674,7 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
 
 Here, `x div n` is the summatory function of $g(n) = 1$ up to $x/n$. This can sum up to $10^{15}$ in about 3s on my laptop, and uses a very modest amount of memory.
 
-When $G(x)$ can be computed in exactly $O(\sqrt{x})$ time, the runtime for $F(x)$ will be about $O(\sqrt{x} \log(x))$. If $G(x)$ can be computed faster, then iterating on the powerful numbers will dominate the runtime and it'll be about $O(\sqrt{x})$. When $G(x)$ is slower, then the runtime of $F(x)$ will basically match that of $G(x)$.
+When $G(x)$ can be computed in exactly $O(\sqrt{x})$ time, the runtime for $F(x)$ will be $O(\sqrt{x} \log(x))$. If $G(x)$ can be computed faster, then iterating on the powerful numbers will dominate the runtime and it'll be $O(\sqrt{x})$. When $G(x)$ is slower, then the runtime of $F(x)$ will basically match that of $G(x)$.
 
 #### Note on Picking $g$
 
@@ -697,7 +699,7 @@ For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $
 
 In my [prime counting post][lucyfenwick] we developed an algorithm to compute $\pi(x)$, the number of primes up to $x$, in something like $O(x^{2/3} (\log x \log \log x)^{1/3})$ time using Fenwick trees and Lucy's algorithm.  
 
-This time we're going to be doing something no one should actually do, and use sums of multiplicative functions to develop an algorithm to compute $\pi(x)$ in about $O(x^{2/3} \log(x))$ time. Really, it's not actually so bad asymptotically, but it is worse. Don't use this.
+This time we're going to be doing something no one should actually do, and use sums of multiplicative functions to develop an algorithm to compute $\pi(x)$ in $O(x^{2/3} \log(x))$ time. Really, it's not actually so bad asymptotically, but it is worse. Don't use this.
 
 The setup here will rely on the following functions:
 
