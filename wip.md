@@ -548,11 +548,24 @@ As a reminder we'll write $D_3(x)$ for the sum of $d_3(n)$ over $n \leq x$.
 
 Now let's find out what sort of function $h = f / d_3$ is.
 
-For this, I like to use Bell series. Read about them in Apostol's book or skip this paragraph straight to the closed form for $h(p^e)$.
+#### Bell Series
+
+Given a multiplicative function $f(n)$, the Bell series of $f$ given a prime $p$ is the formal power series
+
+$$f_p(z) = \sum_{e \geq 0} f(p^e) z^e$$
+
+You can read about these in Apostol's book. A helpful feature is that
+
+$$(f*g)_p(z) = f_p(z) g_p(z)$$
+
+Therefore if we want to compute the closed form of $h = f/d_3$ at prime powers we can divide the Bell series for $f$ and $d_3$ and use the power series for the result.
 
 We compute
 
 $$\begin{align*}
+f_p(z) &= \sum_{e \geq 0} (2e+1)z^e\\
+(d_3)_p(z) &= \sum_{e \geq 0} \binom{e+2}{e} z^e\\
+&= (u\ast u\ast u)_p(z) = \left(\sum_{e \geq 0} z^e\right)^3\\
 h_p(z) &= \frac{\sum_{e \geq 0} (2e+1)z^e}{\left(\sum_{e \geq 0} z^e\right)^3}\\
 &= \frac{(1-z)^3(1+z)}{(1-z)^2} = (1-z)(1+z) = 1-z^2
 \end{align*}$$
@@ -576,7 +589,7 @@ proc sumDn2(x: int64, m: int64): int64 =
   return result
 ```
 
-This takes about 17s to compute $\sum_{n \leq 10^{12}} d(n^2)$ on my laptop.
+This takes about 8s to compute $\sum_{n \leq 10^{12}} d(n^2)$ on my laptop.
 
 We got lucky here in that $h = f/g$ was zero even more often than we'd expect it to be.  
 Let's try a case which does not work out quite that way.
@@ -584,14 +597,35 @@ Let's try a case which does not work out quite that way.
 Suppose we define $f(n)$ to be the largest powerful divisor of $n$.
 In other words, $f$ is the multiplicative function with $f(p) = 1$ and $f(p^e) = p^e$ for $e > 1$.
 
-Clearly here we'll choose $g(n) = u(n) = 1$ for all $n$, and then $h = f/g$ has $h(p) = 0$, $h(p^2) = p^2 - 1$, and $h(p^e) = p^e - p^{e-1}$ for $e > 2$. Now, when it comes to generating all the powerful $n \leq x$ along with their values $h(p^e)$, we'll store pairs $(n, h(n))$ and factor in each prime iteratively. We can loop over the primes $p \leq \sqrt{x}$ using a simple Eratosthenes sieve, and for each $(n, h(n))$ we have stored, calculate $(p^en, h(n)h(p^e))$. If $pn > x$ we'll stop storing $(n, h(n))$ because we won't be adding any more prime factors to it.
+Clearly here we'll choose $g(n) = u(n) = 1$ for all $n$, and then $h = f/g$ has $h(p) = 0$, $h(p^2) = p^2 - 1$, and $h(p^e) = p^e - p^{e-1}$ for $e > 2$.
 
-It helps to have a generic iterator to do this. I pass in $h(n)$ as represented by a two variable function `h(p, e)` in my implementation. Here's how this could look:
+Now, when it comes to generating all the powerful $n \leq x$ along with their values $h(p^e)$, I think a common approach I've seen (I think from baihacker) is to just do a recursive depth first search, adding prime factors in order. We'll do something similar but with a stack.
+
+In the following, $h(p^e)$ is represented by a two variable function `h(p, e: int64): int64`.  
+I'll also include a modulus. You can also implement a version without a modulus for when you know values are going to be small which will save a little bit of time.
+
+#### Algorithm (Powerful Numbers Iterator)
+
+> 1. Start by noting that no prime greater than $\sqrt{x}$ can divide any powerful number up to $x$. So compute the primes up to $\sqrt{x}$ using a simple Eratosthenes sieve into a list, say `ps`.
+> 2. Initialize a stack `stk` which contains tuples `(n, hn, i)`, where `hn` is the value $h(n)$, and `i` is the index of the next prime to consider in the list.  
+> This stack should start with containing `(1, 1, 0)`.
+> 3. If the stack is empty we are finished.  
+> If the stack is nonempty, pop `(n, hn, i)` from the stack.  
+> Set `p = ps[i]` as an `int64`.
+> 4. If `i == ps.len`, then we've already considered adding all prime factors to `n`, so we should just yield `(n, hn)` and return to step 3.  
+> Likewise, if `n*p*p > x`, we will never be adding any more prime factors to `n`, so we should yield `(n, hn)` and return to step 3.  
+> To avoid overflow errors here, check if `p*p > x div n` instead.
+> 5. If we've gotten here, there's the possibility of adding a larger prime factor to `n`. For the case that we _don't_ add a factor of `p`, we push `(n, hn, i+1)` to the stack.  
+> In the other case, we'll be adding a factor of (at least) `p*p`.  
+> Initialize `pp = p*p` for the power of `p` we're factoring into `n`, and set `e = 2` to track the current power of `p` we're considering.  
+While `n*pp <= x` (rather check `pp <= x div n`), push `(n*pp, (hn*h(p,e)) mod m, i+1)` to the stack to be considered later. Be careful about possible overflows in `pp` here, so before doing `pp *= p` and `e += 1` be sure to make sure it won't be too big.  
+> One way to check this is by testing `pp > (x div n) div p`, if this is true then it'll be too big and we can just break.  
+> Once finished adding factors of `p` to `n`, return to step `3`.
 
 ```nim
 iterator powerfulExt(x: int64, h: proc (p, e: int64): int64, m: int64): (int64, int64) =
-  ##Returns (n, h(n) mod m) where n are the O(sqrt x) powerful numbers up to x, 
-  ##and h is any multiplicative function.
+  ##Yields (n, h(n) mod m) where n are the O(sqrt x) powerful numbers
+  ##up to x, and h is any multiplicative function.
   var nrt = isqrt(x).int
   var res = @[(1'i64, 1'i64, 0)]
   var ps = eratosthenes(nrt+1)
@@ -629,7 +663,7 @@ proc sumPowerfulPart(x: int64, m: int64): int64 =
     result = result mod m
 ```
 
-Here, `x div n` is the summatory function of $g(n) = 1$ up to $x/n$. This can sum up to $10^{15}$ in about 5s on my laptop, and uses a very modest amount of memory.
+Here, `x div n` is the summatory function of $g(n) = 1$ up to $x/n$. This can sum up to $10^{15}$ in about 3s on my laptop, and uses a very modest amount of memory.
 
 When $G(x)$ can be computed in exactly $O(\sqrt{x})$ time, the runtime for $F(x)$ will be about $O(\sqrt{x} \log(x))$. If $G(x)$ can be computed faster, then iterating on the powerful numbers will dominate the runtime and it'll be about $O(\sqrt{x})$. When $G(x)$ is slower, then the runtime of $F(x)$ will basically match that of $G(x)$.
 
@@ -651,6 +685,10 @@ Here's a table.
 One pattern that is evident from definitions is that $(f*g)(p) = f(p) + g(p)$. So if we desire some form for $g(p)$ and we can break it up into a sum of ones that we know, we can just use the Dirichlet convolution of those parts.
 
 For example, if we wanted to sum a function with $f(p) = 2p+1$, we could write $2p+1 = p + (p+1)$ and choose $g = N * \sigma_1$. Luckily enough, both $N$ and $\sigma_1$ are feasibly summable using the techniques we've already explored. Thus with the powerful numbers trick we can manage this kind of function too!
+
+### How Not To Count Primes
+
+TODO
 
 ### Black Algorithm and Min-25 Sieve
 
