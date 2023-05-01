@@ -38,3 +38,6 @@ Thumbs.db
 
 #code binaries
 bin/
+
+#blank blog post
+post-format.md

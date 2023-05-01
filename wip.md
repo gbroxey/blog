@@ -1,5 +1,10 @@
 ---
-title: "Another WIP Page"
+title: "Summing Multiplicative Functions (Pt. 2)"
+tags: [number theory, algorithms, prime counting]
+---
+
+> **Abstract.** We will examine and implement the Black Algorithm and the Min-25 sieve.
+
 ---
 
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
