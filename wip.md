@@ -7,6 +7,19 @@ tags: [number theory, algorithms, prime counting]
 
 ---
 
+[Last time][mult1] we learned some tricks and techniques for computing partial sums of multiplicative functions. This time we're going to dedicate some attention to the Black Algorithm and the related Min-25 sieve. These algorithms, as mentioned in the previous post, reduce the problem of summing a multiplicative function to the problem of summing the same function over primes. We already know how to accomplish this (see [my post on Lucy's algorithm][lucyfenwick]) in $O(x^{2/3} (\log x \log \log x)^{1/3})$ time. These algorithms will build off of Lucy's algorithm, and in particular knowledge of how Fenwick trees are used in this context is required to obtain a runtime at least as good as the one given by the powerful numbers trick.
+
+In fact, I think most (any?) cases summable by the Black Algorithm and Min-25 type algorithms can be done perfectly well using the powerful numbers trick, usually in a flat $O(x^{2/3})$ time (or better!).
+
+The functions that these algorithms aim to sum are those multiplicative $f(n)$ such that $f(p)$ has a nice form at prime numbers. Specifically they assume $f(p) = g(p)$ is a polynomial with low degree.
+
+Suppose $g(p)$ has degree $k$, and $g(p) = \sum_{i \leq k} a_i p^i$.  
+Writing $N_i$ for the multiplicative function $N_i(n) = n^i$, we can do the powerful numbers trick by approximating $f(n)$ by the function $(N_0)^{a_0} \ast (N_1)^{a_1} \ast \ldots \ast (N_k)^{a_k}$, where by $(N_0)^{a_0}$ for example I'm referring to the $a_0$-fold convolution of $N_0$ - that is, $N_0 \ast N_0 \ast \ldots \ast N_0$, where there are $a_0$ copies of $N_0$. I'll assume here that $a_i$ are integers - if they are negative, you just convolve the Dirichlet inverse of $N_i$ instead of $N_i$ itself. With linear sieving we finish in time
+
+$$O\left(x^{2/3} \sum_{i \leq k} \vert a_i \vert\right)$$
+
+So now that I've explained that you don't actually need 
+
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
 
 ### Min-25 Sieve
@@ -40,3 +53,14 @@ The first step is achieved using the extended Lucy_Hedgehog algorithm as describ
 The rest of the algorithm proceeds by factoring all of the missing prime factors in all the numbers we want to sum. Step 2 does this essentially by cases, since numbers with no prime factors below $\sqrt[3]{x}+1$ must be $1$, prime, or a product of two primes.
 
 For step 3, Min-25 recommends the use of a Fenwick tree but I don't think they say exactly how to use it. Referencing the [CodeForces article][box-min-25] and my explanation on how to use Fenwick trees in this context I think it should be not impossible to work out how to apply them here. We can get away with avoiding the use of a Fenwick tree though if we only want $O(x^{3/4})$ ish runtime. Check out that CodeForces article for how to do this, they set up a nice recurrence there that works fine.
+
+---
+
+## Code
+
+The code for this blog post is available nowhere.
+
+[mult1]: /blog/2023/04/30/mult-sum-1.html
+[lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
+
+---
