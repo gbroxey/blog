@@ -32,7 +32,7 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 We will not skip straight to my proof. Instead I'll first invite you to try to prove it yourself.
 
-I think that most attempts at a proof for this case will slightly fall short of the desired bound. It's strange how elusive it seems to be, which is even stranger when you see my proof, which proves an even stronger bound than needed. That's actually another interesting aspect here, but not so surprising if you think about it[^1].
+I think that most attempts at a proof for this case will slightly fall short of the desired bound. It's strange how elusive it seems to be, which is even stranger when you see my proof, which provides an even stronger bound than needed. That's actually another interesting aspect here, but not so surprising if you think about it[^1].
 
 The first thing we could notice is that if $A \perp \lbrace 1, 2, 3 \rbrace$, then naturally $A \perp \lbrace 1, 2\rbrace$. This case is quite easy! We can for example let $U$ be the set of all $4^i * j$ for $i \geq 0$ and $j$ odd, after which $U \times \lbrace 1, 2 \rbrace = \NN$ and [Lemma 9][density1] kicks in - we get $\dsup(A) \leq \frac{2}{3}$. The details here are not hard to fill in, [Lemma 7][density1] being especially helpful.
 
@@ -40,7 +40,7 @@ Unfortunately though this is quite far from our desired bound.
 
 A next attempt can be made by using the counting function $A(x) = \left\vert A \cap \lbrace 1, 2, \ldots, \lfloor x \rfloor\rbrace\right\vert$.
 
-Write $R = SA\cup 2A \cup 3A$, so that $R(x) = A(x) + A(x/2) + A(x/3)$.
+Write $R = A\cup 2A \cup 3A$, so that $R(x) = A(x) + A(x/2) + A(x/3)$.
 
 We'll start with the bound $R(x) - R(x/2) \leq \frac{x}{2} + 1$. Expanding the function,
 
@@ -78,7 +78,7 @@ This is some [writing][reference].
 
 ## Code
 
-The code for this blog post is available nowhere.[^1]
+The code for this blog post is available nowhere.
 
 [density1]: /blog/2023/04/13/density-gcds.html
 [density2]: /blog/2023/04/18/dilations-primes.html
