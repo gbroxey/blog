@@ -28,7 +28,22 @@ The following exposition of these methods is based on the following articles (co
 - [This post][min-25-chinese] on a Chinese wiki about some version of Min-25's algorithm, and
 - [This CodeForces blog post][box-min-25] by box, also explaining a version of Min-25's sieve. This one is maybe the easiest to follow, especially for those who don't speak Chinese or Japanese.
 
-Some parts will be my own ideas, and I won't claim to have detailed a perfect implementation of these algorithms, but I will be 
+Some parts will be my own ideas, and I won't claim to have detailed a perfect implementation of these algorithms, but I will be doing my best to show how these methods work.
+
+In all of the following algorithms, $f(n)$ will be the multiplicative function we want to sum.  
+We will write $F(x) = \sum_{n \leq x} f(n)$, and also $F_{\mathbb P}(x) = \sum_{p \leq x} f(p)$ for the sum over only primes. The key ideas in the algorithms here will be to compute $F_{\mathbb P}$ and then to somehow obtain $F$.
+
+---
+
+### Computing $F_{\mathbb P}(x)$
+
+In fact we will usually need to know $F_{\mathbb P}(v)$ for all distinct values of $v = \left\lfloor \frac{x}{n}\right\rfloor$, referred to as "key values" in my previous posts on these topics ([Lucy's Algorithm][lucyfenwick] and [Multiplicative Sums 1][mult1]). We will not be talking so much on this topic here since I've covered in the first of those - see the section "Sums of Primes, Primes Squared, ..." which naturally extends to sums of any polynomial over primes. The total runtime for such a problem is $O(x^{2/3} (\log x \log \log x)^{1/3})$
+
+### The Black Algorithm
+
+This is the simplest version of these ideas.
+
+
 
 
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
