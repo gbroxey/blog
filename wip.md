@@ -14,11 +14,22 @@ In fact, I think most (any?) cases summable by the Black Algorithm and Min-25 ty
 The functions that these algorithms aim to sum are those multiplicative $f(n)$ such that $f(p)$ has a nice form at prime numbers. Specifically they assume $f(p) = g(p)$ is a polynomial with low degree.
 
 Suppose $g(p)$ has degree $k$, and $g(p) = \sum_{i \leq k} a_i p^i$.  
-Writing $N_i$ for the multiplicative function $N_i(n) = n^i$, we can do the powerful numbers trick by approximating $f(n)$ by the function $(N_0)^{a_0} \ast (N_1)^{a_1} \ast \ldots \ast (N_k)^{a_k}$, where by $(N_0)^{a_0}$ for example I'm referring to the $a_0$-fold convolution of $N_0$ - that is, $N_0 \ast N_0 \ast \ldots \ast N_0$, where there are $a_0$ copies of $N_0$. I'll assume here that $a_i$ are integers - if they are negative, you just convolve the Dirichlet inverse of $N_i$ instead of $N_i$ itself. With linear sieving we finish in time
+Writing $N_i$ for the multiplicative function $N_i(n) = n^i$, we can do the powerful numbers trick by approximating $f(n)$ by the function $(N_0)^{a_0} \ast (N_1)^{a_1} \ast \ldots \ast (N_k)^{a_k}$, where by $(N_0)^{a_0}$ for example I'm referring to the $a_0$-fold convolution of $N_0$ - that is, $N_0 \ast N_0 \ast \ldots \ast N_0$, where there are $a_0$ copies. I'll assume here that $a_i$ are integers. If they are negative, you just convolve the Dirichlet inverse of $N_i$ instead of $N_i$ itself. With linear sieving we finish in time
 
 $$O\left(x^{2/3} \sum_{i \leq k} \vert a_i \vert\right)$$
 
-So now that I've explained that you don't actually need 
+So now that I've explained that you probably don't even need to implement the following methods, I'm going to spend a week writing about how they work and how to implement them.
+
+Partially I'm motivated here by the fact that the existing documentation on these methods is a little bit lacking. It is slightly hard to locate, and usually in Chinese or Japanese. There are English articles, but I didn't find any that actually explain how to use Fenwick trees with these methods (unsurprisingly). Given that the use of those is critical in obtaining the fastest version of these algorithms, it's quite frustrating to not have a good resource on this. Hopefully this post will serve as a good overview, and also as a resource allowing you to implement these (if you want to).
+
+The following exposition of these methods is based on the following articles (copied from [the last post][mult1]):
+- [This post][black-baihacker] by baihacker about the Black Algorithm, which itself contains reference to [a post][bohang] by Bohang Zhang, in Chinese, describing another summation algorithm,
+- [This post][min-25-original] from Min-25's blog, in Japanese, encased in amber (the internet archive) due to its having been deleted a while back,
+- [This post][min-25-chinese] on a Chinese wiki about some version of Min-25's algorithm, and
+- [This CodeForces blog post][box-min-25] by box, also explaining a version of Min-25's sieve. This one is maybe the easiest to follow, especially for those who don't speak Chinese or Japanese.
+
+Some parts will be my own ideas, and I won't claim to have detailed a perfect implementation of these algorithms, but I will be 
+
 
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
 
@@ -62,5 +73,10 @@ The code for this blog post is available nowhere.
 
 [mult1]: /blog/2023/04/30/mult-sum-1.html
 [lucyfenwick]: /blog/2023/04/09/lucy-fenwick.html
+[box-min-25]: https://codeforces.com/blog/entry/92703
+[min-25-chinese]: https://oi-wiki.org/math/number-theory/min-25/
+[min-25-original]: https://web.archive.org/web/20211009144526/https://min-25.hatenablog.com/entry/2018/11/11/172216
+[black-baihacker]: http://baihacker.github.io/main/2020/The_prefix-sum_of_multiplicative_function_the_black_algorithm.html
+[bohang]: https://zhuanlan.zhihu.com/p/33544708
 
 ---
