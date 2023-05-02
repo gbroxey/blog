@@ -1,11 +1,11 @@
 ---
 title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
-modified_date: 2023-04-23
+modified_date: 2023-05-02
 tags: [prime counting, number theory, algorithms]
 ---
 
-> **Abstract.** I describe how Lucy_Hedgehog's algorithm works, and how it can be implemented. Then I show how Fenwick trees can be used to boost its runtime without much effort. The final runtime is at most $O(x^{2/3} (\log x \log \log x)^{1/3})$ to compute $\pi(x)$.  
+> **Abstract.** I describe how Lucy_Hedgehog's algorithm works, and how it can be implemented. Then I show how Fenwick trees can be used to boost its runtime without much effort. The final runtime is at most $O(x^{2/3} (\log x)^{1/3})$ to compute $\pi(x)$.  
 > I also give an extension to sums of primes and to primes in arithmetic progressions.  
 > The implementation gives $\pi(10^{13})$ in less than 3s.
 
@@ -315,19 +315,18 @@ Now that we know what's going to happen, here's the algorithm:
 ---
 
 ## Analysis + Optimization
+_Updated 5/2/2023._
+
 Clearly we are using $O(y)$ space. So how about our runtime?
 
 This part will involve a lot of tedious casework so feel free to skip it and trust me instead.
 
-For each prime $p \leq \sqrt{x}$, the Eratosthenes step has to modify `sieve[p*k]` for (at most) all of the values `p*k <= y`.  
-Each update using the Fenwick tree takes $O(\log(y))$ time, for a total of $O\left(\frac{y \log y}{p}\right)$ time.
+For each prime $p \leq \sqrt{x}$, the Eratosthenes step has to modify `sieve[p*k]` whenever `p*k` needs to be marked as composite. Thus we need to update the Fenwick tree at `n` once for each composite $n \leq y$.
+Each update using the Fenwick tree takes $O(\log(y))$ time.
 
 Then the Eratosthenes step takes us a total runtime of
 
-$$\begin{align*}
-\sum_{p \leq \sqrt{x}} \frac{y \log y}{p} &\sim y \log y \log \log \sqrt{x}\\
-&\sim y \log y \log \log x
-\end{align*}$$
+$$O\left(\sum_{n \leq y} \log(y)\right) = O\left(y \log y\right)$$
 
 Okay, now for the Lucy step. Here I won't aim for a perfect asymptotic but will be alright with an upper bound to avoid the most headache inducing analysis. Feel free to be more precise on your own.
 
@@ -336,7 +335,7 @@ The analysis will be slightly different depending on whether $p^2 \leq y$.
 If it is one of these small primes, then for each key value $v > y$ we need to do at most $O(\log y)$ work to update the `FIArray` at `v`. Since there are about $x/y$ such key values, this is a total time of (at most)
 
 $$\begin{align*}
-\sum_{p \leq \sqrt{y}} \frac{x}{y} \log y &\sim \frac{x}{y} \log(y) \pi(\sqrt{y})\\
+\sum_{p \leq \sqrt{y}} \frac{x}{y} \log y &= \frac{x}{y} \log(y) \pi(\sqrt{y})\\
 &\sim \frac{x}{y} \log(y)\cdot \frac{2\sqrt{y}}{\log(y)} \sim \frac{2x}{\sqrt{y}}
 \end{align*}$$
 
@@ -381,19 +380,19 @@ $$\begin{align*}
 So then finally we can plug this back into our estimate on the contribution of the big primes to show that they too only contribute $O\left(\frac{x}{\sqrt{y}}\right)$ to the final runtime in the Lucy section - nice!
 
 Alright, so putting this all together now:
-- The Eratosthenes section takes at most $O(y \log y \log \log x)$ time
+- The Eratosthenes section takes at most $O(y \log y)$ time
 - The Lucy section takes at most $O\left(\frac{x}{\sqrt{y}}\right)$ time
 
-We want to choose $y$ to balance these out. To do this we can pick $y$ near
+We want to choose $y$ to balance these out. To do this we can pick $y$ proportional to
 
-$$\frac{x^{2/3}}{(2\log x \log \log x)^{2/3}}$$
+$$\frac{x^{2/3}}{(\log x)^{2/3}}$$
 
 I'm not guaranteeing this is optimal, especially since my analysis gave a lot of slack.  
 It should be fine though - the final runtime with this value of $y$ should be at least as good as
 
-$$O(x^{2/3} (\log x \log \log x)^{1/3})$$
+$$O(x^{2/3} (\log x)^{1/3})$$
 
-Not bad really! You'll have to tune the value of $y$ in your own impementation, probably by multiplying by a constant or something. This is where you get to use some trial and error. I've found using about `1.7` times the value I stated works fine.
+Not bad really! You'll have to tune the value of $y$ in your own impementation, probably by multiplying by a constant or something. This is where you get to use some trial and error. I've found using about `0.35` times the value I stated works fine.
 
 Finally we can implement this in Nim! Here's how it looks.
 
@@ -402,7 +401,7 @@ proc lucyFenwick*(x: int64): FIArray =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
   y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
   y = max(S.isqrt.int+1, y) #necessary lower bound
   if x <= 10000:
@@ -499,7 +498,7 @@ Given that these characters $\chi$ are periodic and completely multiplicative, t
 
 Consider the set of all $\varphi(d)$ characters which have period $d$ (just trust me if you don't know what I'm talking about).
 
-We can compute the following sum in about $O(\varphi(d)x^{2/3}(\log x \log \log x)^{1/3})$ time:
+We can compute the following sum in about $O(\varphi(d)x^{2/3}(\log x)^{1/3})$ time:
 
 $$\begin{align*}
 \frac{1}{\varphi(d)} \sum_\chi \overline{\chi}(a) \sum_{p \leq x} \chi(p)
@@ -613,8 +612,8 @@ The rest of the algorithm is unchanged apart from only returning `S[x]` at the e
 |10<sup>10</sup>|0.259|0.068|0.022|
 |10<sup>11</sup>|1.370|0.306|0.097|
 |10<sup>12</sup>|7.259|1.574|0.474|
-|10<sup>13</sup>|39.198|7.652|2.637|
-|10<sup>14</sup>|209|34|13|
+|10<sup>13</sup>|39.198|7.652|2.477|
+|10<sup>14</sup>|209|34|10.7|
 |10<sup>15</sup>|&mdash;|171|77|
 
 ---

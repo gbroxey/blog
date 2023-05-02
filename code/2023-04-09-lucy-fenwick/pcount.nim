@@ -24,7 +24,7 @@ proc lucyFenwick(x: int64): FIArray =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(1.70*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
   y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
   y = max(S.isqrt.int+1, y) #necessary lower bound
   if x <= 10000:
@@ -120,7 +120,7 @@ proc lucyFenwickFast(x: int64): int64 =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(1.7*pow(xf, 2.0/3.0) / pow(2.0*ln(xf)*ln(ln(xf)), 2.0/3.0)).int
+  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
   y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
   y = max(S.isqrt.int+1, y) #necessary lower bound
   if x <= 10000:
