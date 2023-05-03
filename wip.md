@@ -37,7 +37,7 @@ We will write $F(x) = \sum_{n \leq x} f(n)$, and also $F_{\mathbb P}(x) = \sum_{
 
 ### Computing $F_{\mathbb P}(x)$
 
-In fact we will usually need to know $F_{\mathbb P}(v)$ for all distinct values of $v = \left\lfloor \frac{x}{n}\right\rfloor$, referred to as "key values" in my previous posts on these topics ([Lucy's Algorithm][lucyfenwick] and [Multiplicative Sums 1][mult1]). We will not be talking so much on this topic here since I've covered in the first of those - see the section "Sums of Primes, Primes Squared, ..." which naturally extends to sums of any polynomial over primes. The total runtime for such a problem is $O(x^{2/3} (\log x \log \log x)^{1/3})$
+In fact we will usually need to know $F_{\mathbb P}(v)$ for all distinct values of $v = \left\lfloor \frac{x}{n}\right\rfloor$, referred to as "key values" in my previous posts on these topics ([Lucy's Algorithm][lucyfenwick] and [Multiplicative Sums 1][mult1]). We will not be talking so much on this topic here since I've covered in the first of those - see the section "Sums of Primes, Primes Squared, ..." which naturally extends to sums of any polynomial over primes. The total runtime for such a problem is $O(x^{2/3} (\log x)^{1/3})$.
 
 ### The Black Algorithm
 
