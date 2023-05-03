@@ -51,16 +51,16 @@ A(x) + A\left(\frac{x}{2}\right) + A\left(\frac{x}{3}\right) - A\left(\frac{x}{2
 
 Since $\frac x3 > \frac x4$, the term $A(x/3) - A(x/4)$ is nonnegative and can be removed from the left hand side:
 
-$$A(x) - A(x/6) \leq \frac{x}{2} + 1$$
+$$A(x) - A\left(\frac{x}{6}\right) \leq \frac{x}{2} + 1$$
 
 Now substituting $x/6$:
 
-$$A(x/6) - A(x/6^2) \leq \frac{x}{2 \cdot 6} + 1$$
+$$A\left(\frac{x}{6}\right) - A\left(\frac{x}{6^2}\right) \leq \frac{x}{2 \cdot 6} + 1$$
 
 And then substituting $x/6$ again, and so on, until $x/6^n < 1$, we obtain
 
 $$\begin{align*}
-\left\lbrack A(x) - A(\frac x6)\right\rbrack + \left\lbrack A(\frac x6) - A(\frac{x}{6^2})\right\rbrack + \ldots + \left\lbrack A(\frac{x}{6^{n-1}}) - A(\frac{x}{6^n})\right\rbrack &\leq \left\lbrack \frac{x}{2} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6^2} + 1\right\rbrack + \ldots + \left\lbrack \frac{x}{2 \cdot 6^{n-1}} + 1\right\rbrack\\
+\left\lbrack A(x) - A\left(\frac x6\right)\right\rbrack + \left\lbrack A\left(\frac x6\right) - A\left(\frac{x}{6^2}\right)\right\rbrack + \ldots + \left\lbrack A\left(\frac{x}{6^{n-1}}\right) - A\left(\frac{x}{6^n}\right)\right\rbrack &\leq \left\lbrack \frac{x}{2} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6^2} + 1\right\rbrack + \ldots + \left\lbrack \frac{x}{2 \cdot 6^{n-1}} + 1\right\rbrack\\
 A(x) &\leq n + \frac{3}{5}x + \frac{2}{5 \cdot 6^n}x \leq n + \frac{3}{5}x + \frac{2}{5}
 \end{align*}$$
 
