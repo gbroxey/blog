@@ -60,7 +60,7 @@ $$A(x/6) - A(x/6^2) \leq \frac{x}{2 \cdot 6} + 1$$
 And then substituting $x/6$ again, and so on, until $x/6^n < 1$, we obtain
 
 $$\begin{align*}
-\left\lbrack A(x) - A(x/6)\right\rbrack + \left\lbrack A(x/6) - A(x/6^2)\right\rbrack + \ldots + \left\lbrack A(x/6^{n-1}) - A(x/6^n)\right\rbrack &\leq \left\lbrack \frac{x}{2} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6^2} + 1\right\rbrack + \ldots + \left\lbrack \frac{x}{2 \cdot 6^{n-1}} + 1\right\rbrack\\
+\left\lbrack A(x) - A(\frac x6)\right\rbrack + \left\lbrack A(\frac x6) - A(\frac{x}{6^2})\right\rbrack + \ldots + \left\lbrack A(\frac{x}{6^{n-1}}) - A(\frac{x}{6^n})\right\rbrack &\leq \left\lbrack \frac{x}{2} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6} + 1\right\rbrack + \left\lbrack \frac{x}{2 \cdot 6^2} + 1\right\rbrack + \ldots + \left\lbrack \frac{x}{2 \cdot 6^{n-1}} + 1\right\rbrack\\
 A(x) &\leq n + \frac{3}{5}x + \frac{2}{5 \cdot 6^n}x \leq n + \frac{3}{5}x + \frac{2}{5}
 \end{align*}$$
 
