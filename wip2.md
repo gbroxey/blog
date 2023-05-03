@@ -82,7 +82,7 @@ _Proof._ This is a consequence of subadditivity of lim sup (see [Lemma 2](densit
 
 > **Lemma 19.** If $S_1 \cup S_2 \cup \ldots = \NN$, and $\lim_{n \to \infty} \dsup(S_{n+1} \cup S_{n+2} \cup \ldots) = 0$, then
 >
-$$\dsup(A) \leq \sum_{k \geq 1} \dsup(S \cap A_k)$$
+$$\dsup(A) \leq \sum_{k \geq 1} \dsup(A \cap S_k)$$
 
 _Proof._ This is intuitive but actually seems subtle so I am going to give it real thought.  
 Lemma 18 can be extended to families $S_1, S_2, \ldots, S_n$ without thinking by just applying it $n-1$ times. If you do that, you will have
@@ -98,6 +98,19 @@ If any partial sum for a given $n$ exceeds $1$ then we are trivially done. Other
 $$\dsup(A) \leq c + \dsup(S_{k+1} \cup S_{k+2} \cup \ldots) \to c$$
 
 and therefore that $\dsup(A) \leq \sum_{k \geq 1} \dsup(A \cap S_k)$ as desired. $\proofqed$
+
+We will rewrite the inequality as follows when all $\dnat(S_k)$ exist:
+
+$$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat(S_k)$$
+
+The conceptual reason for this may be clear.
+
+The quantity $\frac{\dsup(A \cap S_k)}{\dnat(S_k)}$ can be interpreted as the relative density of $A$ in $S_k$.  
+The strategy for the following proof is to select $S_k$ as a nice partition of $\NN$ (so that $\sum \dnat(S_k) = 1$). We also want the relative density of $A$ in $S_k$ to be at most $\delta \leq \frac{6}{11}$, at which point
+
+$$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat(S_k) \leq \sum_{k \geq 1} \delta \dnat(S_k) = \delta \sum_{k \leq 1} \dnat(S_k) = \delta$$
+
+The problem of choosing the sets $S_k$ is now our focus.
 
 This is some [writing][reference].
 
