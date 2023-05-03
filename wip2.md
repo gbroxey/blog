@@ -70,9 +70,34 @@ We only needed to simplify a geometric series to get this result. We have $n = O
 
 $$A(x) \leq \frac{3}{5}x + O(\log(x))$$
 
-Thus immediately $\dsup(A) \leq \frac{3}{5} = 0.6$, which is better than $2/3$ but worse than $6/11 = 0.54\ldots$, which still is out of reach. Maybe there's some way to modify this telescoping method to get a tighter bound (clearly there was some loss when we threw out $A(x/3) - A(x/4)$) but it doesn't seem likely to yield a general proof for $B = \lbrace 1, p, q \rbrace$
+Thus immediately $\dsup(A) \leq \frac{3}{5} = 0.6$, which is better than $2/3$ but worse than $6/11 = 0.54\ldots$ which still is out of reach. Maybe there's some way to modify this telescoping method to get a tighter bound. Clearly there was some loss when we threw out $A(x/3) - A(x/4)$.
 
-## Section Header
+---
+
+The best way that I have found to prove the desired result relies on the following idea.
+
+> **Lemma 18.** If $S \cup T = \NN$ then $\dsup(A) \leq \dsup(A \cap S) + \dsup(A \cap T)$.
+
+_Proof._ This is a consequence of subadditivity of lim sup (see [Lemma 2](density1)). $\proofqed$
+
+> **Lemma 19.** If $S_1 \cup S_2 \cup \ldots = \NN$, and $\lim_{n \to \infty} \dsup(S_{n+1} \cup S_{n+2} \cup \ldots) = 0$, then
+>
+$$\dsup(A) \leq \sum_{k \geq 1} \dsup(S \cap A_k)$$
+
+_Proof._ This is intuitive but actually seems subtle so I am going to give it real thought.  
+Lemma 18 can be extended to families $S_1, S_2, \ldots, S_n$ without thinking by just applying it $n-1$ times. If you do that, you will have
+
+$$\NN - (S_1 \cup S_2 \cup \ldots \cup S_n) \subseteq S_{n+1} \cup S_{n+2} \cup \ldots$$
+
+so that (Lemma 18 again) we have
+
+$$\dsup(A) \leq \sum_{k \leq n} \dsup(A \cap S_k) + \dsup(S_{k+1} \cup S_{k+2} \cup \ldots)$$
+
+If any partial sum for a given $n$ exceeds $1$ then we are trivially done. Otherwise it is bounded, and by monotonicity the sum converges to some constant $c = \sum_{k \geq 1} \dsup(A \cap S_k)$. We then have
+
+$$\dsup(A) \leq c + \dsup(S_{k+1} \cup S_{k+2} \cup \ldots) \to c$$
+
+and therefore that $\dsup(A) \leq \sum_{k \geq 1} \dsup(A \cap S_k)$ as desired. $\proofqed$
 
 This is some [writing][reference].
 
