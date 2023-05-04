@@ -13,7 +13,7 @@ This proof will extend to a bound for $\lbrace 1, p, q\rbrace$ for any $1 < p < 
 ---
 
 This is the third post in a series on density.  
-Read [Density and GCDs][density1] and the [Nearly Disjoint Dilations: Primes][density2] first.
+Read [Density and GCDs][density1] and [Nearly Disjoint Dilations: Primes][density2] first.
 
 Here is the conjecture we continue to contemplate:
 
@@ -113,7 +113,24 @@ $$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat
 
 The problem of choosing the family of sets $S_k$ is now our focus.
 
-This is some [writing][reference].
+Before we do, the following lemma will be helpful to us.
+
+> **Lemma 20.** Suppose $S, T_1, T_2$ are sets such that $S \perp T_1$, $S \perp T_2$, and such that $\dnat(S) > 0$ exists. Then
+> 
+$$\frac{\dnat(S \times T_1)}{\dnat(S \times T_2)} = \frac{\dnat(S) H(T_1)}{\dnat(S) H(T_2)} = \frac{H(T_1)}{H(T_2)}$$
+
+_Proof._ The fact that $\dnat(S \times T_1)$ and $\dnat(S \times T_2)$ exist is guaranteed by [Lemma 7][density1].  
+The rest is just calculation using Lemma 7. $\proofqed$
+
+bla bla more connective text
+
+The most obvious choice for a set in this family would look like $\lbrace 1, 2, 3 \rbrace$. Aside from the fact that this has zero density (which we'll ignore for a second), the densest looking subset $A$ of $\lbrace 1, 2, 3 \rbrace$, such that $A, 2A, 3A$ are disjoint, is $A = \lbrace 1 \rbrace$ or something. None of that means anything until we actually realize that we should include all of the different possible factors other than $2$ or $3$.
+
+A set in this family then looks like $\lbrace 1, 2, 3 \rbrace \times \lbrace k \mid \gcd(k, 6) = 1 \rbrace$.  
+The densest subset $A$ of this set, again with $A, 2A, 3A$ disjoint, is $\lbrace 1 \rbrace \times \lbrace k \mid \gcd(k, 6) = 1 \rbrace = \lbrace k \mid \gcd(k, 6) = 1 \rbrace$.  
+This subset has relative density $\frac{1}{1 + \frac{1}{2} + \frac{1}{3}} = \frac{6}{11}$. Looks good!
+
+Unfortunately, we are unable to create a partition of $\NN$ using sets of this shape.
 
 ---
 
