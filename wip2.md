@@ -111,7 +111,7 @@ We also want the relative density of $A$ in $S_k$ to be at most $\delta \leq \fr
 
 $$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat(S_k) \leq \sum_{k \geq 1} \delta \cdot \dnat(S_k) = \delta \cdot \sum_{k \leq 1} \dnat(S_k) = \delta \leq \frac{6}{11}$$
 
-The problem of choosing the sets $S_k$ is now our focus.
+The problem of choosing the family of sets $S_k$ is now our focus.
 
 This is some [writing][reference].
 
