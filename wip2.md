@@ -109,7 +109,7 @@ The quantity $\frac{\dsup(A \cap S_k)}{\dnat(S_k)}$ can be interpreted as the re
 The strategy for the following proof is to select $S_k$ as a nice partition of $\NN$ (so that $\sum \dnat(S_k) = 1$).  
 We also want the relative density of $A$ in $S_k$ to be at most $\delta \leq \frac{6}{11}$, at which point
 
-$$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat(S_k) \leq \sum_{k \geq 1} \delta \cdot \dnat(S_k) = \delta \cdot \sum_{k \leq 1} \dnat(S_k) = \delta$$
+$$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat(S_k) \leq \sum_{k \geq 1} \delta \cdot \dnat(S_k) = \delta \cdot \sum_{k \leq 1} \dnat(S_k) = \delta \leq \frac{6}{11}$$
 
 The problem of choosing the sets $S_k$ is now our focus.
 
