@@ -7,14 +7,20 @@ tags: [number theory, algorithms, prime counting]
 
 ---
 
-[Last time][mult1] we learned some tricks and techniques for computing partial sums of multiplicative functions. This time we're going to dedicate some attention to the Black Algorithm and the related Min-25 sieve. These algorithms, as mentioned in the previous post, reduce the problem of summing a multiplicative function to the problem of summing the same function over primes. We already know how to accomplish this (see [my post on Lucy's algorithm][lucyfenwick]) in $O(x^{2/3} (\log x \log \log x)^{1/3})$ time. These algorithms will build off of Lucy's algorithm, and in particular knowledge of how Fenwick trees are used in this context is required to obtain a runtime at least as good as the one given by the powerful numbers trick.
+[Last time][mult1] we learned some tricks and techniques for computing partial sums of multiplicative functions. This time we're going to dedicate some attention to the Black Algorithm and the related Min-25 sieve. These algorithms, as mentioned in the previous post, reduce the problem of summing a multiplicative function to the problem of summing the same function over primes. We already know how to accomplish this (see [my post on Lucy's algorithm][lucyfenwick]) in $O(x^{2/3} (\log x)^{1/3})$ time. These algorithms will build off of Lucy's algorithm, and knowledge of how Fenwick trees are used in this context is required to obtain a runtime at least as good as the one given by the powerful numbers trick.
 
 In fact, I think most (any?) cases summable by the Black Algorithm and Min-25 type algorithms can be done perfectly well using the powerful numbers trick, usually in a flat $O(x^{2/3})$ time (or better!).
 
 The functions that these algorithms aim to sum are those multiplicative $f(n)$ such that $f(p)$ has a nice form at prime numbers. Specifically they assume $f(p) = g(p)$ is a polynomial with low degree.
 
 Suppose $g(p)$ has degree $k$, and $g(p) = \sum_{i \leq k} a_i p^i$.  
-Writing $N_i$ for the multiplicative function $N_i(n) = n^i$, we can do the powerful numbers trick by approximating $f(n)$ by the function $(N_0)^{a_0} \ast (N_1)^{a_1} \ast \ldots \ast (N_k)^{a_k}$, where by $(N_0)^{a_0}$ for example I'm referring to the $a_0$-fold convolution of $N_0$ - that is, $N_0 \ast N_0 \ast \ldots \ast N_0$, where there are $a_0$ copies. I'll assume here that $a_i$ are integers. If they are negative, you just convolve the Dirichlet inverse of $N_i$ instead of $N_i$ itself. With linear sieving we finish in time
+Writing $N_i$ for the multiplicative function $N_i(n) = n^i$, we can do the powerful numbers trick by approximating $f(n)$ by the function $(N_0)^{a_0} \ast (N_1)^{a_1} \ast \ldots \ast (N_k)^{a_k}$, where by $(N_0)^{a_0}$ for example I'm referring to the $a_0$-fold convolution of $N_0$ - that is, $N_0 \ast N_0 \ast \ldots \ast N_0$, where there are $a_0$ copies. I'll assume here that $a_i$ are integers. If they are negative, you just convolve the Dirichlet inverse of $N_i$ instead of $N_i$ itself. 
+
+For example, if $g(p) = (p-1)^2 = p^2 - 2p + 1$, we could perform the powerful numbers trick, approximating $f$ by 
+
+$$N_2 \star N^{-1} \star N^{-1} \star u$$
+
+In general, with linear sieving techniques we finish in time
 
 $$O\left(x^{2/3} \sum_{i \leq k} \vert a_i \vert\right)$$
 
