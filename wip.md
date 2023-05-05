@@ -45,12 +45,29 @@ We will write $F(x) = \sum_{n \leq x} f(n)$, and also $F_{\mathbb P}(x) = \sum_{
 
 In fact we will usually need to know $F_{\mathbb P}(v)$ for all distinct values of $v = \left\lfloor \frac{x}{n}\right\rfloor$, referred to as "key values" in my previous posts on these topics ([Lucy's Algorithm][lucyfenwick] and [Multiplicative Sums 1][mult1]). We will not be talking so much on this topic here since I've covered in the first of those - see the section "Sums of Primes, Primes Squared, ..." which naturally extends to sums of any polynomial over primes. The total runtime for such a problem is $O(x^{2/3} (\log x)^{1/3})$.
 
+To make this more concrete, from here onwards we're going to be summing the example function $f(n) = d(n^2)$.  
+We handled this function [previously][mult1], and it's a function for which other methods work extremely nicely.  
+Nonetheless it's a solid example case, not boring, and not too complicated to work with.
+
+In that case, $f(p) = d(p^2) = 2p+1$ is a linear polynomial in $p$, so $F_{\mathbb P}(v)$ can be computed for all key values $v$ in a total time of $O(x^{2/3} (\log x)^{1/3})$.
+
 ### The Black Algorithm
 
 This is the simplest version of these ideas.
 
+I think generally the starting point here is similar to Lucy's Algorithm.
 
+In the following, we let
+- $\pi(x)$ be the number of primes up to $x$
+- $p_k$ be the $k$-th prime number (so $p_1 = 2$, $p_2 = 3$, ...)
+- $\newcommand{lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
+- $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$   
+  In other words, the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
 
+The function $F_k(x)$ is similar looking to the sieve-ish function in the standard Lucy setup.
+
+The goal is to calculate $F(x) = F_1(x)$.  
+We have $F_{\pi(\sqrt{x})}
 
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
 
@@ -60,13 +77,6 @@ This method is specialized to summing multiplicative $f(n)$, taking the value $f
 
 Following Min-25's notation let's write $g(p, 1) = g(p)$ as well. They claim the algorithm will produce $F(x) = \sum_{n \leq x} f(n)$ in $O(x^{2/3})$ time and $O(x^{1/2})$ space. I think it's easier to do it in $O(x^{2/3} \log(x)^{1/3})$ time and about $O(x^{2/3} / \log(x)^{2/3})$ space. This is basically because the first step of the algorithm is to use a Fenwick tree based Lucy_Hedgehog algorithm as described in [my last post][lucyfenwick] which, if you haven't read it already, is still extremely relevant.
 
-In the following, we let
-- $\pi(x)$ be the number of primes up to $x$
-- $p_k$ be the $k$-th prime number (so $p_1 = 2$, $p_2 = 3$, ...)
-- $\newcommand{lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
-- $F_{\text{prime}}(x) := \sum_{p \leq x} f(p)$ is the sum of $f(p)$ over primes up to $x$
-- $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$   
-  In other words, the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
 
 Notice that $F_1(x) = \sum_{n \leq x} f(n)$ is the sum we're after.
 
