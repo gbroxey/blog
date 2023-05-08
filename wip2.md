@@ -28,7 +28,7 @@ Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
 The first thing to notice is that thanks to [Lemma 15][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
 
----
+## Upper Density
 
 We will not skip straight to my proof. Instead I'll first invite you to try to prove it yourself.
 
@@ -85,11 +85,12 @@ _Proof._ This is a consequence of subadditivity of lim sup (see [Lemma 2](densit
 $$\dsup(A) \leq \sum_{k \geq 1} \dsup(A \cap S_k)$$
 
 _Proof._ This is intuitive but actually seems subtle so I am going to give it real thought.  
-Lemma 18 can be extended to families $S_1, S_2, \ldots, S_n$ without thinking by just applying it $n-1$ times. If you do that, you will have
+Lemma 18 can be extended to families $S_1, S_2, \ldots, S_n$ without thinking by just applying it $n-1$ times.  
+Now notice that
 
 $$\NN - (S_1 \cup S_2 \cup \ldots \cup S_n) \subseteq S_{n+1} \cup S_{n+2} \cup \ldots$$
 
-so that (Lemma 18 again) we have
+so that by Lemma 18, we have
 
 $$\dsup(A) \leq \sum_{k \leq n} \dsup(A \cap S_k) + \dsup(S_{k+1} \cup S_{k+2} \cup \ldots)$$
 
@@ -113,7 +114,7 @@ $$\dsup(A) \leq \sum_{k \geq 1} \frac{\dsup(A \cap S_k)}{\dnat(S_k)} \cdot \dnat
 
 The problem of choosing the family of sets $S_k$ is now our focus.
 
-Before we do, the following lemma will be helpful to us.
+It happens that the structure of these sets can be very regular.
 
 > **Lemma 20.** Suppose $S, T_1, T_2$ are sets such that $S \perp T_1$, $S \perp T_2$, and such that $\dnat(S) > 0$ exists. Then
 > 
@@ -121,6 +122,8 @@ $$\frac{\dnat(S \times T_1)}{\dnat(S \times T_2)} = \frac{\dnat(S) H(T_1)}{\dnat
 
 _Proof._ The fact that $\dnat(S \times T_1)$ and $\dnat(S \times T_2)$ exist is guaranteed by [Lemma 7][density1].  
 The rest is just calculation using Lemma 7. $\proofqed$
+
+
 
 bla bla more connective text
 
@@ -134,6 +137,33 @@ Unfortunately, we are unable to create a partition of $\NN$ using sets of this s
 
 ---
 
+## Lower Density
+
+Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$ when $S \perp \lbrace 1, 2, 3 \rbrace$. This section is dedicated to providing a proof that $\dinf(S) \leq \frac{1}{2}$ in this case.
+
+To do so, we need to introduce the concept of logarithmic density.
+
+$$\newcommand{\ldnat}{\mathrm \delta}
+\newcommand{\ldsup}{\overline{\mathrm \delta}}
+\newcommand{\ldinf}{\underline{\mathrm \delta}}\begin{align*}
+\ldsup(A) &= \limsup_{x \to \infty} \frac{\sum_{n \leq x,\, n \in A} \frac{1}{n}}{\log(x)}
+\ldinf(A) &= \liminf_{x \to \infty} \frac{\sum_{n \leq x,\, n \in A} \frac{1}{n}}{\log(x)}
+\end{align*}$$
+
+and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
+
+The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$. So logarithmic density is really just a weighted version of regular density.
+
+Another way to think about this is in terms of random variables, which I like a lot.  
+In the case of regular natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup \text{Pr}(X \in A)$ for example.  
+For logarithmic density, instead of a uniform distribution, we have $\text{Pr}(X = n) \propto \frac{1}{n}$ for each $n \leq x$, so the variable is skewed more towards being smaller. This dampens the effects of oscillations in the set $A$, so (for example) the set $A$ of integers with an odd number of binary bits *does* have a logarithmic density, equal to $1/2$[^2].
+
+One key property of logarithmic density we're going to use is the following:
+
+> **Lemma TODO.** We have $\dinf(A) \leq \ldinf(A)$. Consequently, also $\dsup(A) \geq \ldsup(A)$.
+
+---
+
 ## Code
 
 The code for this blog post is available nowhere.
@@ -144,5 +174,5 @@ The code for this blog post is available nowhere.
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
 [^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
-
+[^2]: See the first section of [Density and GCDs][density1].
 ---
