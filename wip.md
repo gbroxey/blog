@@ -60,14 +60,23 @@ I think generally the starting point here is similar to Lucy's Algorithm.
 In the following, we let
 - $\pi(x)$ be the number of primes up to $x$
 - $p_k$ be the $k$-th prime number (so $p_1 = 2$, $p_2 = 3$, ...)
-- $\newcommand{lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
+- $\newcommand{\lpf}{\text{lpf}}\lpf(n)$ be the smallest prime factor of $n$, with $\lpf(1) := \infty$
 - $F_k(x) := \sum_{n \leq x} \left\lbrack\lpf(n) \geq p_k\right\rbrack\cdot f(n)$   
   In other words, the sum of $f(n)$ over all $n \leq x$ with no prime factors below $p_k$
 
 The function $F_k(x)$ is similar looking to the sieve-ish function in the standard Lucy setup.
 
-The goal is to calculate $F(x) = F_1(x)$.  
-We have $F_{\pi(\sqrt{x})}
+An integer $n$ in the sum for $F_k(x)$ either has $\lpf(n) = p_k$ or $\lpf(n) \geq p_{k+1}$.  
+In the latter case, they contribute $F_{k+1}(x)$ to the sum.  
+In the first case, we sum over the different exponents $p_k$ can be included with:
+
+$$\sum_{c \geq 1} f(p_k^c)F_{k+1}\left(\frac{x}{p_k^c}\right)$$
+
+Therefore we have
+
+$$F_k(x) = F_{k+1}(x) + \sum_{c \geq 1} f(p_k^c)F_{k+1}\left(\frac{x}{p_k^c}\right)$$
+
+Now let's consider $F_{}
 
 Let's first write a bit of code to generate tuples $(t, q)$ where $tq \leq x$ and $q$ is the largest prime factor of $t$. This way, we generate one member of each class of integers up to $x$, and so all the integers up to $x$ can be written as $tp$ where $p$ is a prime such that $p \geq q$ and $tp \leq x$. We're going to write it in a very similar way to generating powerful numbers up to $x$ - notice that since $q$ must be the greatest prime factor of $t$, and $tq \leq x$, that we must have $q^2 \leq x$, so there are not many prime factors to consider here.
 

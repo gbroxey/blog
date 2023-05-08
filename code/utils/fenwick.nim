@@ -1,7 +1,7 @@
 #==== Fenwick Trees ====
 
 type Fenwick*[T] = object
-  arr: seq[T]
+  arr*: seq[T]
 
 proc newFenwick*[T](len: int): Fenwick[T] =
   ##Initializes a fenwick tree with a zero array, f[i] = 0 for all i.
