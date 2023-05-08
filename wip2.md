@@ -176,7 +176,11 @@ $$\begin{align*}
 &= c \log(x) - c \log(x_0)
 \end{align*}$$
 
-and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\dinf(A) \leq \ldinf(A)$.
+and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\ldinf(A) \geq \dinf(A)$.
+
+The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$, for which $\dsup(A) = 1-\dinf(A')$ and $\ldsup(A) = 1-\ldinf(A')$. $\proofqed$.
+
+We will prove that if $\A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
 
 ---
 
