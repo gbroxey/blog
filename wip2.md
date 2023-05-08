@@ -28,6 +28,8 @@ Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
 The first thing to notice is that thanks to [Lemma 15][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
 
+---
+
 ## Upper Density
 
 We will not skip straight to my proof. Instead I'll first invite you to try to prove it yourself.
@@ -146,8 +148,8 @@ To do so, we need to introduce the concept of logarithmic density.
 $$\newcommand{\ldnat}{\mathrm \delta}
 \newcommand{\ldsup}{\overline{\mathrm \delta}}
 \newcommand{\ldinf}{\underline{\mathrm \delta}}\begin{align*}
-\ldsup(A) &= \limsup_{x \to \infty} \frac{\sum_{n \leq x,\, n \in A} \frac{1}{n}}{\log(x)}
-\ldinf(A) &= \liminf_{x \to \infty} \frac{\sum_{n \leq x,\, n \in A} \frac{1}{n}}{\log(x)}
+\ldsup(A) &= \limsup_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}\\
+\ldinf(A) &= \liminf_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}
 \end{align*}$$
 
 and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
@@ -155,12 +157,26 @@ and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
 The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$. So logarithmic density is really just a weighted version of regular density.
 
 Another way to think about this is in terms of random variables, which I like a lot.  
-In the case of regular natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup \text{Pr}(X \in A)$ for example.  
-For logarithmic density, instead of a uniform distribution, we have $\text{Pr}(X = n) \propto \frac{1}{n}$ for each $n \leq x$, so the variable is skewed more towards being smaller. This dampens the effects of oscillations in the set $A$, so (for example) the set $A$ of integers with an odd number of binary bits *does* have a logarithmic density, equal to $1/2$[^2].
+In the case of natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup_{x \to \infty} \text{Pr}(X \in A)$ for example.  
+For logarithmic density, instead of a uniform distribution, we have $\text{Pr}(X = n) \propto \frac{1}{n}$ for each $n \leq x$, so the variable is skewed more towards being smaller. This dampens the effects of oscillations in the set $A$, so (for example) the set $A$ of integers with an odd number of binary bits _does_ have a logarithmic density, equal to $1/2$ (see the first section of [Density and GCDs][density1]).
 
 One key property of logarithmic density we're going to use is the following:
 
 > **Lemma TODO.** We have $\dinf(A) \leq \ldinf(A)$. Consequently, also $\dsup(A) \geq \ldsup(A)$.
+
+_Proof._ Suppose we pick any $c > 0$ so that $\dinf(A) > c$.  
+Then for all large $x$, say $x \geq x_0$, we have $A(x) \geq cx$.
+
+Now use [Abel's summation theorem][abel] to write
+
+$$\begin{align*}
+\sum_{n \leq x,\, n \in A} \frac{1}{n} &= \frac{A(x)}{x} + \int_1^x \frac{A(t)}{t^2}dt\\
+&\geq \int_{x_0}^x \frac{ct}{t^2}dt\\
+&= c\int_{x_0}^x \frac{1}{t}dt\\
+&= c \log(x) - c \log(x_0)
+\end{align*}$$
+
+and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\dinf(A) \leq \ldinf(A)$.
 
 ---
 
@@ -170,9 +186,9 @@ The code for this blog post is available nowhere.
 
 [density1]: /blog/2023/04/13/density-gcds.html
 [density2]: /blog/2023/04/18/dilations-primes.html
+[abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
 [^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
-[^2]: See the first section of [Density and GCDs][density1].
 ---
