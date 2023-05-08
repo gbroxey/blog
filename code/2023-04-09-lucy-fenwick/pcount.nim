@@ -157,3 +157,7 @@ proc lucyFenwickFast(x: int64): int64 =
           sieve.addTo(j, -1)
         j += p
   return S[x]
+
+import ../utils/eutil_timer
+const n = 1e12.int64
+timer: echo lucyFenwick(n)[n]
