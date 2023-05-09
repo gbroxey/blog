@@ -87,7 +87,12 @@ $$\begin{align*}
 &\geq \frac{11}{6} H(B)
 \end{align*}$$
 
-so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$. Can we do better?
+so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$.
+
+How can we translate this to a bound on $\dinf(A)$?
+
+From here on, let's write $Q$ for the set of all integers of the form $2^i 3^j$.  
+We can form a partition of $\NN$ by taking every dilation $nQ$ where $\gcd(n, 6)$, so that $n$ has no factors of two or three.
 
 > **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
 > Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
@@ -252,4 +257,5 @@ The code for this blog post is available nowhere.
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
 [^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
+
 ---
