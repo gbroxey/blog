@@ -32,7 +32,8 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 ## Lower Density
 
-Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$ when $S \perp \lbrace 1, 2, 3 \rbrace$. This section is dedicated to providing a proof that $\dinf(S) \leq \frac{1}{2}$ in this case.
+Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$.  
+This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
 
 To do so, we need to introduce the concept of logarithmic density.
 
@@ -45,7 +46,8 @@ $$\newcommand{\ldnat}{\mathrm \delta}
 
 and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
 
-The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$. So logarithmic density is really just a weighted version of regular density.
+The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$.  
+Therefore logarithmic density is really just a weighted version of regular density.
 
 Another way to think about this is in terms of random variables, which I like a lot.  
 In the case of natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup_{x \to \infty} \text{Pr}(X \in A)$ for example.  
