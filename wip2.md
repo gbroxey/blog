@@ -178,9 +178,64 @@ $$\begin{align*}
 
 and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\ldinf(A) \geq \dinf(A)$.
 
-The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$, for which $\dsup(A) = 1-\dinf(A')$ and $\ldsup(A) = 1-\ldinf(A')$. $\proofqed$.
+The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$.  
+We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
 
-We will prove that if $\A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
+We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
+
+To do so, we start by analyzing a related problem: if $B$ is a set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint, then how large can $H(B) = \sum_{b \in B} \frac{1}{b}$ be?
+
+A first attempt looks like this:
+
+$$\begin{align*}
+3 = \sum_{i, j \geq 0} \frac{1}{2^i 3^j} &\geq \sum_{n \in B \cup 2B \cup 3B} \frac{1}{n}\\
+&\geq \sum_{b \in B} \left(\frac{1}{b} + \frac{1}{2b} + \frac{1}{3b}\right)\\
+&\geq \left(1 + \frac{1}{2} + \frac{1}{3}\right)\sum_{b \in B} \frac{1}{b}\\
+&\geq \frac{11}{6} H(B)
+\end{align*}$$
+
+so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$. Can we do better?
+
+> **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
+> Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
+
+_Proof._ This proof bears some resemblance to the ideas present in the previous section - split all the integers $2^i 3^j$ into nice sections in which we better understand how the elements of $B$ can fit together.
+
+For every integer $k \geq 0$, write $Q_k = \sum \frac{1}{b}$ over those elements $b = 2^i 3^j \in B$ satisfying $i+j = k$. Thinking geometrically, if we plot each $2^i 3^j$ at the point $(i, j)$ in a quarter plane, each $Q_k$ is a diagonal strip of length $k+1$.
+
+***TODO DIAGRAM***
+
+We'll be thinking in terms of pairs of diagonals $Q_{2k}$ and $Q_{2k+1}$.  
+Notice that $2Q_{2k} \subseteq Q_{2k+1}$ and $3Q_{2k} \subseteq Q_{2k+1}$.  
+The strategy here is to obtain an upper bound on $H(B \cap Q_{2k}) + H(B \cap Q_{2k+1})$, and then add this over all $k \geq 0$ to obtain an upper bound on $H(B)$.
+
+Because $B, 2B,$ and $3B$ are all disjoint, we have
+
+$$\begin{align*}
+H(Q_{2k+1}) &\geq H\left((B \cup 2B \cup 3B) \cap Q_{2k+1}\right)\\
+&\geq H(B \cap Q_{2k+1}) + H(2B \cap Q_{2k+1}) + H(3B \cap Q_{2k+1})\\
+&\geq H(B \cap Q_{2k+1}) + \frac{1}{2} H(B \cap Q_{2k}) + \frac{1}{3} H(B \cap Q_{2k})\\
+&\geq H(B \cap Q_{2k+1}) + \left(\frac{1}{2} + \frac{1}{3}\right) H(B \cap Q_{2k})
+\end{align*}$$
+
+We can add $\left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k})$ to both sides to obtain
+
+$$H(Q_{2k+1}) + \left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k}) \geq H(B \cap Q_{2k+1}) + H(B \cap Q_{2k})$$
+
+So we see that to get the best upper bound on the right hand side, we should attempt to maximize $H(B \cap Q_{2k})$.
+
+It happens that since $Q_{2k}$ is a single diagonal (see the diagrams), to maximize $H(B \cap Q_{2k})$ we need to prioritize the inclusion of smaller numbers. You can visualize this as "sliding" all the elements down:
+
+***TODO DIAGRAM***
+
+Thus we see that $H(B \cap Q_{2k})$ is maximized when the relevant elements of $B$ are all $2^i 3^j$ where $i+j = 2k$ and both $i, j$ are even:
+
+***TODO DIAGRAM***
+
+In this case, we can see that $\left(\frac{1}{2} \frac{1}{3}\right)H(B \cap Q_{2k})$ is exactly equal to $H(Q_{2k+1})$, since for each $2^i 3^j$ with $i+j = 2k+1$, exactly one of $i$ or $j$ must be odd, corresponding to $\frac{1}{2}H(B \cap Q_{2k})$ or $\frac{1}{3} H(B \cap Q_{2k})$ respectively:
+
+***TODO DIAGRAM***
+
 
 ---
 
