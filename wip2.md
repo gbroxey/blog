@@ -30,6 +30,113 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 ---
 
+## Lower Density
+
+Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$.  
+This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
+
+To do so, we need to introduce the concept of logarithmic density.
+
+$$\newcommand{\ldnat}{\mathrm \delta}
+\newcommand{\ldsup}{\overline{\mathrm \delta}}
+\newcommand{\ldinf}{\underline{\mathrm \delta}}\begin{align*}
+\ldsup(A) &= \limsup_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}\\
+\ldinf(A) &= \liminf_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}
+\end{align*}$$
+
+and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
+
+The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$.  
+Therefore logarithmic density is really just a weighted version of regular density.
+
+Another way to think about this is in terms of random variables, which I like a lot.  
+In the case of natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup_{x \to \infty} \text{Pr}(X \in A)$ for example.  
+For logarithmic density, instead of a uniform distribution, we have $\text{Pr}(X = n) \propto \frac{1}{n}$ for each $n \leq x$, so the variable is skewed more towards being smaller. This dampens the effects of oscillations in the set $A$, so (for example) the set $A$ of integers with an odd number of binary bits _does_ have a logarithmic density, equal to $1/2$ (see the first section of [Density and GCDs][density1]).
+
+One key property of logarithmic density we're going to use is the following:
+
+> **Lemma TODO.** We have $\dinf(A) \leq \ldinf(A)$. Consequently, also $\dsup(A) \geq \ldsup(A)$.
+
+_Proof._ Suppose we pick any $c > 0$ so that $\dinf(A) > c$.  
+Then for all large $x$, say $x \geq x_0$, we have $A(x) \geq cx$.
+
+Now use [Abel's summation theorem][abel] to write
+
+$$\begin{align*}
+\sum_{n \leq x,\, n \in A} \frac{1}{n} &= \frac{A(x)}{x} + \int_1^x \frac{A(t)}{t^2}dt\\
+&\geq \int_{x_0}^x \frac{ct}{t^2}dt\\
+&= c\int_{x_0}^x \frac{1}{t}dt\\
+&= c \log(x) - c \log(x_0)
+\end{align*}$$
+
+and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\ldinf(A) \geq \dinf(A)$.
+
+The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$.  
+We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
+
+We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
+
+To do so, we start by analyzing a related problem: if $B$ is a set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint, then how large can $H(B) = \sum_{b \in B} \frac{1}{b}$ be?
+
+A first attempt looks like this:
+
+$$\begin{align*}
+3 = \sum_{i, j \geq 0} \frac{1}{2^i 3^j} &\geq \sum_{n \in B \cup 2B \cup 3B} \frac{1}{n}\\
+&\geq \sum_{b \in B} \left(\frac{1}{b} + \frac{1}{2b} + \frac{1}{3b}\right)\\
+&\geq \left(1 + \frac{1}{2} + \frac{1}{3}\right)\sum_{b \in B} \frac{1}{b}\\
+&\geq \frac{11}{6} H(B)
+\end{align*}$$
+
+so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$.
+
+How can we translate this to a bound on $\dinf(A)$?
+
+From here on, let's write $Q$ for the set of all integers of the form $2^i 3^j$.  
+We can form a partition of $\NN$ by taking every dilation $nQ$ where $\gcd(n, 6)$, so that $n$ has no factors of two or three.
+
+> **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
+> Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
+
+_Proof._ This proof bears some resemblance to the ideas present in the previous section - split all the integers $2^i 3^j$ into nice sections in which we better understand how the elements of $B$ can fit together.
+
+For every integer $k \geq 0$, write $Q_k = \sum \frac{1}{b}$ over those elements $b = 2^i 3^j \in B$ satisfying $i+j = k$. Thinking geometrically, if we plot each $2^i 3^j$ at the point $(i, j)$ in a quarter plane, each $Q_k$ is a diagonal strip of length $k+1$.
+
+***TODO DIAGRAM***
+
+We'll be thinking in terms of pairs of diagonals $Q_{2k}$ and $Q_{2k+1}$.  
+Notice that $2Q_{2k} \subseteq Q_{2k+1}$ and $3Q_{2k} \subseteq Q_{2k+1}$.  
+The strategy here is to obtain an upper bound on $H(B \cap Q_{2k}) + H(B \cap Q_{2k+1})$, and then add this over all $k \geq 0$ to obtain an upper bound on $H(B)$.
+
+Because $B, 2B,$ and $3B$ are all disjoint, we have
+
+$$\begin{align*}
+H(Q_{2k+1}) &\geq H\left((B \cup 2B \cup 3B) \cap Q_{2k+1}\right)\\
+&\geq H(B \cap Q_{2k+1}) + H(2B \cap Q_{2k+1}) + H(3B \cap Q_{2k+1})\\
+&\geq H(B \cap Q_{2k+1}) + \frac{1}{2} H(B \cap Q_{2k}) + \frac{1}{3} H(B \cap Q_{2k})\\
+&\geq H(B \cap Q_{2k+1}) + \left(\frac{1}{2} + \frac{1}{3}\right) H(B \cap Q_{2k})
+\end{align*}$$
+
+We can add $\left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k})$ to both sides to obtain
+
+$$H(Q_{2k+1}) + \left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k}) \geq H(B \cap Q_{2k+1}) + H(B \cap Q_{2k})$$
+
+So we see that to get the best upper bound on the right hand side, we should attempt to maximize $H(B \cap Q_{2k})$.
+
+It happens that since $Q_{2k}$ is a single diagonal (see the diagrams), to maximize $H(B \cap Q_{2k})$ we need to prioritize the inclusion of smaller numbers. You can visualize this as "sliding" all the elements down:
+
+***TODO DIAGRAM***
+
+Thus we see that $H(B \cap Q_{2k})$ is maximized when the relevant elements of $B$ are all $2^i 3^j$ where $i+j = 2k$ and both $i, j$ are even:
+
+***TODO DIAGRAM***
+
+In this case, we can see that $\left(\frac{1}{2} \frac{1}{3}\right)H(B \cap Q_{2k})$ is exactly equal to $H(Q_{2k+1})$, since for each $2^i 3^j$ with $i+j = 2k+1$, exactly one of $i$ or $j$ must be odd, corresponding to $\frac{1}{2}H(B \cap Q_{2k})$ or $\frac{1}{3} H(B \cap Q_{2k})$ respectively:
+
+***TODO DIAGRAM***
+
+
+---
+
 ## Upper Density
 
 We will not skip straight to my proof. Instead I'll first invite you to try to prove it yourself.
@@ -139,106 +246,6 @@ Unfortunately, we are unable to create a partition of $\NN$ using sets of this s
 
 ---
 
-## Lower Density
-
-Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$ when $S \perp \lbrace 1, 2, 3 \rbrace$. This section is dedicated to providing a proof that $\dinf(S) \leq \frac{1}{2}$ in this case.
-
-To do so, we need to introduce the concept of logarithmic density.
-
-$$\newcommand{\ldnat}{\mathrm \delta}
-\newcommand{\ldsup}{\overline{\mathrm \delta}}
-\newcommand{\ldinf}{\underline{\mathrm \delta}}\begin{align*}
-\ldsup(A) &= \limsup_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}\\
-\ldinf(A) &= \liminf_{x \to \infty} \frac{1}{\log(x)}\sum_{n \leq x,\, n \in A} \frac{1}{n}
-\end{align*}$$
-
-and obviously we define $\ldnat(A) = \ldsup(A) = \ldinf(A)$ if the limit exists.
-
-The reason for $\log(x)$ as the denominator is that it is asymptotic to $\sum_{n \leq x} \frac{1}{n}$. So logarithmic density is really just a weighted version of regular density.
-
-Another way to think about this is in terms of random variables, which I like a lot.  
-In the case of natural density, we're looking at uniform random variables $X$ on $\lbrace 1, 2, 3, \ldots, \lfloor x \rfloor \rbrace$, and then $\dsup(A) = \limsup_{x \to \infty} \text{Pr}(X \in A)$ for example.  
-For logarithmic density, instead of a uniform distribution, we have $\text{Pr}(X = n) \propto \frac{1}{n}$ for each $n \leq x$, so the variable is skewed more towards being smaller. This dampens the effects of oscillations in the set $A$, so (for example) the set $A$ of integers with an odd number of binary bits _does_ have a logarithmic density, equal to $1/2$ (see the first section of [Density and GCDs][density1]).
-
-One key property of logarithmic density we're going to use is the following:
-
-> **Lemma TODO.** We have $\dinf(A) \leq \ldinf(A)$. Consequently, also $\dsup(A) \geq \ldsup(A)$.
-
-_Proof._ Suppose we pick any $c > 0$ so that $\dinf(A) > c$.  
-Then for all large $x$, say $x \geq x_0$, we have $A(x) \geq cx$.
-
-Now use [Abel's summation theorem][abel] to write
-
-$$\begin{align*}
-\sum_{n \leq x,\, n \in A} \frac{1}{n} &= \frac{A(x)}{x} + \int_1^x \frac{A(t)}{t^2}dt\\
-&\geq \int_{x_0}^x \frac{ct}{t^2}dt\\
-&= c\int_{x_0}^x \frac{1}{t}dt\\
-&= c \log(x) - c \log(x_0)
-\end{align*}$$
-
-and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we have $\ldinf(A) \geq \dinf(A)$.
-
-The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$.  
-We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
-
-We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
-
-To do so, we start by analyzing a related problem: if $B$ is a set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint, then how large can $H(B) = \sum_{b \in B} \frac{1}{b}$ be?
-
-A first attempt looks like this:
-
-$$\begin{align*}
-3 = \sum_{i, j \geq 0} \frac{1}{2^i 3^j} &\geq \sum_{n \in B \cup 2B \cup 3B} \frac{1}{n}\\
-&\geq \sum_{b \in B} \left(\frac{1}{b} + \frac{1}{2b} + \frac{1}{3b}\right)\\
-&\geq \left(1 + \frac{1}{2} + \frac{1}{3}\right)\sum_{b \in B} \frac{1}{b}\\
-&\geq \frac{11}{6} H(B)
-\end{align*}$$
-
-so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$. Can we do better?
-
-> **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
-> Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
-
-_Proof._ This proof bears some resemblance to the ideas present in the previous section - split all the integers $2^i 3^j$ into nice sections in which we better understand how the elements of $B$ can fit together.
-
-For every integer $k \geq 0$, write $Q_k = \sum \frac{1}{b}$ over those elements $b = 2^i 3^j \in B$ satisfying $i+j = k$. Thinking geometrically, if we plot each $2^i 3^j$ at the point $(i, j)$ in a quarter plane, each $Q_k$ is a diagonal strip of length $k+1$.
-
-***TODO DIAGRAM***
-
-We'll be thinking in terms of pairs of diagonals $Q_{2k}$ and $Q_{2k+1}$.  
-Notice that $2Q_{2k} \subseteq Q_{2k+1}$ and $3Q_{2k} \subseteq Q_{2k+1}$.  
-The strategy here is to obtain an upper bound on $H(B \cap Q_{2k}) + H(B \cap Q_{2k+1})$, and then add this over all $k \geq 0$ to obtain an upper bound on $H(B)$.
-
-Because $B, 2B,$ and $3B$ are all disjoint, we have
-
-$$\begin{align*}
-H(Q_{2k+1}) &\geq H\left((B \cup 2B \cup 3B) \cap Q_{2k+1}\right)\\
-&\geq H(B \cap Q_{2k+1}) + H(2B \cap Q_{2k+1}) + H(3B \cap Q_{2k+1})\\
-&\geq H(B \cap Q_{2k+1}) + \frac{1}{2} H(B \cap Q_{2k}) + \frac{1}{3} H(B \cap Q_{2k})\\
-&\geq H(B \cap Q_{2k+1}) + \left(\frac{1}{2} + \frac{1}{3}\right) H(B \cap Q_{2k})
-\end{align*}$$
-
-We can add $\left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k})$ to both sides to obtain
-
-$$H(Q_{2k+1}) + \left(1 - \frac{1}{2} - \frac{1}{3}\right)H(B \cap Q_{2k}) \geq H(B \cap Q_{2k+1}) + H(B \cap Q_{2k})$$
-
-So we see that to get the best upper bound on the right hand side, we should attempt to maximize $H(B \cap Q_{2k})$.
-
-It happens that since $Q_{2k}$ is a single diagonal (see the diagrams), to maximize $H(B \cap Q_{2k})$ we need to prioritize the inclusion of smaller numbers. You can visualize this as "sliding" all the elements down:
-
-***TODO DIAGRAM***
-
-Thus we see that $H(B \cap Q_{2k})$ is maximized when the relevant elements of $B$ are all $2^i 3^j$ where $i+j = 2k$ and both $i, j$ are even:
-
-***TODO DIAGRAM***
-
-In this case, we can see that $\left(\frac{1}{2} \frac{1}{3}\right)H(B \cap Q_{2k})$ is exactly equal to $H(Q_{2k+1})$, since for each $2^i 3^j$ with $i+j = 2k+1$, exactly one of $i$ or $j$ must be odd, corresponding to $\frac{1}{2}H(B \cap Q_{2k})$ or $\frac{1}{3} H(B \cap Q_{2k})$ respectively:
-
-***TODO DIAGRAM***
-
-
----
-
 ## Code
 
 The code for this blog post is available nowhere.
@@ -250,4 +257,5 @@ The code for this blog post is available nowhere.
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
 [^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
+
 ---
