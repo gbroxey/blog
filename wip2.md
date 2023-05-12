@@ -91,8 +91,16 @@ so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$.
 
 How can we translate this to a bound on $\dinf(A)$?
 
-From here on, let's write $Q$ for the set of all integers of the form $2^i 3^j$.  
-We can form a partition of $\NN$ by taking every dilation $nQ$ where $\gcd(n, 6)$, so that $n$ has no factors of two or three.
+From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
+
+Immediately (by [Lemma 7][density1]) we have
+
+$$\dnat(Q) = \left(\sum_{i, j \geq 0} \frac{1}{2^i 3^j}\right)^{-1} = \frac{1}{3}$$
+
+This setup is particularly useful to us in this problem.
+
+Let's say we have figured out some set $B$ such that $B, 2B, 3B$ are disjoint, but rather than allowing $B \subseteq \NN$, we restrict all of its elements to be of the form $2^i 3^j$ (so that $B \subseteq R$). Clearly such a set has density zero, since $R$ TODO TODO
+We can then construct a set $A \subseteq \NN$ such that $A, 2A, 3A$ are disjoint.
 
 > **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
 > Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
