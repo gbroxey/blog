@@ -76,7 +76,23 @@ We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
 
 We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
 
-To do so, we start by analyzing a related problem: if $B$ is a set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint, then how large can $H(B) = \sum_{b \in B} \frac{1}{b}$ be?
+From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
+
+Immediately (by [Lemma 7][density1]) we have
+
+$$\dnat(Q) = \left(\sum_{i, j \geq 0} \frac{1}{2^i 3^j}\right)^{-1} = \frac{1}{3}$$
+
+This setup is particularly useful to us in this problem.
+
+Let's say we have figured out some set $B$ such that $B, 2B, 3B$ are disjoint, but rather than allowing $B \subseteq \NN$, we restrict all of its elements to be of the form $2^i 3^j$ (so that $B \subseteq R$). Clearly such a set has density zero, since $R(x) = O(\log(x)^2)$.
+
+We can then construct from this a set $A \subseteq \NN$, with nonzero density, such that $A, 2A, 3A$ are disjoint. The idea is to fill in all the missing prime factors - simply use $A = Q \times B$.
+
+Since $Q \perp R$ and $B \subseteq R$, we have $Q \perp B$, and (Lemma 7) we have $\dnat(A) = \dnat(Q) H(B) = \frac{1}{3}H(B)$.
+
+When it comes to sets of this form, then, we should attempt to put an upper bound on $H(B)$.
+
+To be clear: if $B$ is a set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint, then how large can $H(B) = \sum_{b \in B} \frac{1}{b}$ be?
 
 A first attempt looks like this:
 
@@ -89,18 +105,9 @@ $$\begin{align*}
 
 so therefore we get the easy bound $H(B) \leq \frac{18}{11} \approx 1.64$.
 
-How can we translate this to a bound on $\dinf(A)$?
+If we translate this back, for sets of the form we discussed before, we get $\dnat(A) \leq \frac{1}{3} \times \frac{18}{11} = \frac{6}{11}$. Note that this does *not* prove $\dsup(A) \leq \frac{6}{11}$ for all sets $A$ such that $A, 2A, 3A$ are disjoint, but only for those of the special type $Q \times B$ as before.
 
-From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
-
-Immediately (by [Lemma 7][density1]) we have
-
-$$\dnat(Q) = \left(\sum_{i, j \geq 0} \frac{1}{2^i 3^j}\right)^{-1} = \frac{1}{3}$$
-
-This setup is particularly useful to us in this problem.
-
-Let's say we have figured out some set $B$ such that $B, 2B, 3B$ are disjoint, but rather than allowing $B \subseteq \NN$, we restrict all of its elements to be of the form $2^i 3^j$ (so that $B \subseteq R$). Clearly such a set has density zero, since $R$ TODO TODO
-We can then construct a set $A \subseteq \NN$ such that $A, 2A, 3A$ are disjoint.
+We can get a better bound on $H(B)$ (in fact, the best possible bound) as follows:
 
 > **Lemma TODO.** Let $B$ be any set of integers, all of the form $2^i 3^j$, such that $B, 2B, 3B$ are disjoint.  
 > Then $H(B) = \sum_{b \in B} \frac{1}{b} \leq \frac{3}{2} = 1.5$.
@@ -141,6 +148,11 @@ Thus we see that $H(B \cap Q_{2k})$ is maximized when the relevant elements of $
 In this case, we can see that $\left(\frac{1}{2} \frac{1}{3}\right)H(B \cap Q_{2k})$ is exactly equal to $H(Q_{2k+1})$, since for each $2^i 3^j$ with $i+j = 2k+1$, exactly one of $i$ or $j$ must be odd, corresponding to $\frac{1}{2}H(B \cap Q_{2k})$ or $\frac{1}{3} H(B \cap Q_{2k})$ respectively:
 
 ***TODO DIAGRAM***
+
+TODO FINISH $\proofqed$
+
+So then, returning to our sets $A = Q \times B$, we have $\dnat(A) \leq \frac{1}{3} \times \frac{3}{2} = \frac{1}{2}$.  
+This looks really good, but we remember that this currently has no 
 
 
 ---
