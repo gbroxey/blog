@@ -8,7 +8,7 @@ Here are some things I like.
 
 ### Books
 
-- _Generatingfunctionology_ by Herbert Wilf
+- [_Generatingfunctionology_ by Herbert Wilf](https://www2.math.upenn.edu/~wilf/DownldGF.html)
 - _Introduction to Analytic Number Theory_ by Tom Apostol
 - _The Sensual (Quadratic) Form_ by John Conway
 
