@@ -32,6 +32,24 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 ## Lower Density
 
+The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
+
+- Include 1
+  - Forbid 2 and 3
+- Include 4
+  - Forbid 8 and 12, and also 6[^0.5]
+- Include 5
+  - Forbid 10 and 15
+- Include 7
+  - Forbid 14 and 21
+- Include 9
+  - Forbid 18 and 27
+- ...
+
+After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
+
+An OEIS search can lead you to determine that this $A$ is the set of all integers of the form $4^i 9^j k$ where $i, j \geq 0$ and $\gcd(k, 6) = 1$. Bla bla
+
 Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$.  
 This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
 
@@ -276,6 +294,7 @@ The code for this blog post is available nowhere.
 
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
+[^0.5]: Because if 4 and 6 were both in $A$, then $2A$ and $3A$ would both contain $12$.
 [^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
 
 ---
