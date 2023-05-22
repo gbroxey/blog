@@ -17,6 +17,7 @@ We actually don't care TOO much about this formula other than the following mani
 $$\begin{align*} D_n &= \sum_{m=0}^n \frac{n!}{m!} (-1)^m\\
 &= n! \sum_{m=0}^n \frac{(-1)^m}{m!}\\
 &= n! \left(\frac{1}{e} - \sum_{m=n+1}^{\infty} \frac{(-1)^m}{m!}\right)\end{align*}$$
+
 The last tail sum there will be vanishingly small - at most $1/(n+1)!$ in absolute value, since it's an alternating sum. If $n+1$ is even (equivalently $n$ is odd), the sum $\sum_{m=n+1}^{\infty} \frac{(-1)^m}{m!}$ will be positive, and then $D_n = \lfloor n!/e \rfloor$. If $n+1$ is even though, the sum will be negative, and so $D_n = 1 + \lfloor n!/e \rfloor$.
 
 So the problem we care about can be expressed as follows in terms of $D_n$:
