@@ -1,13 +1,14 @@
 ---
-title: "The Number $\lfloor n!/e \rfloor" Is Even - Combinatorial Proof"
+title: "The Number $\lfloor n!/e \rfloor" Is Even"
 tags: [combinatorics]
 ---
 
-> **Abstract.** We'll come up with a more interesting proof than the one in [this YouTube video][yt].
+> **Abstract.** There's a proof in [this YouTube video][yt].  
+> We'll prove it combinatorially instead.
 
 ---
 
-So you should probably go watch that video first to get an idea of the proof provided by Michael Penn.  
+You should probably go watch that video first to get an idea of the proof provided by Michael Penn.  
 Basically it boils down to writing down the series $\frac{1}{e} = \sum_{m \geq 0} \frac{(-1)^m}{m!}$ and going from there, doing a little algebraic manipulation which is very common especially when [coming up with a formula for the number of derangements of a set][aops]:
 
 $$D_n = \sum_{m=0}^n \frac{n!}{m!} (-1)^m$$
@@ -26,7 +27,7 @@ So the problem we care about can be expressed as follows in terms of $D_n$:
 
 Michael's proof does this algebraically, which is fine, but this problem reminded me of [a nice paper][die] I read once about the usage of involutions[^1] in evaluating alternating sums using combinatorial techniques. We won't exactly follow that paper but you should go read it anyways because the flavor is the same.
 
-The idea will be to construct an involution $f$ on the set of derangements (represented by permutations $\sigma$) of $n$. This way we'll be pairing up the elements we're counting in $D_n$. If $f$ has no fixed points with $f(\sigma) = \sigma$, we will have shown that $D_n$ is even, and if otherwise $f$ has an odd number of fixed points, we'll have shown that $D_n$ is odd. That's our strategy, coming up with a nice involution here is the rest of the proof.
+We're going to write $\sigma$ for a permutation of the set $\lbrace 1, 2, \ldots, n \rbrace$, so that derangements are those permutations $\sigma$ for which $\sigma(i) \neq i$ for all $i$. The idea of the proof will be to construct an involution $f$ on the set of derangements of $n$. This way we'll be pairing up the elements we're counting in $D_n$. If $f$ has no fixed points with $f(\sigma) = \sigma$, we will have shown that $D_n$ is even, and if otherwise $f$ has an odd number of fixed points, we'll have shown that $D_n$ is odd. That's our strategy, coming up with a nice involution here is the rest of the proof.
 
 We'll be thinking in terms of the cycles in a permutation $\sigma$, and we'll be tweaking those to make a new permutation $f(\sigma)$. Remember that we're permuting the set $\lbrace 1, 2, \ldots, n \rbrace$.
 
