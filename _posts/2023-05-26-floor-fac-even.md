@@ -1,5 +1,5 @@
 ---
-title: "The Number n!/e Is Even"
+title: "The Number ⌊n!/e⌋ Is Even"
 tags: [combinatorics]
 date: 2023-05-26
 ---
