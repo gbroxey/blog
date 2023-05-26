@@ -1,6 +1,7 @@
 ---
 title: "The Number $\lfloor n!/e \rfloor" Is Even"
 tags: [combinatorics]
+date: 2023-05-26
 ---
 
 > **Abstract.** There's a proof in [this YouTube video][yt].  
@@ -36,11 +37,11 @@ We'll be thinking in terms of the cycles in a permutation $\sigma$, and we'll be
 
 Look at the cycle containing $1$. Say it looks like $(1, 5, 3, 4)$ for example. Replace this with the cycle $(1, 4, 3, 5)$ - just reverse the whole cycle. This gives you a new permutation which is also a derangement of $n$, call this $f(\sigma)$.
 
-When is this not defined? Well, if $1$ is in a cycle by itself, $\sigma(1) = 1$ and $\sigma$ wouldn't be a derangement. The only other issue is when the cycle containing $1$ remains the same when you reverse it, which only happens if it looks like $(1, 5)$ or something else of length two. When that happens, just pick the next smallest integer up to $n$ not represented in a cycle of length two and try again.
+When is this not defined? The only issue is when the cycle containing $1$ remains the same when you reverse it, which only happens if it looks like $(1, 5)$ or something else of length two. When that happens, just pick the next smallest integer up to $n$ not represented in a cycle of length two and try again.
 
 For example in the permutation $\sigma = (1, 5)(2, 3, 4)$ we would have $f(\sigma) = (1, 5)(2, 4, 3)$. So now we've extended the definition of our involution, but there are still issues.
 
-What if all of the cycles have length two? First off, we'd automatically have that $n$ is even there. So if $n$ is odd, the involution is *always* defined, so $D_n$ is even. Half of the problem is finished here.
+What if all of the cycles have length two?[^2] First off, we'd automatically have that $n$ is even there. So if $n$ is odd, the involution is *always* defined, so $D_n$ is even. Half of the problem is finished here.
 
 In the case that $n$ is even, we need to try to extend the definition of our involution even further.
 
@@ -66,7 +67,14 @@ $$\begin{align*}
 
 Only the derangement $\sigma = (12)(34)$ is mapped to itself here, and the rest are set in pairs $(\sigma, f(\sigma))$. So the number of derangements $D_4$ is odd.
 
+---
+
+Quick note. I've been working on multiplicative sums 2 and some more density stuff but I've been a little busy and it's taking more time than expected. They're coming at some point though. This was a nice short post to fill a little gap. Thanks to my friend [shawkattack](https://www.twitch.tv/shawkattack) for showing me the original video on this and talking with me about it.
+
+---
+
 [^1]: An involution is a bijective map from a set to itself, which is its own inverse. In other words, it's a way to pair up elements of a set (potentially pairing an element with itself).
+[^2]: One can elementarily count that the total number of such involutions is $(n-1) \cdot (n-3) \cdot \ldots \cdot 3 \cdot 1$ which is odd. So we can just let $f(\sigma) = \sigma$ for these, the number of fixed points is odd, and so $D_n$ is odd. But we'll show it by extending the involution itself and not by counting, just to show the method works.
 
 [yt]: https://www.youtube.com/watch?v=wrHxeHJDTk4
 [aops]: https://artofproblemsolving.com/wiki/index.php/Derangement
