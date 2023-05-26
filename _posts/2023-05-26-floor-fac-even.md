@@ -35,7 +35,9 @@ The idea of the proof will be to construct an involution $f$ on the set of deran
 
 We'll be thinking in terms of the cycles in a permutation $\sigma$, and we'll be tweaking those to make a new permutation $f(\sigma)$. Remember that we're permuting the set $\lbrace 1, 2, \ldots, n \rbrace$.
 
-Look at the cycle containing $1$. Say it looks like $(1, 5, 3, 4)$ for example. Replace this with the cycle $(1, 4, 3, 5)$ - just reverse the whole cycle. This gives you a new permutation which is also a derangement of $n$, call this $f(\sigma)$.
+Look at the cycle containing $1$. Say it looks like $(1, 5, 3, 4)$ for example.  
+Replace this with the cycle $(1, 4, 3, 5)$ - just reverse the whole cycle.  
+This gives you a new permutation which is also a derangement of $n$, call this $f(\sigma)$.
 
 When is this not defined? The only issue is when the cycle containing $1$ remains the same when you reverse it, which only happens if it looks like $(1, 5)$ or something else of length two. When that happens, just pick the next smallest integer up to $n$ not represented in a cycle of length two and try again.
 
@@ -45,13 +47,20 @@ What if all of the cycles have length two?[^2] First off, we'd automatically hav
 
 In the case that $n$ is even, we need to try to extend the definition of our involution even further.
 
-Suppose that $1$ and $2$ are in different cycles. Then you can switch their partners to make a new derangement.  
-For example, for $\sigma = (1, 5)(2, 3)(4, 6)$, we would have $f(\sigma) = (1, 3)(2, 5)(4, 6)$ and we're happy. This breaks when $1$ and $2$ are together, but then just look at $3$ and $4$ instead.
+Suppose that $1$ and $2$ are in different cycles.  
+Then you can switch their partners to make a new derangement.  
+For example, for $\sigma = (1, 5)(2, 3)(4, 6)$, we would have $f(\sigma) = (1, 3)(2, 5)(4, 6)$ and we're happy.  
+This breaks when $1$ and $2$ are together, but then just look at $3$ and $4$ instead.
 
 For example then for $\sigma = (1, 2)(3, 5)(4, 6)$ we would have $f(\sigma) = (1, 2)(3, 6)(4, 5)$.  
 You can check that $f(f(\sigma)) = \sigma$ as we desire.
 
-This still breaks - keep on looking at pairs $1, 2$, then $3, 4$, then $5, 6$, until you've gone up to $n-1, n$. This leads us to a single derangement for which our involution is undefined, the permutation $\sigma = (1, 2)(3, 4)\ldots(n-1, n)$. For this one we just write $f(\sigma) = \sigma$ which will be the unique fixed point of our involution.
+This still breaks - keep on looking at pairs $1, 2$, then $3, 4$, then $5, 6$, until you've gone up to $n-1, n$.  
+This leads us to a single derangement for which our involution is undefined, the permutation 
+
+$$\sigma = (1, 2)(3, 4)\ldots(n-1, n)$$
+
+For this one we just write $f(\sigma) = \sigma$ which will be the unique fixed point of our involution.
 
 So if $n$ is even, there is a single fixed point, and since $1$ is odd, so is $D_n$.
 
@@ -62,10 +71,11 @@ $$\begin{align*}
 (1324) &\xrightarrow{f} (1423)\\
 (1243) &\xrightarrow{f} (1342)\\
 (13)(24) &\xrightarrow{f} (14)(23)\\
-(12)(34) &\xrightarrow{f} (12)(34) \, \textit{(only fixed point)}
+(12)(34) &\xrightarrow{f} (12)(34)
 \end{align*}$$
 
-Only the derangement $\sigma = (12)(34)$ is mapped to itself here, and the rest are set in pairs $(\sigma, f(\sigma))$. So the number of derangements $D_4$ is odd.
+Only the derangement $\sigma = (12)(34)$ is mapped to itself here, and the rest are set in pairs $(\sigma, f(\sigma))$.  
+So the number of derangements $D_4$ is odd.
 
 ---
 
