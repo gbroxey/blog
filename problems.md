@@ -44,4 +44,4 @@ The general case, as well as the special case $B = \lbrace 1, p, q \rbrace$, rem
 
 It seems like there's some simple proof that I'm just totally overlooking here.
 
-I have a strategy which works to prove the binary problem for $a_1, b_1 \leq 2^{2^{\ddots}^2}$ for some big number of twos. I'll write about that at some point later. In general I don't have a solution to this yet.
+I have a strategy which works to prove the binary problem for $a_1, b_1 \leq 2^{2^{2^\ddots}}$ for some big number of twos. I'll write about that at some point later. In general I don't have a solution to this yet.
