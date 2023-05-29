@@ -2,6 +2,8 @@
 layout: page
 title: Open Problems
 permalink: /problems/
+date: 2023-05-28
+modified_date: 2023-05-29
 ---
 
 I've gathered some problems I haven't been able to completely resolve.  
