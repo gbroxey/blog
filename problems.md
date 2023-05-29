@@ -12,7 +12,9 @@ If you decide to try these, or if you find that they've been solved in literatur
 
 ---
 
-> **Problem 1.** Suppose you have two sets $A$ and $B$ of natural numbers.  
+## Problem 1
+
+> Suppose you have two sets $A$ and $B$ of natural numbers.  
 > Write $A \perp B$ if the sets $b_1 A \cap b_2 A$ have zero natural density, whenever $b_1, b_2$ are different elements of $B$. In other words, $A$ has nearly disjoint $B$-dilations.  
 > Then the upper density of $A$ is at most
 > 
@@ -38,7 +40,9 @@ The general case, as well as the special case $B = \lbrace 1, p, q \rbrace$, rem
 
 ---
 
-> **Problem 2.** Fix a base $b > 1$ and a natural number $x_1$.  
+## Problem 2
+
+> Fix a base $b > 1$ and a natural number $x_1$.  
 > Let $x_{n+1} = x_n + f(x_n)$ where $f(x)$ is the sum of the base-$b$ digits of $x$.  
 > Similarly create the sequence $y_n$ starting from a natural number $y_1$.  
 > Then there exists an integer $i$ such that $x_n = y_{n+i}$ for all large $n$ iff $\gcd(x_1, b-1) = \gcd(y_1, b-1)$.  
@@ -62,7 +66,9 @@ My [super old Facebook post](https://www.facebook.com/groups/1923323131245618/po
 
 ---
 
-> **Problem 3.** Say $\alpha$ is an algebraic number.  
+## Problem 3
+
+> Say $\alpha$ is an algebraic number.  
 > Is there always a finite sequence of polynomials $f_1, f_2, \ldots, f_k$ with integer coefficients which, when composed, has $f_1(f_2(\ldots f_k(\alpha) \ldots)) = 0$?
 
 If $\alpha = \frac{p}{q}$ is rational, the length one sequence $f_1(x) = qx - p$ works.
