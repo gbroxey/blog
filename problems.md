@@ -46,7 +46,19 @@ The general case, as well as the special case $B = \lbrace 1, p, q \rbrace$, rem
 
 It seems like there's some simple proof that I'm just totally overlooking here.
 
-I have a strategy which works to prove the binary problem for $a_1, b_1 \leq 2^{2^{2^\cdots}}$ for some big number of twos. I'll write about that at some point later. In general I don't have a solution to this yet.
+Let tetration be written as ${^{n}a} = a^a^{\ldots^a}$, where there are $n$ levels in the tower.
+
+Here's a proof (minus computer calculation) that, in the binary case, any starting values $a_1, b_1 < {^{2000}}{2}$ will both eventually be mapped to the same value.
+
+Fix $K$ and initialize the range $\lbrack 1, {^{K}2} - 1 \rbrack$.  
+Any integer in this range will eventually be mapped to the range $\lbrack {^{K}2}, {^{K}2} + {^{K-1}2} - 1 \rbrack$, since the max bit count in the first range is ${^{K-1}2}$.
+
+From there it gets a little uglier, this range maps into $\lbrack {^{K}2} + {^{K-1}2}, {^{K}2} + {^{K-1}2} - 1 + 1 + {^{K-2}2} \rbrack$.  
+Continuing on, you get ranges of the form $\lbrack {^{K}2} + {^{K-1}2} + \ldots + {^{J}2} + U, {^{K}2} + {^{K-1}2} + \ldots + {^{J-1}2} + V \rbrack$ which get successively narrower, and you stop once the value of $V$ exceeds ${^{J-1}2}$. That only realistically happens for $J-1 \leq 4$, since ${^{5}2}$ is astronomically big.
+
+Now, that doesn't reduce the problem to one integer, rather a small range (seemingly linear in $K$) which we can manually test to ensure they all converge to one trajectory. To do that we separate off the sum of powers of two down to ${^{5}2}$ and treat the bit count of those separately.
+
+My [super old Facebook post](https://www.facebook.com/groups/1923323131245618/posts/2139500409627888/) on this says that every starting value under ${^{2000}2}$ is eventually mapped to ${^{2000}2} + {^{1999}2} + \ldots + {^{5}2} + 838365944$.
 
 ---
 
