@@ -46,7 +46,7 @@ The general case, as well as the special case $B = \lbrace 1, p, q \rbrace$, rem
 
 It seems like there's some simple proof that I'm just totally overlooking here.
 
-Let tetration be written as ${^{n}a} = a^a^{\ldots^a}$, where there are $n$ levels in the tower.
+Let tetration be written as ${^{n}a} = a^a^{{\ldots}^a}$, where there are $n$ levels in the tower.
 
 Here's a proof (minus computer calculation) that, in the binary case, any starting values $a_1, b_1 < {^{2000}}{2}$ will both eventually be mapped to the same value.
 
