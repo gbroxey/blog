@@ -35,6 +35,7 @@ header_pages:
   - about.md
   - tags.md
   - resources.md
+  - problems.md
 
 disqus:
   # Leave shortname blank to disable comments site-wide.
