@@ -89,4 +89,3 @@ Quick note. I've been working on multiplicative sums 2 and some more density stu
 [yt]: https://www.youtube.com/watch?v=wrHxeHJDTk4
 [aops]: https://artofproblemsolving.com/wiki/index.php/Derangement
 [die]: https://scholarship.claremont.edu/cgi/viewcontent.cgi?referer=&httpsredir=1&article=1581&context=hmc_fac_pub
->>>>>>> 7b7c6668994ff46fb58a03e916995d314b64dac5:_posts/2023-05-26-floor-fac-even.md
