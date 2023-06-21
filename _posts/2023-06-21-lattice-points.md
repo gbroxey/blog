@@ -89,8 +89,12 @@ As for the other direction, associate every lattice point $(x, y)$ with *nonzero
 
 Since $S(r)$ grows quadratically we have $N(r) \sim S(r)$ as desired.
 
+<br/>
+
 <!-- see wl code -->
-<center><img src="/blog/docs/assets/images/2023-06-21-latticepoints.png" width="75%" height="75%"></center>
+<center><img src="/blog/docs/assets/images/2023-06-21-latticepoints.png" width="60%" height="60%"></center>
+
+<br/>
 
 So then, thinking back to the coefficients of $a(x)^2$,
 
