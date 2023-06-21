@@ -56,6 +56,8 @@ $$\begin{align*}
 
 Because $r > -1$ we have the desired inequalities as $x \to 1$ from below. $\newcommand{\proofqed}{\quad\quad\quad\square} \proofqed$
 
+---
+
 That's the extent of the integral manipulation we need to use for this proof.
 
 Considering $(1/2)!$ leads us immediately to sequences $a_n$ such that $a_0 + \ldots + a_n \sim \sqrt{n}$.  
@@ -69,15 +71,23 @@ and by the analytical lemma we have
 
 $$\lim_{x \to 1} \frac{(1-x)^{1/2}}{(1/2)!} a(x) = 1$$
 
-The plan will be to look at the coeffifcients of $a(x)^2$ and use the lemma again.
+The plan will be to look at the coefficients of $a(x)^2$ and use the lemma again.
 
-Write $a(x)^2 = \sum c_n x^n$. Each $c_n$ will equal $\sum a_i a_{n-i}$, which ends up being the number of ways to write $n$ as a sum of two non-negative squares. We can then interpret $c_0 + c_1 + \ldots + c_n$ as the number of lattice points in the positive quarter circle of radius $\sqrt{n}$.
+Write $a(x)^2 = \sum c_n x^n$. Each $c_n$ will equal $\sum a_i a_{n-i}$, which ends up being the number of ways to write $n$ as a sum of two non-negative squares. We can then interpret $c_0 + c_1 + \ldots + c_n$ as the number of lattice points in the non-negative quarter circle of radius $\sqrt{n}$.
 
-Following that logic, and geometrical considerations[^1], we have
+Write $N(r)$ for the number of lattice points in the non-negative quarter circle of radius $r$, and $S(r) = \frac{\pi}{4} r^2$ for its area. We'll quickly show that $N(r) \sim S(r)$.
+
+Associate each lattice point $(x, y)$ with the unit square $\lbrack x, x+1\rbrack \times \lbrack y, y+1\rbrack$. These lattice points cover the quarter circle, and since each unit square has area one, we have $N(r) \geq S(r)$. 
+
+As for the other direction, associate every lattice point $(x, y)$ with *nonzero coordinates* with the unit square $\lbrack x-1, x \rbrack \times \lbrack y-1, y \rbrack$. All of these squares will together fit inside the quarter circle. The number of lattice points with no square is $2\lfloor r \rfloor + 1$, so that $N(r) - 2r - 1 \leq S(r)$.
+
+Since $S(r)$ grows quadratically we have $N(r) \sim S(r)$ as desired.
+
+So then, thinking back to the coefficients of $a(x)^2$,
 
 $$c_0 + c_1 + \ldots + c_n \sim \frac{\pi}{4} (\sqrt{n})^2 = \frac{\pi}{4}n$$
 
-So then by the lemma
+and by the lemma,
 
 $$\lim_{x \to 1} (1-x)a(x)^2 = \frac{\pi}{4}$$
 
@@ -87,10 +97,8 @@ $$\lim_{x \to 1} \frac{1-x}{\left\lbrack(1/2)!\right\rbrack^2} a(x)^2 = 1$$
 
 and by comparing coefficients, $\left\lbrack(1/2)!\right\rbrack^2 = \frac{\pi}{4}$.
 
-Then just take the square root to get $(1/2)! = \frac{\sqrt{\pi}}{2}$. $\proofqed$
+Take the square root to get $(1/2)! = \frac{\sqrt{\pi}}{2}$. $\proofqed$
 
 ---
 
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
-
-[^1]: There is actually a proof needed here that the number of lattice points in this positive quarter circle is actually asymptotic to the area of that quarter circle. Here's a proof, writing $r$ for the radius, $N(r)$ for the number of lattice points in the quarter circle, and $A(r) = \frac{\pi}{4} r^2$ for the area. Associate each lattice point $(x, y)$ with the unit square $\lbrack x, x+1\rbrack \times \lbrack y, y+1\rbrack$. These lattice points cover the quarter circle, and since each unit square has area one, we have $N(r) \geq A(r)$. As for the other direction, associate every lattice point $(x, y)$ with *nonzero coordinates* with the unit square $\lbrack x-1, x \rbrack \times \lbrack y-1, y \rbrack$. All of these squares will together fit inside the quarter circle. The number of lattice points with no square is $2\lfloor r \rfloor + 1$, so that $N(r) - 2r - 1 \leq A(r)$. Together we have $N(r) = A(r) + O(r)$.
