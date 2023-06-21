@@ -71,6 +71,10 @@ and by the analytical lemma we have
 
 $$\lim_{x \to 1} \frac{(1-x)^{1/2}}{(1/2)!} a(x) = 1$$
 
+We can square this and simplify to obtain
+
+$$\lim_{x \to 1} (1-x) a(x)^2 = \left\lbrack (1/2)! \right\rbrack^2$$
+
 The plan will be to look at the coefficients of $a(x)^2$ and use the lemma again.
 
 Write $a(x)^2 = \sum c_n x^n$. Each $c_n$ will equal $\sum a_i a_{n-i}$, which ends up being the number of ways to write $n$ as a sum of two non-negative squares. We can then interpret $c_0 + c_1 + \ldots + c_n$ as the number of lattice points in the non-negative quarter circle of radius $\sqrt{n}$.
@@ -79,7 +83,7 @@ Write $N(r)$ for the number of lattice points in the non-negative quarter circle
 
 Associate each lattice point $(x, y)$ with the unit square $\lbrack x, x+1\rbrack \times \lbrack y, y+1\rbrack$. These lattice points cover the quarter circle, and since each unit square has area one, we have $N(r) \geq S(r)$. 
 
-As for the other direction, associate every lattice point $(x, y)$ with *nonzero coordinates* with the unit square $\lbrack x-1, x \rbrack \times \lbrack y-1, y \rbrack$. All of these squares will together fit inside the quarter circle. The number of lattice points with no square is $2\lfloor r \rfloor + 1$, so that $N(r) - 2r - 1 \leq S(r)$.
+As for the other direction, associate every lattice point $(x, y)$ with *nonzero coordinates* with the unit square $\lbrack x-1, x \rbrack \times \lbrack y-1, y \rbrack$. All of these squares will together fit inside the quarter circle. The number of lattice points with no corresponding square is $2\lfloor r \rfloor + 1$, so that $N(r) - 2r - 1 \leq S(r)$.
 
 Since $S(r)$ grows quadratically we have $N(r) \sim S(r)$ as desired.
 
@@ -89,13 +93,7 @@ $$c_0 + c_1 + \ldots + c_n \sim \frac{\pi}{4} (\sqrt{n})^2 = \frac{\pi}{4}n$$
 
 and by the lemma,
 
-$$\lim_{x \to 1} (1-x)a(x)^2 = \frac{\pi}{4}$$
-
-but by squaring the previous application of the lemma we could obtain
-
-$$\lim_{x \to 1} \frac{1-x}{\left\lbrack(1/2)!\right\rbrack^2} a(x)^2 = 1$$
-
-and by comparing coefficients, $\left\lbrack(1/2)!\right\rbrack^2 = \frac{\pi}{4}$.
+$$\lim_{x \to 1} (1-x)a(x)^2 = \frac{\pi}{4} = \left\lbrack(1/2)!\right\rbrack^2$$
 
 Take the square root to get $(1/2)! = \frac{\sqrt{\pi}}{2}$. $\proofqed$
 
