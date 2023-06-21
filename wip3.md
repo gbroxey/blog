@@ -42,6 +42,20 @@ $$\begin{align*}
 
 To continue we use the substitution $x^t = e^{-u}$, obtaining
 
-$\newcommand{\proofqed}{\quad\quad\quad\square} \proofqed$
+$$\begin{align*}
+(\delta+\varepsilon) \cdot \left\lbrack -\log(x) \int_0^\infty (-u/\log(x))^r e^{-u} \cdot \frac{du}{-\log(x)} \right\rbrack &= (\delta+\varepsilon) \cdot \int_0^\infty (-u/\log(x))^r e^{-u} du\\
+&= (\delta+\varepsilon) \cdot (-\log(x))^{-r} \int_0^\infty u^r e^{-u} du\\
+&= (\delta+\varepsilon) \cdot (-\log(x))^{-r} r!
+\end{align*}$$
+
+Now using $-\log(x) \sim 1-x$ as $x$ tends to zero from below, we have the following:
+
+$$\begin{align*}
+\frac{(1-x)^r}{r!} a(x) &\leq O((1-x)^{r+1}) + (\delta + \varepsilon)(1 + o(1))
+\end{align*}$$
+
+Because $r > -1$ we have the desired inequalities as $x \to 1$ from below. $\newcommand{\proofqed}{\quad\quad\quad\square} \proofqed$
+
+
 
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
