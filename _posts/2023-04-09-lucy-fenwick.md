@@ -65,7 +65,7 @@ This trick is ubiquitous and used in a large variety of number theoretic summati
 ### Data Structure Details
 
 To implement Lucy's algorithm, then, it helps to have a nice container to store an `int64` at each key value `v` (where `x` is fixed and known). In my personal library I use a lightweight wrapper object which stores the following data:
-- The value `x``
+- The value `x`
 - The value `isqrt` defined as $\lfloor \sqrt{x} \rfloor$
 - An array `arr` of length `L`, where $L = 2\lfloor \sqrt{x} \rfloor$, or if $\left\lfloor \frac{x}{\lfloor \sqrt{x} \rfloor}\right\rfloor = \lfloor \sqrt{x}\rfloor$ use $L = 2\lfloor \sqrt{x} \rfloor-1$
 
