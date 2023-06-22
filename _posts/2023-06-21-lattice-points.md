@@ -108,4 +108,24 @@ Take the square root to get $(1/2)! = \frac{\sqrt{\pi}}{2}$. $\proofqed$
 
 ---
 
+## Addendum: $d$-Dimensional Balls
+
+It's actually very easy to use this machinery to find an expression for the volume of a $d$-dimensional ball.
+
+Write $a(x)^d = f_0 + f_1 x + f_2 x^2 + \ldots$ where the coefficients $f$ will depend on $d$.  
+Then $f_0 + \ldots + f_n$ is the number of lattice points in the non-negative section of the $d$-ball of radius $\sqrt{n}$. Write $G(r)$ for the number of lattice points in the positive section of the $d$-ball with radius $r$, and write $H(r)$ for its volume. We'll take for granted that $H(r) = H(1) r^d$, but you again have to prove that $H(r) \sim G(r)$. Basically the same trick as before works to show $G(r) = H(r) + O(r^{d-1})$.
+
+So now, recalling the results from before:
+
+$$\begin{align*}
+\lim_{x \to 1} (1-x)^{1/2} a(x) &= (1/2)!\\
+\lim_{x \to 1} \frac{(1-x)^{d/2}}{(d/2)!} a(x)^d &= \frac{\lbrack (1/2)! \rbrack^d}{(d/2)!}
+\end{align*}$$
+
+but also by the lemma and counting, that limit is equal to $H(1)$, the volume of the positive section of the unit $d$-dimensional hypersphere. If we want the whole hypersphere instead, we multiply by $2^d$ to get
+
+$$\frac{\lbrack (1/2)! \rbrack^d 2^d}{(d/2)!}$$
+
+---
+
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
