@@ -8,7 +8,7 @@ modified_date: 2023-05-29
 
 I've gathered some problems I haven't been able to completely resolve.  
 
-If you decide to try these, or if you find that they've been solved in literature somewhere, I'd be interested to hear about them. I'll include a bried summary of progress.
+If you decide to try these, or if you find that they've been solved in literature somewhere, I'd be interested to hear about them. I'll include a brief summary of progress.
 
 ---
 
