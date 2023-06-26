@@ -1,7 +1,7 @@
 ---
 title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
-modified_date: 2023-05-02
+modified_date: 2023-06-25
 tags: [prime counting, number theory, algorithms]
 ---
 
@@ -190,14 +190,15 @@ For each prime $p \leq \sqrt{x}$ we need to do an array operation for each key v
 
 There are at most $x^{1/4}$ small primes, and for each of them we need to do $O(\sqrt x)$ array updates, for a total runtime contribution of $O(x^{3/4})$.
 
-For the large primes $p$, there are at most about $\frac{\sqrt{x}}{p}$ key values to look at (check this!), for a total runtime contribution of
+For the large primes $p$, there are at most about $\frac{x}{p^2}$ key values to look at (check this![^5]), for a total runtime contribution of
 
 $$\begin{align*}
-\sum_{x^{1/4} \leq p \leq \sqrt{x}} \frac{\sqrt{x}}{p} &\leq \sum_{x^{1/4} \leq p \leq \sqrt{x}} \frac{\sqrt{x}}{x^{1/4}}\\
-&\leq x^{1/4} \sqrt{x} = x^{3/4}
+\sum_{x^{1/4} \leq p \leq \sqrt{x}} \frac{x}{p^2} &\leq \sum_{x^{1/4} \leq k} \frac{x}{k^2}\\
+&\leq \frac{x}{(x^{1/4})^2}+ x \int_{x^{1/4}}^\infty \frac{dt}{t^2}\\
+&\leq \sqrt{x} + x^{3/4}
 \end{align*}$$
 
-And so the runtime of Lucy's algorithm is $O(x^{3/4})$!
+And so the runtime of Lucy's algorithm is $O(x^{3/4})$![^6]
 
 ---
 
@@ -397,18 +398,20 @@ Not bad really! You'll have to tune the value of $y$ in your own impementation, 
 Finally we can implement this in Nim! Here's how it looks.
 
 ```nim
-proc lucyFenwick*(x: int64): FIArray =
+proc lucyFenwick(x: int64): FIArray =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
-  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
-  y = max(S.isqrt.int+1, y) #necessary lower bound
-  if x <= 10000:
-    y = x.int #if x is too small, easier to sieve the whole thing
-
+  var y: int
+  if x == 1: y = 1
+  else: 
+    y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
+    y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+    y = max(S.isqrt.int+1, y) #necessary lower bound
   var sieveRaw = newSeq[bool](y+1)
   var sieve = newFenwick[int](y+1, 1) #initialized to 1
+  sieveRaw[1] = true
+  sieveRaw[0] = true
   sieve[1] = 0
   sieve[0] = 0
   
@@ -419,7 +422,6 @@ proc lucyFenwick*(x: int64): FIArray =
     #returns sieve.sum(v) if v <= y, otherwise S[v].
     if v<=y: return sieve.sum(v.int)
     return S[v]
-    
   for p in 2..S.isqrt:
     if not sieveRaw[p]:
       #right now: sieveRaw contains true if it has been removed before sieving out p
@@ -434,7 +436,6 @@ proc lucyFenwick*(x: int64): FIArray =
           sieveRaw[j] = true
           sieve.addTo(j, -1)
         j += p
-
   for v in S.keysInc:
     if v>y: break
     if sieveRaw[v]:
@@ -442,7 +443,7 @@ proc lucyFenwick*(x: int64): FIArray =
     else: 
       S[v] = S[v-1] + 1
   return S
-  ```
+```
 
 ---
 
@@ -653,5 +654,9 @@ The code for this blog post is available [here on GitHub][22].
 [^3]: The function `isqrt()` uses the Babylonian algorithm and belongs in [a utility file](https://github.com/gbroxey/blog/blob/main/code/utils/iops.nim) available in the blog's repository.
 
 [^4]: With help from gor3n in the Project Euler Discord group :)
+
+[^5]: Thanks to \_giz for actually doing that and fixing a small error here. And speaking of errors, thanks to shash4321 for finding another small error in the code elsewhere.
+
+[^6]: You can get a slightly better bound on this runtime (some power of a log factor better) by being more careful about sum estimations and tweaking the break point for large and small primes.
 
 ---
