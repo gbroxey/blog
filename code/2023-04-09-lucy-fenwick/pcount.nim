@@ -24,14 +24,16 @@ proc lucyFenwick(x: int64): FIArray =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
-  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
-  y = max(S.isqrt.int+1, y) #necessary lower bound
-  if x <= 10000:
-    y = x.int #if x is too small, easier to sieve the whole thing
-
+  var y: int
+  if x == 1: y = 1
+  else: 
+    y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
+    y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+    y = max(S.isqrt.int+1, y) #necessary lower bound
   var sieveRaw = newSeq[bool](y+1)
   var sieve = newFenwick[int](y+1, 1) #initialized to 1
+  sieveRaw[1] = true
+  sieveRaw[0] = true
   sieve[1] = 0
   sieve[0] = 0
   
@@ -42,7 +44,6 @@ proc lucyFenwick(x: int64): FIArray =
     #returns sieve.sum(v) if v <= y, otherwise S[v].
     if v<=y: return sieve.sum(v.int)
     return S[v]
-    
   for p in 2..S.isqrt:
     if not sieveRaw[p]:
       #right now: sieveRaw contains true if it has been removed before sieving out p
@@ -57,7 +58,6 @@ proc lucyFenwick(x: int64): FIArray =
           sieveRaw[j] = true
           sieve.addTo(j, -1)
         j += p
-
   for v in S.keysInc:
     if v>y: break
     if sieveRaw[v]:
@@ -120,14 +120,17 @@ proc lucyFenwickFast(x: int64): int64 =
   var S = newFIArray(x)
   #compute y
   var xf = x.float64
-  var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
-  y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
-  y = max(S.isqrt.int+1, y) #necessary lower bound
-  if x <= 10000:
-    y = x.int #if x is too small, easier to sieve the whole thing
+  var y: int
+  if x == 1: y = 1
+  else:
+    var y = round(0.35*pow(xf, 2.0/3.0) / pow(ln(xf), 2.0/3.0)).int
+    y = min(y, 4e9.int) #upper bound - set this depending on how much ram you have
+    y = max(S.isqrt.int+1, y) #necessary lower bound
 
   var sieveRaw = newSeq[bool](y+1)
   var sieve = newFenwick[int](y+1, 1) #initialized to 1
+  sieveRaw[1] = true
+  sieveRaw[0] = true
   sieve[1] = 0
   sieve[0] = 0
   
@@ -157,7 +160,3 @@ proc lucyFenwickFast(x: int64): int64 =
           sieve.addTo(j, -1)
         j += p
   return S[x]
-
-import ../utils/eutil_timer
-const n = 1e12.int64
-timer: echo lucyFenwick(n)[n]
