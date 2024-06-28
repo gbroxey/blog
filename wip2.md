@@ -21,7 +21,7 @@ Here is the conjecture we continue to contemplate:
 > When $H(B) = \infty$, the conclusion is $\dsup(A) = 0$.
 
 At this point I'll assume you're familiar with my choice of notation.  
-If you're not, then reference the previous two posts.
+If you're not, then read the previous two posts.
 
 Our goal for today is to prove this conjecture in the case $B = \lbrace 1, 2, 3\rbrace$.[^0]  
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
@@ -34,21 +34,141 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
-- Include 1
-  - Forbid 2 and 3
-- Include 4
-  - Forbid 8 and 12, and also 6[^0.5]
-- Include 5
-  - Forbid 10 and 15
-- Include 7
-  - Forbid 14 and 21
-- Include 9
-  - Forbid 18 and 27
-- ...
+<script type="text/tikz">
+\newcommand{\lborder}{0.1}
+\newcommand{\dotshape}[3]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
+\newcommand{\thickdotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
+\draw[very thick, blue!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
+\newcommand{\thickgreendotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
+\draw[very thick, teal!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
+\newcommand{\thickreddotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
+\draw[very thick, red!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
+\newcommand{\lshape}[4]{
+
+    \fill[#1,opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
+    \draw[very thick, blue!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
+}
+\newcommand{\lshapeB}[4]{
+
+    \fill[#1,opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
+}
+\newcommand{\xwidth}{0.1}
+\newcommand{\xshape}[3]{\fill[#1] 
+(#2+\lborder,#3+\lborder) -- (#2+\lborder+\xwidth,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder-\xwidth) -- (#2+1-\lborder,#3+1-\lborder)  -- 
+(#2+1-\lborder-\xwidth,#3+1-\lborder)  -- 
+(#2+\lborder,#3+\lborder+\xwidth) -- cycle;
+\fill[#1] 
+(#2+\lborder,#3+1-\lborder) -- (#2+\lborder+\xwidth,#3+1-\lborder) -- (#2+1-\lborder,#3+\lborder+\xwidth) -- (#2+1-\lborder,#3+\lborder)  -- 
+(#2+1-\lborder-\xwidth,#3+\lborder)  -- 
+(#2+\lborder,#3+1-\lborder-\xwidth) -- cycle;}
+
+[scale=1]
+\begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
+\foreach \j in {-0.25,1,2,...,5} {
+\draw[yshift=\j*1.5cm] (0,0) grid (12, 1);
+\draw[very thick] (0,1.5*\j) -- (12, 1.5*\j) -- (12, 1.5*\j+1) -- (0, 1.5*\j+1) -- cycle;
+}
+\thickgreendotshape{green!25}{0}{5*1.5}{0.75}
+\thickgreendotshape{green!10}{1}{5*1.5}{0.35}
+\thickgreendotshape{green!10}{2}{5*1.5}{0.35}
+\draw[very thick, teal!60] (0+0.5,5*1.5+1-\lborder) -- (0+0.5,5*1.5+1+2*\lborder) -- (1+0.5, 5*1.5+1+2*\lborder) -- (1+0.5, 5*1.5+1-\lborder);
+\draw[very thick, teal!60] (1+0.5, 5*1.5+1+2*\lborder) -- (2+0.5, 5*1.5+1+2*\lborder) -- (2+0.5, 5*1.5+1-\lborder);
+
+\thickdotshape{blue!25}{0}{4*1.5}{0.75}
+\thickdotshape{black!15}{1}{4*1.5}{0.2}
+\thickdotshape{black!15}{2}{4*1.5}{0.2}
+\thickgreendotshape{green!25}{3}{4*1.5}{0.75}
+\thickgreendotshape{green!10}{7}{4*1.5}{0.35}
+\thickgreendotshape{green!10}{11}{4*1.5}{0.35}
+\draw[very thick, teal!60] (3+0.5,4*1.5+1-\lborder) -- (3+0.5,4*1.5+1+2*\lborder) -- (7+0.5, 4*1.5+1+2*\lborder) -- (7+0.5, 4*1.5+1-\lborder);
+\draw[very thick, teal!60] (7+0.5, 4*1.5+1+2*\lborder) -- (11+0.5, 4*1.5+1+2*\lborder) -- (11+0.5, 4*1.5+1-\lborder);
+
+\thickdotshape{blue!25}{0}{3*1.5}{0.75}
+\thickdotshape{black!15}{1}{3*1.5}{0.2}
+\thickdotshape{black!15}{2}{3*1.5}{0.2}
+\thickdotshape{blue!25}{3}{3*1.5}{0.75}
+\thickdotshape{black!15}{7}{3*1.5}{0.35}
+\thickdotshape{black!15}{11}{3*1.5}{0.35}
+\thickgreendotshape{green!25}{4}{3*1.5}{0.75}
+\thickgreendotshape{green!10}{9}{3*1.5}{0.35}
+\draw[very thick, teal!60] (4+0.5,3*1.5+1-\lborder) -- (4+0.5,3*1.5+1+2*\lborder) -- (9+0.5, 3*1.5+1+2*\lborder) -- (9+0.5, 3*1.5+1-\lborder);
+\draw[very thick, teal!60] (9+0.5, 3*1.5+1+2*\lborder) -- (11.5, 3*1.5+1+2*\lborder);
+\draw[very thick, teal!60] (11.6, 3*1.5+1+2*\lborder) -- (11.8, 3*1.5+1+2*\lborder);
+\draw[very thick, teal!60] (11.9, 3*1.5+1+2*\lborder) -- (12, 3*1.5+1+2*\lborder);
+
+\thickdotshape{blue!25}{0}{2*1.5}{0.75}
+\thickdotshape{black!15}{1}{2*1.5}{0.2}
+\thickdotshape{black!15}{2}{2*1.5}{0.2}
+\thickdotshape{blue!25}{3}{2*1.5}{0.75}
+\thickdotshape{black!15}{7}{2*1.5}{0.35}
+\thickdotshape{black!15}{11}{2*1.5}{0.35}
+\thickdotshape{blue!25}{4}{2*1.5}{0.75}
+\thickdotshape{black!15}{9}{2*1.5}{0.35}
+\thickreddotshape{red!25}{5}{2*1.5}{0.75}
+\xshape{red!60}{11}{2*1.5}
+\draw[very thick, red!60] (5+0.5,2*1.5+1-\lborder) -- (5+0.5,2*1.5+1+2*\lborder) -- (11+0.5, 2*1.5+1+2*\lborder) -- (11+0.5, 2*1.5+1-\lborder);
+\draw[very thick, red!60] (11.6, 2*1.5+1+2*\lborder) -- (11.8, 2*1.5+1+2*\lborder);
+\draw[very thick, red!60] (11.9, 2*1.5+1+2*\lborder) -- (12, 2*1.5+1+2*\lborder);
+
+\thickdotshape{blue!25}{0}{1*1.5}{0.75}
+\thickdotshape{black!15}{1}{1*1.5}{0.2}
+\thickdotshape{black!15}{2}{1*1.5}{0.2}
+\thickdotshape{blue!25}{3}{1*1.5}{0.75}
+\thickdotshape{black!15}{7}{1*1.5}{0.35}
+\thickdotshape{black!15}{11}{1*1.5}{0.35}
+\thickdotshape{blue!25}{4}{1*1.5}{0.75}
+\thickdotshape{black!15}{9}{1*1.5}{0.35}
+\thickdotshape{black!15}{5}{1*1.5}{0.35}
+\xshape{black!40}{5}{1*1.5}
+\thickgreendotshape{green!25}{6}{1*1.5}{0.75}
+\draw[very thick, teal!60] (6+0.5,1*1.5+1-\lborder) -- (6+0.5,1*1.5+1+2*\lborder) -- (11.5, 1*1.5+1+2*\lborder);
+\draw[very thick, teal!60] (11.6, 1*1.5+1+2*\lborder) -- (11.8, 1*1.5+1+2*\lborder);
+\draw[very thick, teal!60] (11.9, 1*1.5+1+2*\lborder) -- (12, 1*1.5+1+2*\lborder);
+
+\node at (6, 1.0625) {\textbf\ldots};
+
+\thickdotshape{blue!25}{0}{-0.25*1.5}{0.75}
+\thickdotshape{black!15}{1}{-0.25*1.5}{0.2}
+\thickdotshape{black!15}{2}{-0.25*1.5}{0.2}
+\thickdotshape{blue!25}{3}{-0.25*1.5}{0.75}
+\thickdotshape{black!15}{7}{-0.25*1.5}{0.35}
+\thickdotshape{black!15}{11}{-0.25*1.5}{0.35}
+\thickdotshape{blue!25}{4}{-0.25*1.5}{0.75}
+\thickdotshape{black!15}{9}{-0.25*1.5}{0.35}
+\thickdotshape{black!15}{5}{-0.25*1.5}{0.35}
+\xshape{black!40}{5}{-0.25*1.5}
+\thickdotshape{blue!25}{6}{-0.25*1.5}{0.75}
+\thickdotshape{blue!25}{8}{-0.25*1.5}{0.75}
+\thickdotshape{blue!25}{10}{-0.25*1.5}{0.75}
+
+\end{scope}
+\foreach \i in {1,2,...,12} {
+\foreach \j in {-0.25,1,2,...,5} {
+\node at (\i-1, 1.5*\j) {\i};
+}
+}
+</script>
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
 
-An OEIS search can lead you to determine that this $A$ is the set of all integers of the form $4^i 9^j k$ where $i, j \geq 0$ and $\gcd(k, 6) = 1$. Bla bla
+> **Lemma TODO.** The set $A$ consists of all $4^i 9^j k$ where $\gcd(k, 6) = 1$.
+
+_Proof._ Search the sequence on OEIS.  
+Suppose we have proven that $A \cap \lbrack 1 .. n \rbrack$ is full of the desired elements, and let $n+1$ be written in the form $2^i 3^j k$ for $i, j \geq 0$ and $\gcd(k, 6) = 1$. Suppose that $i, j$ are not both even, we will show that $n+1$ cannot be included in the set $A$.
+
+If $i$ is odd and $j$ is even, then $2^{i-1}3^jk$ is an element of $A$, and so $n+1$ is twice an element of $A$ and cannot be added to the set. A similar idea works if $i$ is even and $j$ is odd.
+
+If $i, j$ are both odd, then $2^{i+1} 3^{j-1}k = \frac{2}{3}(n+1) \leq n$ is an element of $A$, so that $2A$ would contain $2(n+1) = 2^{i+1} 3^j k$ and $3A$ would contain $3 \cdot 2^{i+1}3^{j-1}k = 2^{i+1} 3^j k$, so that $2A$ and $3A$ are not disjoint.
+
+So $n+1 = 2^i 3^j k$ can only be included in $A$ if $i, j$ are both even. $\proofqed$
+
+Let's also compute the density of this set for good measure.
+
+We'll decompose $A = A_0 \times A_1$ where $A_0 = \lbrace 4^i 9^j \mid i, j \geq 0 \rbrace$ and $A_1 = \lbrace k \mid \gcd(k, 6) = 1 \rbrace$.  
+We can verify that $A_1$ is periodic and so has density $\frac{2}{6} = \frac{1}{3}$.  
+Also, $A_1 \perp A_0$, so by [Lemma 7][density1],
+
+$$\dnat(A) = \dnat(A_1) H(A_0) = \frac{1}{3} \sum_{i, j \geq 0} \frac{1}{4^i 9^j} = \frac{1}{2}$$
 
 Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$.  
 This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
@@ -179,7 +299,7 @@ This looks really good, but we remember that this currently has no
 
 We will not skip straight to my proof. Instead I'll first invite you to try to prove it yourself.
 
-I think that most attempts at a proof for this case will slightly fall short of the desired bound. It's strange how elusive it seems to be, which is even stranger when you see my proof, which provides an even stronger bound than needed. That's actually another interesting aspect here, but not so surprising if you think about it[^1].
+I think that most attempts at a proof for this case will slightly fall short of the desired bound. It's strange how elusive it seems to be, which is even stranger when you see my proof, which provides an even stronger bound than needed. That's actually another interesting aspect here, but not so surprising if you think about it[^2].
 
 The first thing we could notice is that if $A \perp \lbrace 1, 2, 3 \rbrace$, then naturally $A \perp \lbrace 1, 2\rbrace$. This case is quite easy! We can for example let $U$ be the set of all $4^i * j$ for $i \geq 0$ and $j$ odd, after which $U \times \lbrace 1, 2 \rbrace = \NN$ and [Lemma 9][density1] kicks in - we get $\dsup(A) \leq \frac{2}{3}$. The details here are not hard to fill in, [Lemma 7][density1] being especially helpful.
 
@@ -294,7 +414,7 @@ The code for this blog post is available nowhere.
 
 
 [^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
-[^0.5]: Because if 4 and 6 were both in $A$, then $2A$ and $3A$ would both contain $12$.
-[^1]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
+[^1]: Because if 4 and 6 were both in $A$, then $2A$ and $3A$ would both contain $12$.
+[^2]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
 
 ---
