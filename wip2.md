@@ -62,7 +62,6 @@ The first idea to explore is to see what happens when we greedily shove elements
   (#2+1-\lborder-\xwidth,#3+\lborder)  -- 
   (#2+\lborder,#3+1-\lborder-\xwidth) -- cycle;}
 
-  \begin{center}
   \begin{tikzpicture}[scale=1.5]
   \begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
   \foreach \j in {-0.25,1,2,...,5} {
@@ -149,8 +148,8 @@ The first idea to explore is to see what happens when we greedily shove elements
   }
   }
   \end{tikzpicture}
-  \end{center}
 </script>
+
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
 
