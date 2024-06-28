@@ -34,6 +34,7 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
+<div style="text-align:center;">
 <script type="text/tikz">
   \newcommand{\lborder}{0.1}
   \newcommand{\dotshape}[3]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
@@ -149,6 +150,7 @@ The first idea to explore is to see what happens when we greedily shove elements
   }
   \end{tikzpicture}
 </script>
+</div>
 
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
