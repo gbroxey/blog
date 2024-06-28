@@ -62,7 +62,7 @@ The first idea to explore is to see what happens when we greedily shove elements
   (#2+1-\lborder-\xwidth,#3+\lborder)  -- 
   (#2+\lborder,#3+1-\lborder-\xwidth) -- cycle;}
 
-  [scale=1]
+  \begin{tikzpicture}[scale=1]
   \begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
   \foreach \j in {-0.25,1,2,...,5} {
   \draw[yshift=\j*1.5cm] (0,0) grid (12, 1);
@@ -147,6 +147,7 @@ The first idea to explore is to see what happens when we greedily shove elements
   \node at (\i-1, 1.5*\j) {\i};
   }
   }
+  \end{tikzpicture}
 </script>
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
