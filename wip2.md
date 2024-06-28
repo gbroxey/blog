@@ -33,7 +33,9 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 ## Lower Density
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
-$$\newcommand{\lborder}{0.1}
+
+<script type="text/tikz">
+  \newcommand{\lborder}{0.1}
   \newcommand{\dotshape}[3]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
   \newcommand{\thickdotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
   \draw[very thick, blue!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
@@ -59,10 +61,9 @@ $$\newcommand{\lborder}{0.1}
   (#2+\lborder,#3+1-\lborder) -- (#2+\lborder+\xwidth,#3+1-\lborder) -- (#2+1-\lborder,#3+\lborder+\xwidth) -- (#2+1-\lborder,#3+\lborder)  -- 
   (#2+1-\lborder-\xwidth,#3+\lborder)  -- 
   (#2+\lborder,#3+1-\lborder-\xwidth) -- cycle;}
-$$
 
-<script type="text/tikz">
-  \begin{tikzpicture}[scale=1]
+  \begin{center}
+  \begin{tikzpicture}[scale=1.5]
   \begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
   \foreach \j in {-0.25,1,2,...,5} {
   \draw[yshift=\j*1.5cm] (0,0) grid (12, 1);
@@ -148,6 +149,7 @@ $$
   }
   }
   \end{tikzpicture}
+  \end{center}
 </script>
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
