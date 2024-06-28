@@ -34,123 +34,7 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
-<div style="text-align:center;">
-<script type="text/tikz">
-  \newcommand{\lborder}{0.1}
-  \newcommand{\dotshape}[3]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
-  \newcommand{\thickdotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
-  \draw[very thick, blue!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
-  \newcommand{\thickgreendotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
-  \draw[very thick, teal!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
-  \newcommand{\thickreddotshape}[4]{\fill[#1] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;
-  \draw[very thick, red!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+1-\lborder,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+\lborder,#3+1-\lborder) -- cycle;}
-  \newcommand{\lshape}[4]{
-
-      \fill[#1,opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
-      \draw[very thick, blue!60, opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
-  }
-  \newcommand{\lshapeB}[4]{
-
-      \fill[#1,opacity=#4] (#2+\lborder,#3+\lborder) -- (#2+2-\lborder,#3+\lborder) -- (#2+2-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+1-\lborder) -- (#2+1-\lborder,#3+2-\lborder) -- (#2+\lborder,#3+2-\lborder) -- cycle;
-  }
-  \newcommand{\xwidth}{0.1}
-  \newcommand{\xshape}[3]{\fill[#1] 
-  (#2+\lborder,#3+\lborder) -- (#2+\lborder+\xwidth,#3+\lborder) -- (#2+1-\lborder,#3+1-\lborder-\xwidth) -- (#2+1-\lborder,#3+1-\lborder)  -- 
-  (#2+1-\lborder-\xwidth,#3+1-\lborder)  -- 
-  (#2+\lborder,#3+\lborder+\xwidth) -- cycle;
-  \fill[#1] 
-  (#2+\lborder,#3+1-\lborder) -- (#2+\lborder+\xwidth,#3+1-\lborder) -- (#2+1-\lborder,#3+\lborder+\xwidth) -- (#2+1-\lborder,#3+\lborder)  -- 
-  (#2+1-\lborder-\xwidth,#3+\lborder)  -- 
-  (#2+\lborder,#3+1-\lborder-\xwidth) -- cycle;}
-
-  \begin{tikzpicture}[scale=1.5]
-  \begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
-  \foreach \j in {-0.25,1,2,...,5} {
-  \draw[yshift=\j*1.5cm] (0,0) grid (12, 1);
-  \draw[very thick] (0,1.5*\j) -- (12, 1.5*\j) -- (12, 1.5*\j+1) -- (0, 1.5*\j+1) -- cycle;
-  }
-  \thickgreendotshape{green!25}{0}{5*1.5}{0.75}
-  \thickgreendotshape{green!10}{1}{5*1.5}{0.35}
-  \thickgreendotshape{green!10}{2}{5*1.5}{0.35}
-  \draw[very thick, teal!60] (0+0.5,5*1.5+1-\lborder) -- (0+0.5,5*1.5+1+2*\lborder) -- (1+0.5, 5*1.5+1+2*\lborder) -- (1+0.5, 5*1.5+1-\lborder);
-  \draw[very thick, teal!60] (1+0.5, 5*1.5+1+2*\lborder) -- (2+0.5, 5*1.5+1+2*\lborder) -- (2+0.5, 5*1.5+1-\lborder);
-
-  \thickdotshape{blue!25}{0}{4*1.5}{0.75}
-  \thickdotshape{black!15}{1}{4*1.5}{0.2}
-  \thickdotshape{black!15}{2}{4*1.5}{0.2}
-  \thickgreendotshape{green!25}{3}{4*1.5}{0.75}
-  \thickgreendotshape{green!10}{7}{4*1.5}{0.35}
-  \thickgreendotshape{green!10}{11}{4*1.5}{0.35}
-  \draw[very thick, teal!60] (3+0.5,4*1.5+1-\lborder) -- (3+0.5,4*1.5+1+2*\lborder) -- (7+0.5, 4*1.5+1+2*\lborder) -- (7+0.5, 4*1.5+1-\lborder);
-  \draw[very thick, teal!60] (7+0.5, 4*1.5+1+2*\lborder) -- (11+0.5, 4*1.5+1+2*\lborder) -- (11+0.5, 4*1.5+1-\lborder);
-
-  \thickdotshape{blue!25}{0}{3*1.5}{0.75}
-  \thickdotshape{black!15}{1}{3*1.5}{0.2}
-  \thickdotshape{black!15}{2}{3*1.5}{0.2}
-  \thickdotshape{blue!25}{3}{3*1.5}{0.75}
-  \thickdotshape{black!15}{7}{3*1.5}{0.35}
-  \thickdotshape{black!15}{11}{3*1.5}{0.35}
-  \thickgreendotshape{green!25}{4}{3*1.5}{0.75}
-  \thickgreendotshape{green!10}{9}{3*1.5}{0.35}
-  \draw[very thick, teal!60] (4+0.5,3*1.5+1-\lborder) -- (4+0.5,3*1.5+1+2*\lborder) -- (9+0.5, 3*1.5+1+2*\lborder) -- (9+0.5, 3*1.5+1-\lborder);
-  \draw[very thick, teal!60] (9+0.5, 3*1.5+1+2*\lborder) -- (11.5, 3*1.5+1+2*\lborder);
-  \draw[very thick, teal!60] (11.6, 3*1.5+1+2*\lborder) -- (11.8, 3*1.5+1+2*\lborder);
-  \draw[very thick, teal!60] (11.9, 3*1.5+1+2*\lborder) -- (12, 3*1.5+1+2*\lborder);
-
-  \thickdotshape{blue!25}{0}{2*1.5}{0.75}
-  \thickdotshape{black!15}{1}{2*1.5}{0.2}
-  \thickdotshape{black!15}{2}{2*1.5}{0.2}
-  \thickdotshape{blue!25}{3}{2*1.5}{0.75}
-  \thickdotshape{black!15}{7}{2*1.5}{0.35}
-  \thickdotshape{black!15}{11}{2*1.5}{0.35}
-  \thickdotshape{blue!25}{4}{2*1.5}{0.75}
-  \thickdotshape{black!15}{9}{2*1.5}{0.35}
-  \thickreddotshape{red!25}{5}{2*1.5}{0.75}
-  \xshape{red!60}{11}{2*1.5}
-  \draw[very thick, red!60] (5+0.5,2*1.5+1-\lborder) -- (5+0.5,2*1.5+1+2*\lborder) -- (11+0.5, 2*1.5+1+2*\lborder) -- (11+0.5, 2*1.5+1-\lborder);
-  \draw[very thick, red!60] (11.6, 2*1.5+1+2*\lborder) -- (11.8, 2*1.5+1+2*\lborder);
-  \draw[very thick, red!60] (11.9, 2*1.5+1+2*\lborder) -- (12, 2*1.5+1+2*\lborder);
-
-  \thickdotshape{blue!25}{0}{1*1.5}{0.75}
-  \thickdotshape{black!15}{1}{1*1.5}{0.2}
-  \thickdotshape{black!15}{2}{1*1.5}{0.2}
-  \thickdotshape{blue!25}{3}{1*1.5}{0.75}
-  \thickdotshape{black!15}{7}{1*1.5}{0.35}
-  \thickdotshape{black!15}{11}{1*1.5}{0.35}
-  \thickdotshape{blue!25}{4}{1*1.5}{0.75}
-  \thickdotshape{black!15}{9}{1*1.5}{0.35}
-  \thickdotshape{black!15}{5}{1*1.5}{0.35}
-  \xshape{black!40}{5}{1*1.5}
-  \thickgreendotshape{green!25}{6}{1*1.5}{0.75}
-  \draw[very thick, teal!60] (6+0.5,1*1.5+1-\lborder) -- (6+0.5,1*1.5+1+2*\lborder) -- (11.5, 1*1.5+1+2*\lborder);
-  \draw[very thick, teal!60] (11.6, 1*1.5+1+2*\lborder) -- (11.8, 1*1.5+1+2*\lborder);
-  \draw[very thick, teal!60] (11.9, 1*1.5+1+2*\lborder) -- (12, 1*1.5+1+2*\lborder);
-
-  \node at (6, 1.0625) {\textbf\ldots};
-
-  \thickdotshape{blue!25}{0}{-0.25*1.5}{0.75}
-  \thickdotshape{black!15}{1}{-0.25*1.5}{0.2}
-  \thickdotshape{black!15}{2}{-0.25*1.5}{0.2}
-  \thickdotshape{blue!25}{3}{-0.25*1.5}{0.75}
-  \thickdotshape{black!15}{7}{-0.25*1.5}{0.35}
-  \thickdotshape{black!15}{11}{-0.25*1.5}{0.35}
-  \thickdotshape{blue!25}{4}{-0.25*1.5}{0.75}
-  \thickdotshape{black!15}{9}{-0.25*1.5}{0.35}
-  \thickdotshape{black!15}{5}{-0.25*1.5}{0.35}
-  \xshape{black!40}{5}{-0.25*1.5}
-  \thickdotshape{blue!25}{6}{-0.25*1.5}{0.75}
-  \thickdotshape{blue!25}{8}{-0.25*1.5}{0.75}
-  \thickdotshape{blue!25}{10}{-0.25*1.5}{0.75}
-
-  \end{scope}
-  \foreach \i in {1,2,...,12} {
-  \foreach \j in {-0.25,1,2,...,5} {
-  \node at (\i-1, 1.5*\j) {\i};
-  }
-  }
-  \end{tikzpicture}
-</script>
-</div>
+DIAGRAM HERE
 
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
@@ -162,7 +46,9 @@ Suppose we have proven that $A \cap \lbrack 1 .. n \rbrack$ is full of the desir
 
 If $i$ is odd and $j$ is even, then $2^{i-1}3^jk$ is an element of $A$, and so $n+1$ is twice an element of $A$ and cannot be added to the set. A similar idea works if $i$ is even and $j$ is odd.
 
-If $i, j$ are both odd, then $2^{i+1} 3^{j-1}k = \frac{2}{3}(n+1) \leq n$ is an element of $A$, so that $2A$ would contain $2(n+1) = 2^{i+1} 3^j k$ and $3A$ would contain $3 \cdot 2^{i+1}3^{j-1}k = 2^{i+1} 3^j k$, so that $2A$ and $3A$ are not disjoint.
+If $i, j$ are both odd, then $2^{i+1} 3^{j-1}k = \frac{2}{3}(n+1) \leq n$ is an element of $A$.  
+Then $2A$ would contain $2(n+1) = 2^{i+1} 3^j k$ and $3A$ would contain $3 \cdot 2^{i+1}3^{j-1}k = 2^{i+1} 3^j k$.  
+In this case, $2A$ and $3A$ are not disjoint.
 
 So $n+1 = 2^i 3^j k$ can only be included in $A$ if $i, j$ are both even. $\proofqed$
 
@@ -174,7 +60,9 @@ Also, $A_1 \perp A_0$, so by [Lemma 7][density1],
 
 $$\dnat(A) = \dnat(A_1) H(A_0) = \frac{1}{3} \sum_{i, j \geq 0} \frac{1}{4^i 9^j} = \frac{1}{2}$$
 
-Perhaps surprisingly, we can prove a very good upper bound on the lower density of $S$.  
+---
+
+Perhaps surprisingly, we can prove a very good upper bound on the lower density of $A$.  
 This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
 
 To do so, we need to introduce the concept of logarithmic density.
