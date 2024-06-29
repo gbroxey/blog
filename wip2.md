@@ -1,8 +1,8 @@
 ---
-title: "Nearly Disjoint Dilations: {1, 2, 3}"
+title: "Nearly Disjoint Dilations: Nontrivial Finite Cases"
 ---
 
-> **Abstract.** Returning to density, I'll prove that if $A, 2A, 3A$ are disjoint, then $\newcommand{\NN}{\mathbb N}
+> **Abstract.** Returning to density, we examine our main conjecture fI'll prove that if $A, 2A, 3A$ are disjoint, then $\newcommand{\NN}{\mathbb N}
 \newcommand{\PP}{\mathbb P}
 \newcommand{\dnat}{\mathrm d}
 \newcommand{\dsup}{\overline{\mathrm d}}
@@ -23,7 +23,76 @@ Here is the conjecture we continue to contemplate:
 At this point I'll assume you're familiar with my choice of notation.  
 If you're not, then read the previous two posts.
 
-Our goal for today is to prove this conjecture in the case $B = \lbrace 1, 2, 3\rbrace$.[^0]  
+Let's start by tallying up our current score against it:
+
+> Using [Lemma 9][density1] we have a proof if $B$ is the finite set of all divisors of some integer.  
+> In general, if $B$ is finite and we have a set $U$ such that $U \times B = \NN$ and $\dsup(U) \leq H(B)^{-1}$, then the lemma proves this case. This is the "trivial" finite case.
+> 
+> By a limiting argument, we can use the trivial finite cases to prove some divergent infinite cases like $B = \NN$ or $B = \lbrace 2k+1 \mid k \geq 0 \rbrace$ for example, as in [the gcd problem][density1].
+> 
+> With complicated probabilistic arguments, one can use a variant of Lemma 9 to prove the divergent coprime case, when $H(B)$ diverges and the elements of $B$ are relatively prime. This is the topic of the [second density post][density2], see the proof of Theorem 1. This includes $B = \PP$.
+
+This is roughly where we left off.  
+Our goal for today is to examine the general finite case and prove as much as we can.  
+This is going to be an interesting and maybe complicated journey.
+
+## Finite $B$ For Infants
+
+Let's talk about the "trivial" case.  
+Given a finite $B$, when can we find $U \times B = \N$ with $\dsup(U) \leq H(B)^{-1}$?  
+This seems hard. We know we can do it when $B$ is the set of all divisors of an integer.  
+Can we do any others this way? Sure!
+
+The easiest one I can think of is $B = \lbrace 1, 4 \rbrace$, for which we can pick
+$$U = \lbrace 1, 2 \rbrace \times \lbrace 16^i \mid i \geq 0 \rbrace \times \lbrace 2i+1 \mid i \geq 0 \rbrace$$
+The last set has density $\frac{1}{2}$, then [Lemma 7][density1] twice gives
+$$\dnat(U) = \left(1+\frac{1}{2}\right) \cdot \left(\sum_{i \geq 0} \frac{1}{16^i}\right) \cdot \frac{1}{2} = \frac{4}{5} = \left(1 + \frac{1}{4}\right)^{-1}$$
+If you are uneasy about this, try verifying the details of Lemma 7 yourself, specifically make sure you understand why $\lbrace 2i+1 \mid i \geq 0\rbrace \perp \lbrace 16^i \mid i \geq 0\rbrace$ for example. Basically this is just a matter of being familiar with what my $\perp$ notation means.
+
+Anyways, the most important reason why this one worked is that we can factorize $\N = U \times B$ where each $n$ has a unique representation as $u \cdot b$ where $u \in U, b \in B$. The literature calls these "direct factors" of $\N$, and it is proved in the paper [here][saffari] by Erdős, Saffari, and Vaughan that $\dnat(U)$ exists and equals $H(B)^{-1}$.
+
+So if $B$ is a finite member of a direct factor pair, then our conjecture holds.
+
+What if $B$ is less nice?
+
+## "One-Dimensional" Case
+
+Let's pick an integer $p > 1$ not necessarily prime, and consider $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$.
+
+First, if $B$ is something like $\lbrace 1, p, p^2, p^3, p^4 \rbrace$, or some other complete prefix, then we can write $B$ as a member of a direct factor pair relatively simply as follows:
+
+Let $U_0$ be the set of all proper divisors of $p$, and let $U_1$ be the set $\lbrace p^{5i} \mid i \geq 0\rbrace$.  
+Also let $U_2$ be the set of all integers relatively prime to $p$.  
+We can set $U = U_0 \times U_1 \times U_2$ and then $U \times B$ is a direct factor pair!
+
+We don't even need Saffari's result here. Factor $p = q_1^{e_1} q_2^{e_2} \ldots q_k^{e_k}$ where $q_i$ are different primes.  
+Now consider a general $n = q_1^{r_1} q_2^{r_2} \ldots q_k^{r_k} m$ where $m$ is relatively prime to $p$, and observe that we can consider the $r_i$ mod $5e_i$ and then mod $e_i$ to uniquely write $n$ as a product in $U_0 \times U_1 \times U_2 \times B$. The details are not exactly immediate, but writing them out here is not as enlightening as having you do it yourself, especially if it's not intuitively obvious why it works.
+
+Okay, but what about something like $B = \lbrace 1, p^2, p^3 \rbrace$, where it's not part of a direct factor pair?
+
+For this and other similar cases, we introduce a natural way of displaying these sets graphically.  
+
+Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\N = V_{\text{div}} \times V_\text{pow} \times V_\text{rel}$, where
+- $V_{\text{div}}$ is the set of proper divisors of $p$
+- $V_\text{pow}$ is the set of powers of $p$
+- $V_\text{rel}$ is the set of integers relatively prime to $p$
+
+This is the big idea:
+
+> **Lemma TODO.** Assume $A \perp B$ where $B$ is a finite subset of $\lbrace 1, p, p^2, \ldots \rbrace$.  
+> In this case, since $B$ is finite, assume that each $b_1 A \cap b_2 A$ is empty (see [Lemma 15][density2]).  
+> For each $v \in V_\text{div} \times V_\text{rel}$, we examine the set $W = A \cap v V_\text{pow}$.  
+> Then the condition on $A$ is equivalent to that $b_1 W \cap b_2 W$ is empty for $b_1 \neq b_2 \in B$.  
+> This way we reduce the study to subsets of geometric series in $p$.
+
+The behavior of $A \cap v V_\text{pow}$ is essentially independent of $v$, but when we look at prefixes of $A$ then the relative size of $v$ will play a part in determining how the chunk is filled.
+
+Since we are now examining parts of $A$ which are subsets of certain geometric series, we will visualize this as a sequence of squares as in the following diagram.
+
+<center><img src = "./images/wip2/onedim-1.svg" style="width: 80vw"/></center>
+
+## $B = \lbrace 1, 2, 3\rbrace$
+
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
 The first thing to notice is that thanks to [Lemma 15][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
@@ -34,7 +103,7 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
-<center><img src = "./images/wip2/greedy.svg" alt="Greedy algorithm illustration." style="width: 80vw"/></center>
+<center><img src = "./images/wip2/greedy.svg" style="width: 80vw"/></center>
 
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
@@ -302,6 +371,7 @@ The code for this blog post is available nowhere.
 
 [density1]: /blog/2023/04/13/density-gcds.html
 [density2]: /blog/2023/04/18/dilations-primes.html
+[saffari]: https://old.renyi.hu/~p_erdos/1979-10.pdf
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 
 
