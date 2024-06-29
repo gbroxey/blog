@@ -91,6 +91,28 @@ Since we are now examining parts of $A$ which are subsets of certain geometric s
 
 <center><img src = "./images/wip2/onedim-1.svg" style="width: 80vw"/></center>
 
+$$A \perp \lbrace 1, p^2, p^3 \rbrace$$
+$$W = A \cap v V_\text{pow} = \lbrace v, v \cdot p^5, v \cdot p^9 \rbrace$$
+$$W \cap p^2 W = W \cap p^3 W = p^2 W \cap p^3 W = \empty$$
+
+We see we're slotting together disconnected blobs with no overlap.  
+You should notice that in the shown configuration there is unnecessary empty space at $v \cdot p^4$, we are able to slide everything afterwards towards the left one square and achieve a "better" packing.
+
+You should also notice that the empty square inside the blob will never be filled! In fact,
+
+> **Lemma.** If $A \perp \lbrace 1, p^2, p^3 \rbrace$, then $A \perp \lbrace 1, p, p^2, p^3 \rbrace$ so 
+> 
+$$\dsup(A) \leq H(\lbrace 1, p, p^2, p^3 \rbrace)^{-1} < H(\lbrace 1, p^2, p^3 \rbrace)^{-1}$$
+
+_Proof._ We have $A \cap pA = \frac{1}{p^2} \left(p^2A \cap p^3A\right)$ has density zero.  
+The set $\lbrace 1, p, p^2, p^3 \rbrace$ is trivial so we are done. $\proofqed$
+
+So maybe this is not quite the most interesting case ever but we'll pretend otherwise because I can only draw so many squares without going insane.
+
+Instead of that observation, it is slightly more interesting to consider the whole idea of reducing wasted space by sliding the shapes downwards. First we have to actually relate this to density.
+
+TODO
+
 ## $B = \lbrace 1, 2, 3\rbrace$
 
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
