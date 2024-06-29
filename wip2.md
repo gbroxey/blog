@@ -92,7 +92,9 @@ Since we are now examining parts of $A$ which are subsets of certain geometric s
 <center><img src = "./images/wip2/onedim-1.svg" style="width: 80vw"/></center>
 
 $$A \perp \lbrace 1, p^2, p^3 \rbrace$$
+
 $$W = A \cap v V_\text{pow} = \lbrace v, v \cdot p^5, v \cdot p^9 \rbrace$$
+
 $$W \cap p^2 W = W \cap p^3 W = p^2 W \cap p^3 W = \emptyset$$
 
 We see we're slotting together disconnected blobs with no overlap.  
