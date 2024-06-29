@@ -1,14 +1,14 @@
 ---
-title: "Nearly Disjoint Dilations: Nontrivial Finite Cases"
+title: "Nearly Disjoint Dilations: Finite Case"
 ---
 
-> **Abstract.** Returning to density, we examine our main conjecture fI'll prove that if $A, 2A, 3A$ are disjoint, then $\newcommand{\NN}{\mathbb N}
+> **Abstract.** Returning to density, we examine our main conjecture in the finite case.  
+We will be drawing lots of colorful squares.$\newcommand{\NN}{\mathbb N}
 \newcommand{\PP}{\mathbb P}
 \newcommand{\dnat}{\mathrm d}
 \newcommand{\dsup}{\overline{\mathrm d}}
 \newcommand{\dinf}{\underline{\mathrm d}}
-\newcommand{\proofqed}{\quad\quad\quad\square}\dsup(A) \leq 6/11$.  
-This proof will extend to a bound for $\lbrace 1, p, q\rbrace$ for any $1 < p < q \leq p^2$.
+\newcommand{\proofqed}{\quad\quad\quad\square}$
 
 ---
 
