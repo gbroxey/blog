@@ -39,7 +39,7 @@ This is going to be an interesting and maybe complicated journey.
 ## Finite $B$ For Infants
 
 Let's talk about the "trivial" case.  
-Given a finite $B$, when can we find $U \times B = \N$ with $\dsup(U) \leq H(B)^{-1}$?  
+Given a finite $B$, when can we find $U \times B = \NN$ with $\dsup(U) \leq H(B)^{-1}$?  
 This seems hard. We know we can do it when $B$ is the set of all divisors of an integer.  
 Can we do any others this way? Sure!
 
@@ -49,7 +49,7 @@ The last set has density $\frac{1}{2}$, then [Lemma 7][density1] twice gives
 $$\dnat(U) = \left(1+\frac{1}{2}\right) \cdot \left(\sum_{i \geq 0} \frac{1}{16^i}\right) \cdot \frac{1}{2} = \frac{4}{5} = \left(1 + \frac{1}{4}\right)^{-1}$$
 If you are uneasy about this, try verifying the details of Lemma 7 yourself, specifically make sure you understand why $\lbrace 2i+1 \mid i \geq 0\rbrace \perp \lbrace 16^i \mid i \geq 0\rbrace$ for example. Basically this is just a matter of being familiar with what my $\perp$ notation means.
 
-Anyways, the most important reason why this one worked is that we can factorize $\N = U \times B$ where each $n$ has a unique representation as $u \cdot b$ where $u \in U, b \in B$. The literature calls these "direct factors" of $\N$, and it is proved in the paper [here][saffari] by Erdős, Saffari, and Vaughan that $\dnat(U)$ exists and equals $H(B)^{-1}$.
+Anyways, the most important reason why this one worked is that we can factorize $\NN = U \times B$ where each $n$ has a unique representation as $u \cdot b$ where $u \in U, b \in B$. The literature calls these "direct factors" of $\NN$, and it is proved in the paper [here][saffari] by Erdős, Saffari, and Vaughan that $\dnat(U)$ exists and equals $H(B)^{-1}$.
 
 So if $B$ is a finite member of a direct factor pair, then our conjecture holds.
 
@@ -72,7 +72,7 @@ Okay, but what about something like $B = \lbrace 1, p^2, p^3 \rbrace$, where it'
 
 For this and other similar cases, we introduce a natural way of displaying these sets graphically.  
 
-Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\N = V_{\text{div}} \times V_\text{pow} \times V_\text{rel}$, where
+Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\NN = V_{\text{div}} \times V_\text{pow} \times V_\text{rel}$, where
 - $V_{\text{div}}$ is the set of proper divisors of $p$
 - $V_\text{pow}$ is the set of powers of $p$
 - $V_\text{rel}$ is the set of integers relatively prime to $p$
