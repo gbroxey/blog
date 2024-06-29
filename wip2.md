@@ -34,7 +34,7 @@ The first thing to notice is that thanks to [Lemma 15][density2], we can reduce 
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
-![Greedy sequence illustration.](./images/wip2/greedy.svg)
+<center><img src = "./images/wip2/greedy.svg" alt="Greedy algorithm illustration." style="width: 80vw"/></center>
 
 
 After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbrace$.
