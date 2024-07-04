@@ -36,6 +36,8 @@ This is roughly where we left off.
 Our goal for today is to examine the general finite case and prove as much as we can.  
 This is going to be an interesting and maybe complicated journey.
 
+---
+
 ## Finite $B$ For Infants
 
 Let's talk about the "trivial" case.  
@@ -46,7 +48,9 @@ Can we do any others this way? Sure!
 The easiest one I can think of is $B = \lbrace 1, 4 \rbrace$, for which we can pick
 $$U = \lbrace 1, 2 \rbrace \times \lbrace 16^i \mid i \geq 0 \rbrace \times \lbrace 2i+1 \mid i \geq 0 \rbrace$$
 The last set has density $\frac{1}{2}$, then [Lemma 7][density1] twice gives
+
 $$\dnat(U) = \left(1+\frac{1}{2}\right) \cdot \left(\sum_{i \geq 0} \frac{1}{16^i}\right) \cdot \frac{1}{2} = \frac{4}{5} = \left(1 + \frac{1}{4}\right)^{-1}$$
+
 If you are uneasy about this, try verifying the details of Lemma 7 yourself, specifically make sure you understand why $\lbrace 2i+1 \mid i \geq 0\rbrace \perp \lbrace 16^i \mid i \geq 0\rbrace$ for example. Basically this is just a matter of being familiar with what my $\perp$ notation means.
 
 Anyways, the most important reason why this one worked is that we can factorize $\NN = U \times B$ where each $n$ has a unique representation as $u \cdot b$ where $u \in U, b \in B$. The literature calls these "direct factors" of $\NN$, and it is proved in the paper [here][saffari] by Erdős, Saffari, and Vaughan that $\dnat(U)$ exists and equals $H(B)^{-1}$.
@@ -54,6 +58,8 @@ Anyways, the most important reason why this one worked is that we can factorize 
 So if $B$ is a finite member of a direct factor pair, then our conjecture holds.
 
 What if $B$ is less nice?
+
+---
 
 ## "One-Dimensional" Case
 
