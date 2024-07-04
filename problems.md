@@ -69,7 +69,7 @@ My [super old Facebook post](https://www.facebook.com/groups/1923323131245618/po
 ## Problem 3
 
 > Say $\alpha$ is an algebraic number.  
-> Is there always a finite sequence of polynomials $f_1, f_2, \ldots, f_k$ with integer coefficients which, when composed, has $f_1(f_2(\ldots f_k(\alpha) \ldots)) = 0$?
+> Is there always a finite sequence of polynomials $f_1, f_2, \ldots, f_k$ all of which having integer coefficients and rational zeros[^1] which, when composed, has $f_1(f_2(\ldots f_k(\alpha) \ldots)) = 0$?
 
 If $\alpha = \frac{p}{q}$ is rational, the length one sequence $f_1(x) = qx - p$ works.
 
@@ -82,3 +82,5 @@ I posted this some years ago on the [actually good math problems](https://www.fa
 > Any cubic x^3+ax^2+bx+c divides the polynomial (x+a/3)^2*((x+a/3)^2-(a^2-3b)/3)^2-((2a^3-9ab+27c)/27)^2. This comes from computing the depressed cubic t^3+dt+e (where d,e depend on a,b,c) through the change t=x+a/3, and noting that t^3+dx+e divides t^2*(t^2+d)^2-e^2. So f_1(x)=(x+a/3)^2, f_2(x)=x*(x-(a^2-3b)/3)^2, f_3(x)=x-((2a^3-9ab+27c)/27)^2.
 
 Seems interesting. The cases with degree $\geq 4$ are open.
+
+[^1]: Edit added 7/3/2024. Oops!
