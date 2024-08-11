@@ -197,8 +197,10 @@ iterator powerfulExt(x: int64, h: proc (p, e: int64): int64, m: int64): (int64, 
   var ps = eratosthenes(xrt+1)
   while res.len > 0:
     var (n, hn, i) = res.pop
-    let p = ps[i].int64
+    var p: int64
+    if i < ps.len: p = ps[i]
     if i >= ps.len or p*p > x div n:
+      #note: value of p is only used here if i < ps.len
       yield (n, hn)
       continue
     res.add (n, hn, i+1)
