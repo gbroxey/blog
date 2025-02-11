@@ -1,7 +1,7 @@
 ---
 title: "Lucy's Algorithm + Fenwick Trees"
 date: 2023-04-09
-modified_date: 2023-06-25
+modified_date: 2025-02-10
 tags: [prime counting, number theory, algorithms]
 ---
 
@@ -17,7 +17,9 @@ In fact many expositions of the ML algorithm that I've seen look awfully complic
 
 The purpose of this post is to talk about arguably the simplest efficient prime counting algorithm out there - it is nowhere near the fastest (and there are [lots of cool ways][5] to do this), but it is very fast. In the end we'll be able to compute $\pi(10^{13})$ in less than 3s. If you want the absolute fastest prime counting algorithm, you'll have to look at some more complicated math than this - I think it's generally accepted that Kim Walisch's [primecount][23] contains some of the fastest implementations of some very technically complex algorithms for this purpose. Check it out even if you aren't implementing those algorithms yourself.
 
-I'll be describing how the basic algorithm works first, and then showing how you can use a Fenwick tree to greatly improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
+I'll be describing how the basic algorithm works first, and then showing how you can use a Fenwick tree to asymptotically improve the runtime by using some more memory. This is a long and involved read with a lot of references, but I've tried my best to be accurate and descriptive here. I'm going to write this assuming that the reader hasn't seen either Lucy's algorithm nor Fenwick trees before.
+
+I added an addendum today, Feb 10 2025, mentioning some implementation improvements that were preventing my basic Lucy's algorithm from being fast. Please [read it](#addendum---feb-10-2025) at some point along the way.
 
 Throughout, $x$ will be the large integer (like $10^8 \ll x \ll 10^{15}$) for which we want to calculate $\pi(x)$.
 
@@ -68,10 +70,13 @@ To implement Lucy's algorithm, then, it helps to have a nice container to store 
 - The value `x`
 - The value `isqrt` defined as $\lfloor \sqrt{x} \rfloor$
 - An array `arr` of length `L`, where $L = 2\lfloor \sqrt{x} \rfloor$, or if $\left\lfloor \frac{x}{\lfloor \sqrt{x} \rfloor}\right\rfloor = \lfloor \sqrt{x}\rfloor$ use $L = 2\lfloor \sqrt{x} \rfloor-1$
+- An array `keys` of length `L`, which contains in increasing order the different values of $\lfloor x/n \rfloor$.
+
+The array of keys was added in February 2025. Please see the [addendum](#addendum---feb-10-2025).
 
 We will see why we sometimes need this lower value of `L` presently.
 
-The strategy is to index the array by `1, 2, ..., isqrt, x div isqrt, x div (isqrt-1), ..., x`.  
+The strategy is to use `keys = 1, 2, ..., isqrt, x div isqrt, x div (isqrt-1), ..., x` as indices.  
 This has a total length of `2*isqrt`. If we query the input `v`, we check if `v <= isqrt`. If it is, we return `arr[v-1]`, and otherwise return `arr[L-(x div v)]`.
 
 For example, with $x = 12$ we have `isqrt == 3` and our array elements correspond to 
@@ -87,13 +92,32 @@ This duplicate index would cause us a headache. Hence if at the boundary we have
 In the code, I'll be calling this container `FIArray` - standing for floor indexed array. There's no actual name for this but this one seems as good as any. Here's a simple implementation[^3] in [Nim][9] (note that `div` is floor division):
 
 ```nim
-type FIArray = object
-  ##Given x, stores a value at each distinct (x div n).
-  x: int64
-  isqrt: int64
-  arr: seq[int64]
+import iops, tables
 
-proc newFIArray(x: int64): FIArray =
+##Given x, store the different values floor(x/n) in increasing order
+var keysTableFI = initTable[int64, seq[int64]]()
+
+proc keysFI*(x: int64): seq[int64] =
+  if keysTableFI.hasKey(x): return keysTableFI[x]
+  #generate key table for the first time
+  let rt = isqrt(x)
+  result = @[]
+  for v in 1..rt: result.add v
+  if rt != x div rt: 
+    result.add x div rt
+  for n in countdown(rt - 1, 1):
+    result.add x div n
+  #save it in case we want to use these keys again later
+  keysTableFI[x] = result
+
+type FIArray* = object
+  ##Given x, stores a value at each distinct (x div n).
+  x*: int64
+  isqrt*: int64
+  arr*: seq[int64]
+  #keys is accessed by keysTable[x]
+
+proc newFIArray*(x: int64): FIArray =
   ##Initializes a new FIArray with result[v] = 0 for all v.
   result.x = x
   var isqrt = isqrt(x)
@@ -102,32 +126,22 @@ proc newFIArray(x: int64): FIArray =
   if isqrt == (x div isqrt): dec L
   result.arr = newSeq[int64](L)
 
-proc `[]`(S: FIArray, v: int64): int64 =
-  ##Accesses S[v].
+proc indexOf*(S: FIArray, v: int64): int =
+  ##Computes the index of key value v in S.arr, using a division.
+  ##Try NOT to need to use this, as divisions are very slow.
+  if v <= S.isqrt: return v-1
+  return S.arr.len - (S.x div v)
+
+proc `[]`*(S: FIArray, v: int64): int64 =
+  ##Accesses S[v], using a division.
   if v <= 0: return 0
   if v <= S.isqrt: return S.arr[v-1]
   return S.arr[^(S.x div v).int] #equiv S.arr[L - (S.x div v)]
 
-proc `[]=`(S: var FIArray, v: int64, z: int64) =
-  ##Sets S[v] = z.
+proc `[]=`*(S: var FIArray, v: int64, z: int64) =
+  ##Sets S[v] = z, using a division.
   if v <= S.isqrt: S.arr[v-1] = z
   else: S.arr[^(S.x div v).int] = z
-
-iterator keysInc(S: FIArray): int64 =
-  ##Iterates over the key values of S in increasing order.
-  for v in 1..S.isqrt: yield v
-  if S.isqrt != S.x div S.isqrt: 
-    yield S.x div S.isqrt
-  for n in countdown(S.isqrt - 1, 1):
-    yield S.x div n
-
-iterator keysDec(S: FIArray): int64 =
-  ##Iterates over the key values of S in decreasing order.
-  for n in 1..(S.isqrt - 1):
-    yield S.x div n
-  if S.isqrt != S.x div S.isqrt: 
-    yield S.x div S.isqrt
-  for v in countdown(S.isqrt, 1): yield v
 ```
 
 Nothing magical is happening here quite yet, it's just incredibly helpful to have these functions set up when we actually implement Lucy's algorithm. Speaking of, we can describe and implement it now -
@@ -154,30 +168,38 @@ For now, though, here's the incredibly simple Nim implementation of Lucy's algor
 ```nim
 proc lucy(x: int64): FIArray =
   var S = newFIArray(x)
-  for v in S.keysInc:
-    S[v] = v-1
+  var V = keysFI(x)
+  for i, v in V.pairs:
+    S.arr[i] = v-1 #set S[v] = v-1
   for p in 2..S.isqrt:
-    if S[p] == S[p-1]: continue
+    #since p is small we have
+    #S[p] = S.arr[p-1], S[p-1] = S.arr[p-2]
+    if S.arr[p-1] == S.arr[p-2]: continue
     #p is prime
-    for v in S.keysDec:
+    let sp = S.arr[p-2] #= S[p-1]
+    for i in countdown(V.len - 1, 0):
+      let v = V[i]
       if v < p*p: break
-      S[v] = S[v] - (S[v div p] - S[p-1])
+      #S[v] = S[v] - (S[v div p] - S[p-1])
+      S.arr[i] = S.arr[i] - (S[v div p] - sp)
   return S
 ```
 
+Again see [the addendum](#addendum---feb-10-2025) for mention of a small change that's been made here.
+
 Hopefully you can understand the allure of this prime counting method.
 
-A quick benchmark tells us that we can compute $\pi(10^{12}) = 37607912018$ in only `7.3s` (on my machine). Since we only store about $2\sqrt{x} = 2*10^6$ values in our container, this also has fantastic memory usage. If we try running it at a few more powers of ten we get the following runtime data:
+A quick benchmark tells us that we can compute $\pi(10^{12}) = 37607912018$ in only `2.2s` (on my machine). Since we only store about $2\sqrt{x} = 2*10^6$ values in our container, this also has fantastic memory usage. If we try running it at a few more powers of ten we get the following runtime data:
 
 
 |x|pi(x)|Time (s)|
 |:---:|:---:|:---:|
-|10<sup>9</sup>|50847534|0.049|
-|10<sup>10</sup>|455052511|0.259|
-|10<sup>11</sup>|4118054813|1.370|
-|10<sup>12</sup>|37607912018|7.259|
-|10<sup>13</sup>|346065536839|39|
-|10<sup>14</sup>|3204941750802|209|
+|10<sup>9</sup>|50847534|0.016|
+|10<sup>10</sup>|455052511|0.08|
+|10<sup>11</sup>|4118054813|0.41|
+|10<sup>12</sup>|37607912018|2.2|
+|10<sup>13</sup>|346065536839|11.4|
+|10<sup>14</sup>|3204941750802|60.1|
 
 
 Beyond $10^{14}$ we're a little too lazy to wait so long. Honestly, the algorithm described so far probably suffices for most uses in Project Euler, and even for $10^{14}$ you only need an array of length $2*10^7$ which is very reasonable. In Lucy's original post, they add that it "is also possible to improve the complexity of the algorithm... but the code would be more complex". In [the paper of Lagarias, Miller and Odlyzko][2], mention is made to a "special data structure" which is key to achieving a faster runtime. Both of these are referring to a Fenwick tree, a structure which allows efficient prefix sums and array updates. The inclusion of a Fenwick tree will significantly increase memory requirements, from $O(\sqrt{x})$ to $O(x^{2/3})$ or so, but it will also give us a nice performance boost.
@@ -203,6 +225,8 @@ And so the runtime of Lucy's algorithm is $O(x^{3/4})$![^6]
 ---
 
 ## Fenwick / Binary Indexed Trees
+
+If you haven't scrolled down and read [the addendum](#addendum---feb-10-2025) please do so now.
 
 A **Fenwick Tree** (also known as a **Binary Indexed Tree** or **BIT**) is a data structure which has been described in a [billion][10] [different][11] [places][12] in a lot of detail by [very smart computer scientists][13] who know a lot more than I do. Really - this thing has a plethora of uses, for example [counting inversions in an array][14], quickly calculating the index of a permutation among all permutations listed lexicographically[^2], and as you'll see soon, prime counting! Seriously, you should go read all the articles I just linked.
 
@@ -310,7 +334,7 @@ Now that we know what's going to happen, here's the algorithm:
 >     4a. If `sieveRaw[p]` is `true`, then `p` is not a prime so increment `p` and try again.  
 >     4b. Otherwise, `p` is a prime - for each key value `v` satisfying `v >= p*p` and `v > y`, in _decreasing order_, update the value at `v` by  `S[v] -= S_0[v div p] - S_0[p-1]`, where `S_0[u]` is equal to `S[u]` if `u > y` and equal to `sieve.sum(u)` otherwise.  
 >     4c. Do a step of the Eratosthenes sieve - for each multiple of `p` up to `y`, say `j = p*k`, check `sieveRaw[j]`. If it is `false`, we need to eliminate `j` from the sieve by setting `sieveRaw[j]` to `true` and adding `-1` to `sieve[j]`.
-> 5. For each key value $v \leq y$, test if `sieveRaw[v]`. If it is true, set `S[v] = S[v-1]`, otherwise `S[v] = S[v-1]+1`.
+> 5. For each key value $v \leq y$, set `S[v] = sieve.sum(v)`.
 > 6. Return `S`. Here, `S[v]` is the number of primes up to `v` for each key value `v`.
 
 ---
@@ -414,9 +438,10 @@ proc lucyFenwick(x: int64): FIArray =
   sieveRaw[0] = true
   sieve[1] = 0
   sieve[0] = 0
-  
-  for v in S.keysInc:
-    S[v] = v-1
+
+  let V = keysFI(x)
+  for i, v in V.pairs:
+    S.arr[i] = v-1
 
   proc S0(v: int64): int64 =
     #returns sieve.sum(v) if v <= y, otherwise S[v].
@@ -436,12 +461,9 @@ proc lucyFenwick(x: int64): FIArray =
           sieveRaw[j] = true
           sieve.addTo(j, -1)
         j += p
-  for v in S.keysInc:
+  for i, v in V.pairs:
     if v>y: break
-    if sieveRaw[v]:
-      S[v] = S[v-1]
-    else: 
-      S[v] = S[v-1] + 1
+    S.arr[i] = sieve.sum(v)
   return S
 ```
 
@@ -455,12 +477,12 @@ The following table includes the old runtimes for comparison.
 
 |x|Lucy (s)| Lucy + Fenwick (s) |
 |:---:|:---:|:---:|
-|10<sup>9</sup>|0.049|0.014|
-|10<sup>10</sup>|0.259|0.068|
-|10<sup>11</sup>|1.370|0.306|
-|10<sup>12</sup>|7.259|1.574|
-|10<sup>13</sup>|39.198|7.652|
-|10<sup>14</sup>|209.039|34.021|
+|10<sup>9</sup>|0.016|0.014|
+|10<sup>10</sup>|0.08|0.07|
+|10<sup>11</sup>|0.41|0.30|
+|10<sup>12</sup>|2.2|1.4|
+|10<sup>13</sup>|11.4|6.9|
+|10<sup>14</sup>|60.1|33.8|
 
 It's of note that the new algorithm, although using more memory, only uses about 1GB for $10^{14}$.  
 If we're willing to temporarily sacrifice 4GB of ram and permanently sacrifice three minutes of our lives we can push this new algorithm to calculate $\pi(10^{15}) = 29844570422669$. In the implementation I gave I include a cap on $y$ to restrict memory usage, so we could push this to ask for $\pi(10^{16})$ or $\pi(10^{17})$ and get an answer in a relatively reasonable amount of time.
@@ -541,11 +563,12 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
   #cop has size phi(k)
 
   var pis = newSeq[FIArray](cop.len)
+  let V = keysFI(n)
   for i in 0..cop.high:
     pis[i] = newFIArray(n)
-    for v in pis[i].keysInc:
-      pis[i][v] = (v - cop[i] + k) div k
-      if i == 0: pis[i][v] = pis[i][v] - 1
+    for j, v in V.pairs:
+      pis[i].arr[j] = (v - cop[i] + k) div k
+      if i == 0: pis[i].arr[j] = pis[i].arr[j] - 1
 
   var minv = newSeq[int](k) #mod inverse of i mod k
   for i in 1..<k:
@@ -557,26 +580,30 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
           break
   for p in 2..pis[0].isqrt:
     if gcd(p, k)>1: continue
+    let pmodk = p mod k
     #p is prime if any of the pis[i][p] > pis[i][p-1]
     var isPrime = false
     for i in 0..<pis.len:
-      if pis[i][p] > pis[i][p-1]:
+      if pis[i].arr[p-1] > pis[i].arr[p-2]:
         isPrime = true
         break
     if not isPrime: continue
     var sp = newSeq[int64](cop.len) #pis[i][p-1]
     for i in 0..cop.high:
-      sp[i] = pis[ci[(cop[i]*minv[p mod k]) mod k]][p-1]
-    for v in pis[0].keysDec:
+      sp[i] = pis[ci[(cop[i]*minv[p mod k]) mod k]].arr[p-2]
+    for i in countdown(V.len - 1, 0):
+      let v = V[i]
       if v < p*p: break
-      for i in 0..cop.high:
-        var index = ci[(cop[i]*minv[p mod k]) mod k]
-        var eliminated = pis[index][v div p] - pis[index][p-1]
-        pis[i][v] = pis[i][v] - eliminated
+      let vdivp = v div p
+      let vdivp_idx = pis[0].indexOf(vdivp)
+      for j in 0..cop.high:
+        var index = ci[(cop[j]*minv[pmodk]) mod k]
+        var eliminated = pis[index].arr[vdivp_idx] - pis[index].arr[p-2]
+        pis[j].arr[i] = pis[j].arr[i] - eliminated
   return pis
 ```
 
-This finds the number of primes of the form $4k+1$ and of the form $4k+3$, under $10^{12}$, as $18803924340$ and $18803987677$ respectively, in about 15s. That's just about double the runtime of the original Lucy algorithm which is what we would expect since $\varphi(4) = 2$.
+This finds the number of primes of the form $4k+1$ and of the form $4k+3$, under $10^{12}$, as $18803924340$ and $18803987677$ respectively, in about 2.9s. That's just barely slower than the original Lucy algorithm which is really awesome.
 
 Of course the same extension applies to Lucy + Fenwick, but we need $\varphi(d)$ Fenwick trees, and we have to similarly be careful how the sieves interact, so I'll leave this to you to implement for yourself.
 
@@ -609,13 +636,87 @@ The rest of the algorithm is unchanged apart from only returning `S[x]` at the e
 
 |x|Lucy (s)|Lucy + Fenwick (s)|Lucy + Fenwick + Trick (s)|
 |:---:|:---:|:---:|:---:|
-|10<sup>9</sup>|0.049|0.014|0.006|
-|10<sup>10</sup>|0.259|0.068|0.022|
-|10<sup>11</sup>|1.370|0.306|0.097|
-|10<sup>12</sup>|7.259|1.574|0.474|
-|10<sup>13</sup>|39.198|7.652|2.477|
-|10<sup>14</sup>|209|34|10.7|
-|10<sup>15</sup>|&mdash;|171|77|
+|10<sup>9</sup>|0.016|0.014|0.006|
+|10<sup>10</sup>|0.08|0.07|0.022|
+|10<sup>11</sup>|0.41|0.30|0.097|
+|10<sup>12</sup>|2.2|1.4|0.474|
+|10<sup>13</sup>|11.4|6.9|2.477|
+|10<sup>14</sup>|60.1|33.8|10.7|
+|10<sup>15</sup>|320|166|77|
+
+---
+
+## Addendum - Feb 10 2025
+
+TLDR: The old versions of the standard Lucy had too many unnecessary integer divisons.
+
+Many times over the years since I wrote this post I've seen other people implement the standard Lucy's algorithm in a way that was just unbelievably fast compared to mine. I finally figured out what made my Lucy's algorithm implementation so bad, and so now I have had to go through and make some changes in this article to alleviate it. Here I'm going to very briefly explain what the problem was, how it was fixed, and the performance difference that I saw.
+
+First let's examine the old implementation of ``lucy(x)`` next to the current one:
+
+```nim
+#April 2023
+proc lucy(x: int64): FIArray =
+  var S = newFIArray(x)
+  for v in S.keysInc:
+    S[v] = v-1
+  for p in 2..S.isqrt:
+    if S[p] == S[p-1]: continue
+    #p is prime
+    for v in S.keysDec:
+      if v < p*p: break
+      S[v] = S[v] - (S[v div p] - S[p-1])
+  return S
+
+#February 2025
+proc lucy(x: int64): FIArray =
+  var S = newFIArray(x)
+  var V = keysFI(x)
+  for i, v in V.pairs:
+    S.arr[i] = v-1 #set S[v] = v-1
+  for p in 2..S.isqrt:
+    #since p is small we have
+    #S[p] = S.arr[p-1], S[p-1] = S.arr[p-2]
+    if S.arr[p-1] == S.arr[p-2]: continue
+    #p is prime
+    let sp = S.arr[p-2] #= S[p-1]
+    for i in countdown(V.len - 1, 0):
+      let v = V[i]
+      if v < p*p: break
+      #S[v] = S[v] - (S[v div p] - S[p-1])
+      S.arr[i] = S.arr[i] - (S[v div p] - sp)
+  return S
+```
+
+We also had the following functions, ``keysInc`` and ``keysDec``:
+
+```nim
+iterator keysInc(S: FIArray): int64 =
+  ##Iterates over the key values of S in increasing order.
+  for v in 1..S.isqrt: yield v
+  if S.isqrt != S.x div S.isqrt: 
+    yield S.x div S.isqrt
+  for n in countdown(S.isqrt - 1, 1):
+    yield S.x div n
+
+iterator keysDec(S: FIArray): int64 =
+  ##Iterates over the key values of S in decreasing order.
+  for n in 1..(S.isqrt - 1):
+    yield S.x div n
+  if S.isqrt != S.x div S.isqrt: 
+    yield S.x div S.isqrt
+  for v in countdown(S.isqrt, 1): yield v
+```
+
+The new ``lucy`` is slightly harder to read, because rather than using nice array accesses that look like ``S[v]``, it chooses to access the value as ``S.arr[i]``. The big issue with the old ``lucy`` is that, any time we have such an array access, there is a big chance we'll be using an integer division ``x div v`` or something to figure out which index we actually want. Integer divisions are extremely expensive, and so the new version is slightly uglier but uses the indices we already know we want to access instead of recalculating them every time.
+
+This was slightly hard for me to notice, other than the fact that everyone else's $O(x^{3/4})$ Lucy implementations would totally crush mine and get close to their $O(x^{2/3})$ implementations. I finally figured out that it was the fault of all the extra integer divisions, and when I cut those out it got way faster.
+
+The original ``lucy`` could calculate the primes up to $10^{14}$ in about 209 seconds, the new version with fewer divisions does it in 60 seconds. I also went through and changed ``lucyAP`` to avoid divisions when possible. Counting primes equivalent to 1 mod 4 up to $10^{11}$ went from 25 sec to 0.6 sec with the standard Lucy approach outlined here. It's a staggering time save.
+
+Thanks to Project Euler Discord server members, including lightbulbmeow and others, for making me revisit this and see why it was so slow.
+
+
 
 ---
 
