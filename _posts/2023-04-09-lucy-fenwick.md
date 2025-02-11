@@ -714,7 +714,7 @@ This was slightly hard for me to notice, other than the fact that everyone else'
 
 The original ``lucy`` could calculate the primes up to $10^{14}$ in about 209 seconds, the new version with fewer divisions does it in 60 seconds. I also went through and changed ``lucyAP`` to avoid divisions when possible. Counting primes equivalent to 1 mod 4 up to $10^{11}$ went from 25 sec to 0.6 sec with the standard Lucy approach outlined here. It's a staggering time save.
 
-Thanks to Project Euler Discord server members, including lightbulbmeow and others, for making me revisit this and see why it was so slow.
+Thanks to Project Euler Discord server members, including lightbulbmeow and others, for making me revisit this and see why it was so slow. Thanks also to PE user icy001 for pointing out a small bug in one of the functions here.
 
 
 
