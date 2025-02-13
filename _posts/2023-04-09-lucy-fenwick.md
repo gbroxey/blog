@@ -714,6 +714,8 @@ This was slightly hard for me to notice, other than the fact that everyone else'
 
 The original ``lucy`` could calculate the primes up to $10^{14}$ in about 209 seconds, the new version with fewer divisions does it in 60 seconds. I also went through and changed ``lucyAP`` to avoid divisions when possible. Counting primes equivalent to 1 mod 4 up to $10^{11}$ went from 25 sec to 0.6 sec with the standard Lucy approach outlined here. It's a staggering time save.
 
+An important point here I forgot to make is that if your "basic" 3/4 Lucy algorithm is really well written, it can easily outperform the Fenwick stuff I described here. Asymptotically, yes, the Fenwick approach gives us a better runtime. It also uses a ton of memory, and if you have a really good 3/4 Lucy it can be worth to use just that. Please write and test both of them to see how they compare.
+
 Thanks to Project Euler Discord server members, including lightbulbmeow and others, for making me revisit this and see why it was so slow. Thanks also to PE user icy001 for pointing out a small bug in one of the functions here.
 
 
