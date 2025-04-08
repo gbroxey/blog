@@ -3,7 +3,7 @@ title: "Summing Multiplicative Functions (Pt. 1.5)"
 tags: [number theory, algorithms, prime counting]
 ---
 
-> **Abstract.** We will examine and implement the Min-25 sieve, another technique for computing partial sums of multiplicative functions. It is closely related to Lucy's algorithm.
+> **Abstract.** We will examine and implement the Min-25 sieve, another technique for computing partial sums of multiplicative functions. It is closely related to Lucy's algorithm. 
 
 ---
 
