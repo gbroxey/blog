@@ -31,7 +31,6 @@ proc unlucy(S: var FIArray, f: proc(p: int, e: int): int64, modulus: int64 = 0):
   for k in countdown(primes.high, 0):
     let p = primes[k]
     #since p is small we have
-    #S[p] = S.arr[p-1], S[p-1] = S.arr[p-2]
     let sp = S.arr[p-1] #= S[p]
     for idx in countdown(V.high, 0):
       let v = V[idx]
