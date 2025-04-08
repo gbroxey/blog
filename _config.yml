@@ -5,7 +5,7 @@ author:
 description: >
   Griffin's blog about math and programming, usually relating to number theory and combinatorics.
 
-remote_theme: jekyll/minima
+remote_theme: jekyll/minima@1e8a445
 
 plugins:
   - jekyll-feed
