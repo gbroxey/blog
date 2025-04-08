@@ -12,13 +12,11 @@ proc lucy(x: int64, g: proc(p: int): int64, G: proc(v: int64): int64, modulus: i
     S.arr[i] = G(v)
   for p in eratosthenes(S.isqrt.int+1):
     #since p is small we have
-    #S[p] = S.arr[p-1], S[p-1] = S.arr[p-2]
     let sp = S.arr[p-2] #= S[p-1]
     for i in countdown(V.len - 1, 0):
       let v = V[i]
       if v < p*p: break
-      #S[v] = S[v] - f(p, 1)*(S[v div p] - S[p-1])
-      S.arr[i] = S.arr[i] - g(p)*(S[v div p] - sp)
+      S.arr[i] -= g(p)*(S[v div p] - sp)
       if modulus > 0: S.arr[i] = S.arr[i] mod modulus
   return S
 
@@ -35,7 +33,7 @@ proc unlucy(S: var FIArray, f: proc(p: int, e: int): int64, modulus: int64 = 0):
     #since p is small we have
     #S[p] = S.arr[p-1], S[p-1] = S.arr[p-2]
     let sp = S.arr[p-1] #= S[p]
-    for idx in countdown(V.len - 1, 0):
+    for idx in countdown(V.high, 0):
       let v = V[idx]
       if v < p*p: break
       #iterate over p^(i+1) <= v with i >= 1
@@ -70,8 +68,8 @@ proc example_one_old_way() =
   var not_sqfr = newSeq[bool](cbrtx+1)
   for i in 2..cbrtx:
     if i*i > cbrtx: break
-    for j in 1..(cbrtx div (i*i)):
-      not_sqfr[i*i*j] = true
+    for j in countup(i*i, cbrtx, i*i):
+      not_sqfr[j] = true
   var total = 0'i64
   for b in 1'i64..cbrtx:
     if not_sqfr[b]: continue
@@ -144,5 +142,3 @@ proc example_two() =
   timer.mark "Unlucy step completed."
   echo S[x]
   timer.stop
-
-example_two()
