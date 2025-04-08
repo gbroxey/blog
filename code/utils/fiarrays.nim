@@ -35,8 +35,8 @@ proc newFIArray*(x: int64): FIArray =
 proc indexOf*(S: FIArray, v: int64): int =
   ##Computes the index of key value v in S.arr, using a division.
   ##Try NOT to need to use this, as divisions are very slow.
-  if v <= S.isqrt: return v-1
-  return S.arr.len - (S.x div v)
+  if v <= S.isqrt: return int(v)-1
+  return S.arr.len - int(S.x div v)
 
 proc `[]`*(S: FIArray, v: int64): int64 =
   ##Accesses S[v], using a division.
