@@ -118,7 +118,7 @@ proc lucyAP(n: int64, k: int): seq[FIArray] =
     var sp = newSeq[int64](cop.len) #pis[i][p-1]
     for i in 0..cop.high:
       sp[i] = pis[ci[(cop[i]*minv[p mod k]) mod k]].arr[p-2]
-    for i in countdown(V.len - 1, 0):
+    for i in countdown(V.high, 0):
       let v = V[i]
       if v < p*p: break
       let vdivp = v div p
