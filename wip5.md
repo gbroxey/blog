@@ -8,7 +8,7 @@ date: 1970-01-01
 
 ---
 
-The first thing I'd like to do here is briefly discuss the two main examples we'll be dealing with. I'll quickly show how each example can be rephrased in terms of counting lattice points.
+The first thing I'd like to do here is briefly discuss the two main examples we'll be dealing with.
 
 ### Divisor Count Summatory Function
 
@@ -25,6 +25,7 @@ The idea is simple. The function $d(k)$ counts positive integer pairs $(x, y)$ w
 I included a diagram last time, but since this post is going to have a lot of diagrams and I want stylistic consistency, I've made a new one.[^2] Here's what the hyperbola method is doing:
 
 <center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png" width="100%" height="100%"></center>
+
 
 The red and purple areas on the left together contain $\sum_{x \leq \sqrt{n}} \left\lfloor\frac{n}{x}\right\rfloor$ lattice points.  
 Because of symmetry, that's the same number of lattice points as in the blue and purple areas on the bottom.  
@@ -46,6 +47,10 @@ proc divisorSummatory(n: int64): int64 =
 ```
 
 For small values of $n$, this simple algorithm is certainly all you need. Even at $n = 10^{17}$ it is perfectly good at only a bit over two seconds to compute the answer. But if we want to push it to something like $n = 10^{24}$, which is more around the range we're interested in today, we will need to do something more involved.[^3]
+
+### Sum of Squares Function $r_2$
+
+
 
 ---
 
