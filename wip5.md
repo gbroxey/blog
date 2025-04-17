@@ -92,7 +92,7 @@ The language I've been using so far, Nim, does not have a built in BigInt or Int
 
 Let's look at the set of points in the positive quarter circle that we want to count.
 
-<center><img src="/blog/docs/assets/images/wip/circ_points.png" width="100%" height="100%"></center>
+<center><img src="/blog/docs/assets/images/wip/circ_points.png" width="75%" height="75%"></center>
 <br>
 
 ---
@@ -109,9 +109,9 @@ It happens that $g(k)$ is the number of divisors of $k$ which are $1$ mod $4$ mi
 
 This is not actually so hard to work with, since now
 
-$$R(n) = 1 + 4\left[\sum_{k \leq \sqrt{n}} \Chi(n/k) + \sum_{k \leq \sqrt{n}} \chi(k) \left\lfloor \frac{n}{k} \right\rfloor - \Chi(\sqrt{n})\lfloor \sqrt{n}\rfloor\right]$$
+$$R(n) = 1 + 4\left[\sum_{k \leq \sqrt{n}} X(n/k) + \sum_{k \leq \sqrt{n}} X(k) \left\lfloor \frac{n}{k} \right\rfloor - X(\sqrt{n})\lfloor \sqrt{n}\rfloor\right]$$
 
-where $\Chi(n) = \sum_{k \leq n} \chi(n)$ is also periodic, whose values begin as $1, 1, 0, 0$ and so on.  
+where $X(n) = \sum_{k \leq n} \chi(n)$ is also periodic, whose values begin as $1, 1, 0, 0$ and so on.  
 If you wanted to, you could implement this in $O(\sqrt n)$ time as
 
 ```nim
