@@ -24,7 +24,7 @@ The idea is simple. The function $d(k)$ counts positive integer pairs $(x, y)$ w
 
 I included a diagram last time, but since this post is going to have a lot of diagrams and I want stylistic consistency, I've made a new one.
 
-<center><img src="/blog/docs/assets/images/hyperbola_chunks.png" width="100%" height="100%"></center>
+<center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png" width="100%" height="100%"></center>
 
 ---
 
