@@ -27,9 +27,9 @@ I included a diagram last time, but since this post is going to have a lot of di
 <center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png" width="100%" height="100%"></center>
 <br>
 
-The red and purple areas on the left together contain $\sum_{x \leq \sqrt{n}} \left\lfloor\frac{n}{x}\right\rfloor$ lattice points.  
-Because of symmetry, that's the same number of lattice points as in the blue and purple areas on the bottom. So, to get the total count, we can add those two together.  
-We have to subtract the number of points in the purple square since those ones get counted twice.
+The red area on the left contains $\sum_{x \leq \sqrt{n}} \left\lfloor\frac{n}{x}\right\rfloor$ lattice points.  
+Because of symmetry, that's the same number of lattice points as in the blue area on the bottom.  
+To get the total count, we can add those two together, so long as we subtract the number of points in the purple square, since those ones get counted twice.
 
 This gives the answer as
 
