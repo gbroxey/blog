@@ -12,24 +12,24 @@ The first thing I'd like to do here is briefly discuss the two main examples we'
 
 ### Divisor Count Summatory Function
 
-We considered in [summing multiplicative functions 1][mult1] how to compute the partial sums of the function $d(n)$, defined as the number of divisors of $n$. The summation is written as
+We considered in [summing multiplicative functions 1][mult1] how to compute the partial sums of the function $d(n)$, defined as the number of divisors of $n$. The summatory function is written as
 
 $$D(n) = \sum_{1 \leq k \leq n} d(k)$$
 
 where I will be taking care not to use my personally preferred variable $x$ as a summation limit.[^1]
 
-This is the standard application of the so-called Dirichlet Hyperbola Method, which I described in detail [last time][mult1].
+This is the standard application of the Dirichlet Hyperbola Method, which I described in detail [last time][mult1].
 
-The idea is simple. The function $d(k)$ counts positive integer pairs $(x, y)$ with $xy = k$, and so summing over $k \leq n$ will give us the count of all integer pairs $(x, y)$ with $xy \leq n$. This region forms a hyperbola, hence the name hyperbola method. The important formula comes from exploiting the symmetry of the hyperbola, very quickly counting the lattice points in a small section of the hyperbola and computing the total count from that.
+The idea is simple. The function $d(k)$ counts positive integer pairs $(x, y)$ with $xy = k$, and so summing over $k \leq n$ will give us the count of all integer pairs $(x, y)$ with $xy \leq n$. This region forms a hyperbola, hence the name hyperbola method. The important formula comes from exploiting the symmetry of the hyperbola, very quickly counting the lattice points in a small section of the hyperbola, and computing the total count from that.
 
 I included a diagram last time, but since this post is going to have a lot of diagrams and I want stylistic consistency, I've made a new one.[^2] Here's what the hyperbola method is doing:
 
 <center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png" width="100%" height="100%"></center>
-
+<br>
 
 The red and purple areas on the left together contain $\sum_{x \leq \sqrt{n}} \left\lfloor\frac{n}{x}\right\rfloor$ lattice points.  
-Because of symmetry, that's the same number of lattice points as in the blue and purple areas on the bottom.  
-So, to get the total count, we can add those two together. We have to subtract the number of points in the purple square since those ones get counted twice.
+Because of symmetry, that's the same number of lattice points as in the blue and purple areas on the bottom. So, to get the total count, we can add those two together.  
+We have to subtract the number of points in the purple square since those ones get counted twice.
 
 This gives the answer as
 
