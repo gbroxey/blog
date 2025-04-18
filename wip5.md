@@ -168,9 +168,23 @@ At this point is when I'd like to introduce this problem more generally.
 
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
 
-$\newcommand{\apo}{'}$ Additionally, we assume that $f'(x) \leq 0$ and $f\apo\apo(x) \leq 0$ on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
+Additionally, we assume that $f$ has nonpositive derivative and second derivative on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
 
 We want to be able to handle this for whatever $f$ we give it, so I'll phrase it in general when I can, but the diagrams from here on will mostly be the circle case, since that one is nicer.
+
+---
+
+Let's suppose we are at a convex hull point $(x, y)$ and want to find the next.
+
+<center><img src="/blog/docs/assets/images/wip/blob_slopes.png"></center>
+<br>
+
+Generally there will be lots of options for vectors $(dx, -dy)$ to choose to get to the next point. In the above, we should clearly prefer the vector $(5, -3)$ over the vector $(3, -2)$ since the former is shallower[^6]. The next point on the convex hull will be at $(x+dx, y-dy)$ where $(dx, -dy)$ is the shallowest vector such that the resulting point fits in the blob we are considering. So the question becomes, how can we quickly find this shallowest $(dx, -dy)$?
+
+### Stern-Brocot Binary Search Tree
+
+TODO :)
+
 
 ## How Many Trapezoids?
 
@@ -224,3 +238,5 @@ Hi
 [^4]: Or into trapeziums if you're British.
 
 [^5]: Actually you probably don't need $x$, but later you might be counting points of a specific form inside the trapezoid for which you may want information about the $x$ value.
+
+[^6]: We can consider $(0, -1)$ to be the steepest vector, and $(1, 0)$ to be the shallowest. So really we're finding $(dx, -dy)$ such that $dy/dx$ is as low as possible, and such that $(x+dx, y-dy)$ fits in the blob.
