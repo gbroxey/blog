@@ -167,7 +167,8 @@ This is the really important part of this algorithm. All of the stuff with trape
 At this point is when I'd like to introduce this problem more generally.
 
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
-Additionally, we assume that $f'(x) \leq 0$ and $f''(x) \leq 0$ on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
+
+$\newcommand{\apo}{'}$ Additionally, we assume that $f'(x) \leq 0$ and $f\apo\apo(x) \leq 0$ on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
 
 We want to be able to handle this for whatever $f$ we give it, so I'll phrase it in general when I can, but the diagrams from here on will mostly be the circle case, since that one is nicer.
 
