@@ -107,11 +107,20 @@ It could look something like this:
 
 As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately.
 
-A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?
+A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5]  
+Given these values, is it easy to count the number of lattice points in the trapezoid?  
 
-<center><img src="/blog/docs/assets/images/wip/trapezoid_points.png"></center>
+Of course! Here's how we split it up, where the below trapezoid has $(x, y) = (0, 6)$, and $(dx, -dy) = (3, -2)$:
+
+<center><img src="/blog/docs/assets/images/wip/trapezoid_points_large.png"></center>
 <br>
 
+We have a rectangle with $(dx+1)(y-dy)$ points, a mysterious triangle, and the left border of $y+1$ points.  
+
+We deal with the triangle in the standard way, more symmetry:
+
+<center><img src="/blog/docs/assets/images/wip/large_triangle_half_rectangle.png"></center>
+<br>
 
 The points on the convex hull allow us to break the shape up into trapezoids:
 
