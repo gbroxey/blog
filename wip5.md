@@ -57,7 +57,7 @@ The idea is simple. The function $d(k)$ counts positive integer pairs $(x, y)$ w
 
 I included a diagram last time, but since this post is going to have a lot of diagrams and I want stylistic consistency, I've made a new one.[^2] Here's what the hyperbola method is doing:
 
-<center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png" width="100%" height="100%"></center>
+<center><img src="/blog/docs/assets/images/wip/hyperbola_chunks.png"></center>
 <br>
 
 The red area on the left contains $\sum_{x \leq \sqrt{n}} \left\lfloor\frac{n}{x}\right\rfloor$ lattice points.  
