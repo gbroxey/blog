@@ -102,7 +102,14 @@ Let's first pretend that we have a way to obtain the points on the convex hull e
 The simplest case, really, is when there are only one or two points on the convex hull.  
 It could look something like this:
 
-<center><img src="/blog/docs/assets/images/wip/small_circ_trapezoids.png"></center>
+<center><img src="/blog/docs/assets/images/wip/large_small_circ_trapezoids.png"></center>
+<br>
+
+As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately.
+
+A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?
+
+<center><img src="/blog/docs/assets/images/wip/trapezoid_points.png"></center>
 <br>
 
 
@@ -159,3 +166,7 @@ Hi
 [^2]: I made all the diagrams on this page by hand in [Aseprite][aseprite]. The hyperbola is a Bézier curve with points at $(1, 16), (2, 3), (3, 2), (16, 1)$.
 
 [^3]: Unless you're extremely patient. For $n = 10^{24}$ I estimated something like over two hours runtime for this more basic algorithm. It is pretty parallelizable though, if you're exceptionally lazy, since it has no memory requirement.
+
+[^4]: Or into trapeziums if you're British.
+
+[^5]: Actually you probably don't need $x$, but later you might be counting points of a specific form inside the trapezoid for which you may want information about the $x$ value.
