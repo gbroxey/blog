@@ -115,14 +115,27 @@ Of course! Here's how we split it up, where the below trapezoid has $(x, y) = (0
 <center><img src="/blog/docs/assets/images/wip/trapezoid_points_large.png"></center>
 <br>
 
-We have a rectangle with $(dx+1)(y-dy)$ points, a mysterious triangle, and the left border of $y+1$ points.  
+We have a rectangle with $(dx+1)(y-dy)$ points, a triangle, and the left border of $y+1$ points.  
 
 We deal with the triangle in the standard way, more symmetry:
 
 <center><img src="/blog/docs/assets/images/wip/large_triangle_half_rectangle.png"></center>
 <br>
 
-The points on the convex hull allow us to break the shape up into trapezoids:
+The number of lattice points in the triangle is $\frac{(dx+1)(dy+1)}{2} + 1$, since we don't want to split those two vertices on the hypotenuse equally, we want both of them on one triangle. Notice that we're taking advantage of $\gcd(dx, dy) = 1$, so that there are no more points on the hypotenuse of the triangle. Let's write the trapezoid point counter now:
+
+```nim
+proc trapezoid(x0, y0, dx, dy: int64): int64 =
+  ##The number of lattice points (x, y) inside the trapezoid
+  ##whose points are (x0, y0), (x0+dx, y0-dy), (x0+dx, 0), (x0, 0),
+  ##and such that x0 < x (so we are not counting the left border).
+  result = (dx + 1) * (y0 - dy) #rectangle
+  result += (((dx + 1) * (dy + 1)) shr 1) + 1 #triangle
+  result -= y0 + 1 #left border
+```
+
+Now we are convinced that, given the points of the convex hull of a shape, we can count the lattice points inside.  
+Here's how a circle of radius $16$ looks, broken up into trapezoids:
 
 <center><img src="/blog/docs/assets/images/wip/circ_trapezoids.png"></center>
 <br>
