@@ -92,8 +92,13 @@ The language I've been using so far, Nim, does not have a built in BigInt or Int
 
 Let's look at the set of points in the positive quarter circle that we want to count.
 
-<center><img src="/blog/docs/assets/images/wip/circ_points.png" width="75%" height="75%"></center>
+<center><img src="/blog/docs/assets/images/wip/circ_points.png"></center>
 <br>
+
+I've also decided to attach a black rubber band at the top left and bottom right points, and then allowed it to stretch tightly over the lattice points inside the circle. The polygon formed by the points touching this rubber band is known as the convex hull of the points inside the circle. The remainder of this article is about how we can exploit these convex hulls to count the lattice points inside a shape like this very quickly.
+
+Let's first pretend that we have a way to obtain the points on the convex hull extremely quickly, and see how it is possible to count the number of lattice points inside the shape.
+
 
 ---
 
