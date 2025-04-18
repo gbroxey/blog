@@ -144,9 +144,23 @@ Now we are convinced that, given the points of the convex hull of a shape, we ca
 
 Oops. Okay, but helpfully, we are allowed to count whatever points we want, so instead we'll count the points outside of the hyperbola. We can rotate everything around like this:
 
-TODO
+<center><img src="/blog/docs/assets/images/wip/hyperbola_flip.png"></center>
+<br>
 
-### Finding the Convex Hull
+For the hyperbola $xy \leq n$, we mapped $(x, y) \to (n+1-x, n+1-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape. That's not so bad:
+
+```nim
+proc upperTrapezoid(x0, y0, dx, dy, n: int64): int64 =
+  ##The number of lattice points (x, y) inside the trapezoid
+  ##whose points are (x0, y0), (x0+dx, y0-dy), (x0+dx, n), (x0, n),
+  ##and such that x0 < x (so we are not counting the left border).
+  result = (dx + 1) * (n - y0 - dy) #rectangle
+  result += (((dx + 1) * (dy + 1)) shr 1) + 1 #triangle
+  result -= (n - y0) + 1 #left border
+```
+
+
+## Finding the Convex Hull
 
 This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull point to the next.
 
@@ -157,6 +171,7 @@ Additionally, we assume that $f'(x) \leq 0$ and $f''(x) \leq 0$ on the interior 
 
 We want to be able to handle this for whatever $f$ we give it, so I'll phrase it in general when I can, but the diagrams from here on will mostly be the circle case, since that one is nicer.
 
+## How Many Trapezoids?
 
 ---
 
