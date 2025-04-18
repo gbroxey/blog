@@ -99,6 +99,8 @@ I've also decided to attach a black rubber band at the top left and bottom right
 
 Let's first pretend that we have a way to obtain the points on the convex hull extremely quickly, and see how it is possible to count the number of lattice points inside the shape.
 
+### Using the Convex Hull
+
 The simplest case, really, is when there are only one or two points on the convex hull.  
 It could look something like this:
 
@@ -107,10 +109,9 @@ It could look something like this:
 
 As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately.
 
-A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5]  
-Given these values, is it easy to count the number of lattice points in the trapezoid?  
+A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
 
-Of course! Here's how we split it up, where the below trapezoid has $(x, y) = (0, 6)$, and $(dx, -dy) = (3, -2)$:
+Of course! The below trapezoid has $(x, y) = (0, 6)$, and $(dx, -dy) = (3, -2)$:
 
 <center><img src="/blog/docs/assets/images/wip/trapezoid_points_large.png"></center>
 <br>
@@ -134,12 +135,27 @@ proc trapezoid(x0, y0, dx, dy: int64): int64 =
   result -= y0 + 1 #left border
 ```
 
-Now we are convinced that, given the points of the convex hull of a shape, we can count the lattice points inside.  
-Here's how a circle of radius $16$ looks, broken up into trapezoids:
+Now we are convinced that, given the points of the convex hull of a shape, we can count the lattice points inside. Here's how a positive quarter circle looks, broken up into trapezoids:
 
 <center><img src="/blog/docs/assets/images/wip/circ_trapezoids.png"></center>
 <br>
 
+### Wait, a Hyperbola Does Not Make a Convex Set
+
+Oops. Okay, but helpfully, we are allowed to count whatever points we want, so instead we'll count the points outside of the hyperbola. We can rotate everything around like this:
+
+TODO
+
+### Finding the Convex Hull
+
+This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull point to the next.
+
+At this point is when I'd like to introduce this problem more generally.
+
+We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
+Additionally, we assume that $f'(x) \leq 0$ and $f''(x) \leq 0$ on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
+
+We want to be able to handle this for whatever $f$ we give it, so I'll phrase it in general when I can, but the diagrams from here on will mostly be the circle case, since that one is nicer.
 
 
 ---
