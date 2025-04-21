@@ -192,25 +192,34 @@ We can start with $[\frac{0}{1}, \frac{1}{0}]$, the interval of all positive rea
 
 We want to refine the interval $[\frac{a}{b}, \frac{c}{d}]$ by splitting it into two parts. Pretend that we don't know exactly how we're going to do that yet, so the midpoint is just some mysterious reduced fraction $\frac{e}{f}$ in the interval.  
 
-The most important thing we have to be able to do is determine if the shallowest $dy/dx$ such that $(x+dx, y-dy)$ fits inside our shape can be found in a given interval. We will use the following nice idea:
+The most important thing we have to be able to do is determine if the shallowest $dy/dx$ such that $(x+dx, y-dy)$ fits inside our shape can be found in a given interval.  
+We will use the following nice idea:
 
-> **Requirement 1.** Let an interval of reduced fractions $[\frac{a}{b}, \frac{c}{d}]$ be given, and suppose $p/q$ is a reduced fraction in the interior of this interval. If $(x+p, y-q)$ fits in the blob, then $(x+c, y-d)$ also will fit.
+> **Requirement 1.** Let an interval of reduced fractions $[\frac{a}{b}, \frac{c}{d}]$ be given, and suppose $p/q$ is a reduced fraction in the interior of this interval.  
+> If $(x+p, y-q)$ fits in the blob, then $(x+c, y-d)$ also will fit.
 
 This seems rather strange, since $c/d$ is steeper than $p/q$ we may expect $c/d$ could be too large to fit. But it turns out that we can find a system of intervals such that this requirement holds, and moreover there's only one way to do it.
 
 For now, how would we use this property?
 
-Since we are looking for the shallowest possible slope, suppose we have narrowed our search down to the first interval of the finite sequence $[\frac{a_1}{b_1}, \frac{a_2}{b_2}] \cup [\frac{a_2}{b_2}, \frac{a_3}{b_3}] \cup \ldots = [\frac{a_1}{b_1}, \frac{1}{0}]$, where we have previously broken down $[\frac{0}{1}, \frac{1}{0}]$ into some number of parts and perhaps thrown away some parts we now know to be too shallow to include.
+Since we are looking for the shallowest possible slope, suppose we have narrowed our search down to the first interval of the finite sequence 
 
-First, just see if we can use $\frac{a_1}{b_1}$ as a slope, since it's obviously shallowest. If $(x+a_1, y-b_1)$ fits in the blob, then jump to that point, and repeat until $(x+a_1, y-b_1)$ no longer fits. The shallowest slope we can use after this point is now strictly steeper than $\frac{a_1}{b_1}$, so we need to decide what to do with the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$.
+$$[\frac{a_1}{b_1}, \frac{a_2}{b_2}] \cup [\frac{a_2}{b_2}, \frac{a_3}{b_3}] \cup \ldots = [\frac{a_1}{b_1}, \frac{1}{0}]$$
 
-We should now test the steeper endpoint, and see whether $(x+a_2, y-b_2)$ is in the blob. If it isn't, then we throw out the entire interval, since the Requirement for the intervals under consideration implies that no reduced fractions on the interior will fit either.
+where we have previously broken down $[\frac{0}{1}, \frac{1}{0}]$ into some number of parts and perhaps thrown away some parts we now know to be too shallow to include.
+
+First, just see if we can use $\frac{a_1}{b_1}$ as a slope, since it's obviously shallowest.  
+If $(x+a_1, y-b_1)$ fits in the blob, then jump to that point, and repeat until $(x+a_1, y-b_1)$ no longer fits. The shallowest slope we can use after this point is now strictly steeper than $\frac{a_1}{b_1}$, so we need to decide what to do with the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$.
+
+We should now test the steeper endpoint, and see whether $(x+a_2, y-b_2)$ is in the blob.  
+If it isn't, then we throw out the entire interval, since the Requirement for the intervals under consideration implies that no reduced fractions on the interior will fit either.
 
 If, however, $(x+a_2, y-b_2)$ does fit, then there may be some shallower slope in the interior of the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$ that we should prefer, so we have to split the interval in two and then examine the shallower part. We should hope to someday encounter the shallowest possible slope as an endpoint, so we should also require
 
-> **Requirement 2.** Every reduced fraction should eventually be found as an endpoint of one of our intervals.
+> **Requirement 2.** Every reduced fraction should eventually be found as an endpoint of the intervals in our system.
 
-There is a very small problem, which is that we don't know when to stop splitting an interval, in the case that $\frac{a_2}{b_2}$ is actually the shallowest possible slope that we can use. Our intervals can always be split, and so we would just split with reckless abandon forever. We will deal with this shortly once we figure out what the intervals should be.
+There is a very small problem, which is that we don't know when to stop splitting an interval, in the case that $\frac{a_2}{b_2}$ is actually the shallowest possible slope that we can use. The intervals can always be split, and so we would just split with reckless abandon forever.  
+We will deal with this shortly once we figure out what the intervals should be.
 
 TODO :)
 
