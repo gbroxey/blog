@@ -185,6 +185,8 @@ Generally there will be lots of options for vectors $(dx, -dy)$ to choose to get
 
 ### Stern-Brocot Binary Search Tree
 
+Skip this section if you think the use of SB tree is obvious. This was one of the parts which was most non-obvious to me, so I assume there will be some other people who also think it's not obvious.
+
 Consider maintaining intervals such that we know the next slope $dy/dx$ is somewhere in the range $[a, b]$.  
 We can start with $[\frac{0}{1}, \frac{1}{0}]$, the interval of all positive reals including infinity. The slope $\frac{1}{0}$ here represents moving one unit directly downwards, of course, and we don't really intend to divide by zero.
 
@@ -224,6 +226,19 @@ We will deal with this shortly once we figure out what the intervals should be.
 
 _Proof._ Since our interval choices should work no matter what the blob looks like, we can choose a specific one which helps us prove the lemma. The most helpful one to choose is the set of points $(x, y)$ with $0 \leq x \leq q$ and $0 \leq y \leq p - \frac{p}{q}x$, which forms a triangle like this:
 
+<center><img src="/blog/docs/assets/images/wip/lemma1.png"></center>
+<br>
+
+Here I've chosen the parameters $\frac{p}{q} = \frac{3}{5}$, and I've also added the endpoints of the interval $[\frac{1}{5}, \frac{2}{1}]$.
+
+Requirement 1 says that the steeper endpoint (here $\frac{c}{d} = \frac{2}{1}$) should be such that $(0+d, p-c)$ is inside the triangle, since $(q, p)$ is in the blob. Actually this makes things very obvious, since any point $\frac{c}{d}$ we could use as an endpoint will necessarily land inside the triangle, and so we have $c \leq p$ and $d \leq q$. $\newcommand{\proofqed}{\quad\quad\quad\square}\proofqed$
+
+Now let's see how we can use this to determine our system of intervals.
+
+> **Lemma 2.** Let $[\frac{a}{b}, \frac{c}{d}]$ be an interval, and $\frac{p}{q}$ the fraction in the interior with the smallest denominator, and then if there are multiple options, the one with the smallest numerator. Then the interval should be split at $\frac{p}{q}$.
+
+_Proof._ By requirement 1, we have $p \geq c$ and $q \geq d$.  
+If $p/q$ ends up in the steeper of the two intervals we split into, 
 
 ## How Many Trapezoids?
 
