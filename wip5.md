@@ -195,7 +195,7 @@ The most important thing we have to be able to do is determine if the shallowest
 We will use the following nice idea:
 
 > **Requirement 1.** Let an interval of reduced fractions $[\frac{a}{b}, \frac{c}{d}]$ be given, and suppose $p/q$ is any reduced fraction in the interior of this interval.  
-> If $(x+p, y-q)$ fits in the blob, then $(x+c, y-d)$ also will fit.
+> If $(x+q, y-p)$ fits in the blob, then $(x+d, y-c)$ also will fit.
 
 This seems rather strange, since $c/d$ is steeper than $p/q$ we may expect $c/d$ could be too large to fit. But it turns out that we can find a system of intervals such that this requirement holds, and moreover there's only one way to do it.
 
@@ -208,19 +208,21 @@ $$[\frac{a_1}{b_1}, \frac{a_2}{b_2}] \cup [\frac{a_2}{b_2}, \frac{a_3}{b_3}] \cu
 where we have previously broken down $[\frac{0}{1}, \frac{1}{0}]$ into some number of parts and perhaps thrown away some parts we now know to be too shallow to include.
 
 First, just see if we can use $\frac{a_1}{b_1}$ as a slope, since it's obviously shallowest.  
-If $(x+a_1, y-b_1)$ fits in the blob, then jump to that point, and repeat until $(x+a_1, y-b_1)$ no longer fits. The shallowest slope we can use after this point is now strictly steeper than $\frac{a_1}{b_1}$, so we need to decide what to do with the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$.
+If $(x+b_1, y-a_1)$ fits in the blob, then jump to that point, and repeat until $(x+b_1, y-a_1)$ no longer fits. The shallowest slope we can use after this point is now strictly steeper than $\frac{a_1}{b_1}$, so we need to decide what to do with the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$.
 
-We should now test the steeper endpoint, and see whether $(x+a_2, y-b_2)$ is in the blob.  
+We should now test the steeper endpoint, and see whether $(x+b_2, y-a_2)$ is in the blob.  
 If it isn't, then we throw out the entire interval, since the Requirement for the intervals under consideration implies that no reduced fractions on the interior will fit either.
 
-If, however, $(x+a_2, y-b_2)$ does fit, then there may be some shallower slope in the interior of the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$ that we should prefer, so we have to split the interval in two and then examine the shallower part. We should hope to someday encounter the shallowest possible slope as an endpoint, so we should also require
+If, however, $(x+b_2, y-a_2)$ does fit, then there may be some shallower slope in the interior of the interval $[\frac{a_1}{b_1}, \frac{a_2}{b_2}]$ that we should prefer, so we have to split the interval in two and then examine the shallower part. We should hope to someday encounter the shallowest possible slope as an endpoint, so we should also require
 
 > **Requirement 2.** Every reduced fraction should eventually be found as an endpoint of the intervals in our system.
 
 There is a very small problem, which is that we don't know when to stop splitting an interval, in the case that $\frac{a_2}{b_2}$ is actually the shallowest possible slope that we can use. The intervals can always be split, and so we would just split with reckless abandon forever.  
 We will deal with this shortly once we figure out what the intervals should be.
 
-> **Lemma 1.** For Requirement 1 to hold for an interval $[\frac{a}{b}, \frac{c}{d}]$, it must be true that any reduced fraction $p/q$ in the interior of the interval must have a denominator larger than $d$.
+> **Lemma 1.** For Requirement 1 to hold for an interval $[\frac{a}{b}, \frac{c}{d}]$, it must be true that any reduced fraction $p/q$ in the interior of the interval must have $p>c$ and $q>d$.
+
+_Proof._ Since our interval choices should work no matter what the blob looks like, we can choose a specific one which helps us prove the lemma. The most helpful one to choose is the set of points $(x, y)$ with $0 \leq x \leq q$ and $0 \leq y \leq p - \frac{p}{q}x$, which forms a triangle like this:
 
 
 ## How Many Trapezoids?
