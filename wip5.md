@@ -374,7 +374,19 @@ proc convexLatticeCount(xInit, yInit: int64,
 
 Here, we give the same information as before, but now we're adding up the number of lattice points inside of each generated trapezoid. As discussed before, this does not include the count of points on the left $x$-boundary, with ``x = xInit``, so if you wanted to include those, please do not forget them.
 
+## Counting a Circle's Lattice Points
+
+Let's apply the function we made to the problem of counting all the lattice points inside a circle with $r^2 = 10^{18}$.  
+This is the sum $\sum_{0 \leq n \leq 10^{18}} r_2(n)$, if you forgot.  
+
+
+
 TODO show circle implementation + timings
+
+<center><img src="/blog/docs/assets/images/wip/anim_circ_lg.png"></center>
+<br>
+
+
 TODO show hyperbola implementation + timings
 
 ## How Many Trapezoids?
