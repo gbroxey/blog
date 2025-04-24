@@ -284,9 +284,11 @@ In this case, split the interval at $\frac{a+c}{b+d}$.
 
 It's time..
 
-The algorithm accepts an initial point ``(xInit, yInit)`` on the convex hull. The final $x$-coordinate ``xFinal`` to define the domain `` xInit <= x <= xFinal`` is only implied, and is determined by the next functions.
+The algorithm accepts an initial point ``(xInit, yInit)`` on the convex hull.  
+The final $x$-coordinate ``xFinal`` to define the domain `` xInit <= x <= xFinal`` is only implied, and is determined by the next functions.
 
-We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``cut(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob. That should be all we need.
+We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``cut(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob.  
+That should be all we need.
 
 The function will return the edges of the upper boundary of the convex hull as ``(x, y, dx, dy)``, which also determines the trapezoids with points ``(x, y), (x+dx, y-dy), (x+dx, 0), (x, 0)``.  
 
