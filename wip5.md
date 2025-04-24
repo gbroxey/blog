@@ -190,7 +190,7 @@ Skip this section if you think the use of SB tree is obvious. This was one of th
 Consider maintaining intervals such that we know the next slope $dy/dx$ is somewhere in the range $[a, b]$.  
 We can start with $[\frac{0}{1}, \frac{1}{0}]$, the interval of all positive reals including infinity. The slope $\frac{1}{0}$ here represents moving one unit directly downwards, of course, and we don't really intend to divide by zero.
 
-We want to refine the interval $[\frac{a}{b}, \frac{c}{d}]$ by splitting it into two parts.  
+We want to refine our search over the interval $[\frac{a}{b}, \frac{c}{d}]$ by splitting it into two parts.  
 Pretend that we don't know exactly how we're going to do that yet, so the midpoint is just some mysterious reduced fraction $\frac{e}{f}$ in the interval.  
 
 The most important thing we have to be able to do is determine if the shallowest $dy/dx$ such that $(x+dx, y-dy)$ fits inside our shape can be found in a given interval.  
@@ -201,7 +201,7 @@ We will use the following nice idea:
 
 This seems rather strange, since $c/d$ is steeper than $p/q$ we may expect $c/d$ could be too large to fit. But it turns out that we can find a system of intervals such that this requirement holds, and moreover there's only one way to do it.
 
-For now, how would we use this property?
+For now, we'll motivate this requirement by showing how we use it.
 
 Since we are looking for the shallowest possible slope, suppose we have narrowed our search down to the first interval of the finite sequence 
 
@@ -231,14 +231,48 @@ _Proof._ Since our interval choices should work no matter what the blob looks li
 
 Here I've chosen the parameters $\frac{p}{q} = \frac{3}{5}$, and I've also added the endpoints of the interval $[\frac{1}{5}, \frac{2}{1}]$.
 
-Requirement 1 says that the steeper endpoint (here $\frac{c}{d} = \frac{2}{1}$) should be such that $(0+d, p-c)$ is inside the triangle, since $(q, p)$ is in the blob. Actually this makes things very obvious, since any point $\frac{c}{d}$ we could use as an endpoint will necessarily land inside the triangle, and so we have $c \leq p$ and $d \leq q$. $\newcommand{\proofqed}{\quad\quad\quad\square}\proofqed$
+Requirement 1 says that the steeper endpoint (here $\frac{c}{d} = \frac{2}{1}$) should be such that $(0+d, p-c)$ is inside the triangle, since $(q, p)$ is in the blob. Actually this makes things very obvious, since any point $\frac{c}{d}$ we could use as an endpoint will necessarily land inside the triangle, and so we have $c \leq p$ and $d \leq q$.
+
+---
 
 Now let's see how we can use this to determine our system of intervals.
 
-> **Lemma 2.** Let $[\frac{a}{b}, \frac{c}{d}]$ be an interval, and $\frac{p}{q}$ the fraction in the interior with the smallest denominator, and then if there are multiple options, the one with the smallest numerator. Then the interval should be split at $\frac{p}{q}$.
+> **Lemma 2.** Let $[\frac{a}{b}, \frac{c}{d}]$ be an interval, and $\frac{p}{q}$ the fraction in the interior with the smallest denominator, and then if there are multiple options, the one with the smallest numerator. Then the interval should be split at or before $\frac{p}{q}$.
 
 _Proof._ By requirement 1, we have $p \geq c$ and $q \geq d$.  
-If $p/q$ ends up in the steeper of the two intervals we split into, 
+If $p/q$ ends up in the shallower of the two intervals we split into, then there will be a problem. The steeper endpoint would have a denominator or numerator larger than that of $p/q$, violating Requirement 1. $\newcommand{\proofqed}{\quad\quad\square}\proofqed$
+
+Alright, enough beating around the bush.  
+The Stern-Brocot tree splits the interval $[\frac{a}{b}, \frac{c}{d}]$ at the slope $p/q$ described above. Moreover, starting from $[\frac{0}{1}, \frac{1}{0}]$, we get intervals $[\frac{a}{b}, \frac{c}{d}]$ who split at $\frac{p}{q} = \frac{a+c}{b+d}$, the mediant of the two endpoints. These will always be reduced fractions. The sizes of the numerators and denominators imply that these choices will give us intervals satisfying Requirement 1. Also, every reduced fraction will show up as an endpoint of an interval, which is Requirement 2. It all works out very well, and people who were previously familiar with Stern-Brocot would say this is the most natural way to arrange reduced slopes into a binary search structure[^7]. This is the correct way to search for the next slope.
+
+If you want to learn more about the Stern-Brocot tree, and its relation to continued fractions and best rational approximations, I recommend you read [this][cpalg-stern-brocot] from algmyr, adamant, and others on cp-algorithms, and this [other interesting article][adamant-cfrac] written by adamant. It is widely applicable and a good thing to know about.
+
+---
+
+There was one thing we briefly considered a few moments ago which we now have to deal with.
+
+We were considering the shallowest interval $[\frac{a}{b}, \frac{c}{d}]$, and had assumed we had jumped by $(b, -a)$ as much as possible, such that $(x+b, y-a)$ no longer fits in the blob. We need a way to determine when we cannot gainfully split this interval up any further to search for shallower slopes than $\frac{c}{d}$.
+
+Now, though, we are aware that the point we split the interval at is $\frac{a+c}{b+d}$.  
+If this slope fails, we would have to split $[\frac{a+c}{b+d}, \frac{c}{d}]$ at $\frac{a+2c}{b+2d}$, and so on.  
+The slopes we consider are $(b+nd, a+nc)$, and we need a way to determine when none of these will work.  
+
+One simple idea is to simply stop once $a+c$ or $b+d$ exceed known bounds on the size of the shape, like its height or width, but it turns out that we would consider an unhealthy number of slopes this way.
+
+A more complicated idea, but one which is able to cut out much sooner, is to consider the slope of the boundary of the blob near the point $(x+b+d, y-a-c)$. First we check that point to make sure it's not in the blob. Then, if the boundary of the blob is receding faster than we can approach it by taking mediants towards $\frac{c}{d}$, we will have no hope of ever meeting the blob again.
+
+<center><img src="/blog/docs/assets/images/wip/slope_cut.png"></center>
+<br>
+
+I've pictured an example of this behavior.  
+Above, we are considering splitting the interval $[\frac{1}{3}, \frac{1}{2}]$.  The first mediant $\frac{2}{5}$ is pictured as the extended red ray, which does not land in the blob. Even worse, successive mediants $\frac{3}{7}, \frac{4}{9}$, etc, which would be the endpoints of further splits towards $\frac{1}{2}$, lie along the higher of the two dark blue rays I drew. The bottom ray is heading downwards faster than that, though, and so there's no way any shallower slope than $\frac{1}{2}$ will work.  
+
+When we get to this point in the slope search, we can throw out this interval, since $\frac{1}{2}$ will be the shallower endpoint of the next interval on our list. This cutoff behavior is summarized as
+
+> **Slope Search Cut.** Suppose $[\frac{a}{b}, \frac{c}{d}]$ is a slope search interval, where $(x+b, y-a)$ no longer fits in the blob.  
+If $x+b+d > x_1$ is out of bounds, or if $y-a-c < 0$ is out of bounds, abandon the interval.  
+If $f'(x+b+d) < -\frac{c}{d}$, the blob is receding too fast, and we can also safely abandon the interval.  
+Otherwise, we may possibly find a shallower slope than $\frac{a}{b}$ somewhere, so split the interval at $\frac{a+c}{b+d}$.
 
 ## How Many Trapezoids?
 
@@ -286,6 +320,8 @@ Hi
 [mult1]: /blog/2023/04/30/mult-sum-1.html
 [nint128]: https://github.com/rockcavera/nim-nint128
 [aseprite]: https://www.aseprite.org/
+[cpalg-stern-brocot]: https://cp-algorithms.com/others/stern_brocot_tree_farey_sequences.html
+[adamant-cfrac]: https://cp-algorithms.com/algebra/continued-fractions.html
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 
@@ -298,3 +334,5 @@ Hi
 [^5]: Actually you probably don't need $x$, but later you might be counting points of a specific form inside the trapezoid for which you may want information about the $x$ value.
 
 [^6]: We can consider $(0, -1)$ to be the steepest vector, and $(1, 0)$ to be the shallowest. So really we're finding $(dx, -dy)$ such that $dy/dx$ is as low as possible, and such that $(x+dx, y-dy)$ fits in the blob.
+
+[^7]: It is
