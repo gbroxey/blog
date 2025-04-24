@@ -383,7 +383,7 @@ This is the sum $\sum_{0 \leq n \leq 10^{18}} r_2(n)$, if you forgot.
 
 TODO show circle implementation + timings
 
-<center><img src="/blog/docs/assets/images/wip/anim_circ_lg.png"></center>
+<center><img src="/blog/docs/assets/images/wip/anim_circ_lg.gif"></center>
 <br>
 
 
