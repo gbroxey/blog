@@ -273,11 +273,107 @@ The first mediant $\frac{2}{5}$ is pictured as the extended red ray, which does 
 When we get to this point in the slope search, we can throw out this interval, since $\frac{1}{2}$ will be the shallower endpoint of the next interval on our list. This cutoff behavior is summarized as
 
 > **Slope Search Cut.** Suppose $[\frac{a}{b}, \frac{c}{d}]$ is a slope search interval.  
-Also assume $\frac{a}{b}$ has been used as much as possible, so $(x+b, y-a)$ no longer fits in the blob.  
+Also assume $\frac{a}{b}$ has been used as much as possible, so $(x+b, y-a)$ no longer fits.  
 If $x+b+d > x_1$ is out of bounds, or if $y-a-c < 0$ is out of bounds, abandon the interval, since the numerators and denominators of the mediants will only increase.  
-If $f'(x+b+d) < -\frac{c}{d}$, the blob is receding faster than we are able to catch up to it. We can safely determine that no further mediants will work, and we can abandon the interval.  
+If $f'(x+b+d) \leq -\frac{c}{d}$, the blob is receding faster than we are able to catch up to it.   
+We can determine that no further mediants work, and we can abandon the interval.  
 Otherwise, we may possibly find a shallower slope than $\frac{a}{b}$ somewhere.  
 In this case, split the interval at $\frac{a+c}{b+d}$.
+
+## Generic Implementation
+
+It's time..
+
+The algorithm accepts an initial point ``(xInit, yInit)`` on the convex hull. The final $x$-coordinate ``xFinal`` to define the domain `` xInit <= x <= xFinal`` is only implied, and is determined by the next functions.
+
+We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``cut(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob. That should be all we need.
+
+The function will return the edges of the upper boundary of the convex hull as ``(x, y, dx, dy)``, which also determines the trapezoids with points ``(x, y), (x+dx, y-dy), (x+dx, 0), (x, 0)``.  
+
+Here's how it looks in Nim.
+
+```nim
+iterator chull(xInit, yInit: int64, 
+              inside: (proc (x, y: int64): bool),
+              cut: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
+  ##Finds the convex hull of integer points
+  ##with xInit <= x, and 0 <= y <= f(x).
+  ##Yields (x, y, dx, dy), 
+  ##where the next edge is from (x, y) to (x+dx, y-dy).
+  ##A point is in the shape iff inside(x, y).
+  ##The function inside() also enforces the maximum x coordinate.
+  ##Also provide cut(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
+  ##This works for f'(x) <= 0 and f''(x) <= 0.
+  #---
+  var (x, y) = (xInit, yInit)
+  var stack = @[(0'i64, 1'i64), (1'i64, 0'i64)]
+  #stack of slopes (dx, dy) = -dy/dx
+  #always kept in order of steepest slope to shallowest slope
+  #adjacent values form slope search intervals
+  while true:
+    var (dx1, dy1) = stack.pop()
+    #(dx1, dy1) is the shallowest possible slope in the convex hull
+    if dx1 == 0: #going straight down
+      #no need to make any silly looking chull points
+      break
+    #use the slope -dy1/dx1 as much as possible
+    while inside(x+dx1, y-dy1):
+      yield (x, y, dx1, dy1)
+      x += dx1
+      y -= dy1
+    #test if we are at the end already..
+    if y == 0: break
+
+    #get current slope search interval
+    var (dx2, dy2) = (dx1, dy1)
+    while stack.len != 0:
+      (dx1, dy1) = stack[^1]
+      #here, [dy2/dx2, dy1/dx1] forms the shallowest slope search interval
+      if inside(x+dx1, y-dy1):
+        break #by requirement 1, this interval contains the next slope
+      #otherwise it is useless, so we discard the interval,
+      #while maintaining the steeper endpoint
+      discard stack.pop
+      (dx2, dy2) = (dx1, dy1)
+    if stack.len == 0: break #probably unecessary to add this here
+
+    #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
+    while true:
+      var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
+      if inside(x + mx, y - my):
+        (dx1, dy1) = (mx, my) 
+        stack.add (mx, my)
+        #stack has the intervals [my/mx, dy1/dx1], [dy1/dx1, ..], ...
+        #active interval is [dy2/dx2, my/mx]
+      else:
+        if cut(x+mx, y-my, dx1, dy1):
+          #slope search cut condition
+          #the intervals [(dy2+n*dy1)/(dx2+n*dx1), dy1/dx1] never work
+          #fully discard dy2/dx2 and therefore the interval [dy2/dx2,dy1/dx1]
+          break
+        #refine the search to [my/mx, dy1/dx1]
+        (dx2, dy2) = (mx, my)
+    #the search is over
+    #top of the stack contains the next active search interval
+```
+
+The actual code is very short, I have just labelled all of the ideas to try to make it as easy to reference as possible. We'll talk about the runtime of this function later, but for now let's use it:
+
+```nim
+proc convexLatticeCount(xInit, yInit: int64, 
+              inside: (proc (x, y: int64): bool),
+              cut: (proc (x, y, dx, dy: int64): bool)): int64 =
+  ##Uses the chull edges to find the number of lattice points
+  ##under a decreasing convex function.
+  ##Does NOT include points at the border with x = xInit.
+  for (x, y, dx, dy) in chull(xInit, yInit, inside, cut):
+    result += trapezoid(x, y, dx, dy)
+```
+
+Here, we give the same information as before, but now we're adding up the number of lattice points inside of each generated trapezoid. As discussed before, this does not include the count of points on the left $x$-boundary, with ``x = xInit``, so if you wanted to include those, please do not forget them.
+
+TODO show circle implementation + timings
+TODO show hyperbola implementation + timings
 
 ## How Many Trapezoids?
 
