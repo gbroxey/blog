@@ -419,7 +419,7 @@ The green rays are slopes on the stack which form endpoints of search intervals,
 <br>
 
 As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
-I've included it [at the end](#addendum-b---slightly-faster--using-more-symmetry).
+I've included it [at the end](#addendum-b---using-more-symmetry).
 
 
 TODO show hyperbola implementation + timings
