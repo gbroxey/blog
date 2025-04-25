@@ -379,7 +379,7 @@ Here, we give the same information as before, but now we're adding up the number
 Let's apply the function we made to the problem of counting all the lattice points inside a circle.  
 This is the sum $R(n) = \sum_{0 \leq k \leq n} r_2(k)$, if you forgot.  
 
-We need to give ``chull`` a decreasing function whose derivative is also decreasing, so it is most natural to operate on the non-negative quarter circle. Even better, there is a way to decompose the lattice point count:
+We need to give ``chull`` a decreasing function whose derivative is also decreasing, so it is most natural to operate on the non-negative quarter circle. There is a way to decompose the lattice point count:
 
 <center><img src="/blog/docs/assets/images/wip/circ_quadrants.png"></center>
 <br>
