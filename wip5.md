@@ -421,6 +421,12 @@ The green rays are slopes on the stack which form endpoints of search intervals,
 As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
 I've included it [at the end](#addendum-b---using-more-symmetry).
 
+## Counting a Hyperbola's Lattice Points
+
+Now we're going to actually deal with the problem that $xy \leq n$ does not form a nice convex boundary. I mentioned before that once we map $(x, y) \to (n+1-x, n+1-y)$, the boundary does become convex, so we'll just see how that changes the use of ``chull`` function.
+
+The original function which defined the boundary was $f_0(x) = n/x$, which is decreasing, but it has a positive second derivative. The function we actually pass into ``chull` should be 
+
 
 TODO show hyperbola implementation + timings
 
