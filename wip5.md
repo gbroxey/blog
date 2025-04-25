@@ -12,8 +12,7 @@ The first thing I'd like to do here is briefly discuss the two main examples we'
 
 ### Sum of Squares Function $r_2$
 
-The function $r_2(n)$ tells you how many ways an integer $n$ can be written as a sum of two squares, $n = x^2 + y^2$.  
-The integers $x, y$ are allowed to be positive, negative, or zero.  
+The function $r_2(n)$ tells you how many ways an integer $n$ can be written as a sum of two squares.  
 I will write the summatory function as
 
 $$R(n) = \sum_{0 \leq k \leq n} r_2(k)$$
@@ -37,9 +36,9 @@ proc R(n: int64): int64 =
   result = 1 + 2*nsqrt
   var y = nsqrt
   for x in 1..nsqrt:
-    #do x and -x at once
     while x*x + y*y > n: 
       dec y #y--
+    #do x and -x at once
     result += 2 + 4 * y
 ```
 
@@ -90,7 +89,7 @@ The language I've been using so far, Nim, does not have a built in BigInt or Int
 
 ## Convex Hulls
 
-Let's look at the set of points in the positive quarter circle that we want to count.
+Let's look at the set of integer points in a non-negative quarter circle.
 
 <center><img src="/blog/docs/assets/images/wip/circ_points.png"></center>
 <br>
@@ -168,7 +167,8 @@ At this point is when I'd like to introduce this problem more generally.
 
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
 
-Additionally, we assume that $f$ has nonpositive derivative and second derivative on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set. In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and then $f(x) = n/x$ on the interval $[1, n]$.
+Additionally, we assume that $f$ has nonpositive derivative and second derivative on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set.  
+In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and something worse for the hyperbola case.
 
 From this point on when I make mention to 'the shape' or 'the blob', I'm referring to the convex set with boundaries described above. Hopefully that's easy enough to follow.
 
@@ -257,7 +257,7 @@ We were considering the shallowest interval $[\frac{a}{b}, \frac{c}{d}]$, and ha
 
 Now, though, we are aware that the point we split the interval at is $\frac{a+c}{b+d}$.  
 If this slope fails, we would have to split $[\frac{a+c}{b+d}, \frac{c}{d}]$ at $\frac{a+2c}{b+2d}$, and so on.  
-The slopes we consider are all of the form $(b+nd, a+nc)$ for integer $n \geq 1$, and we need a way to determine when none of these will work.  
+The slopes we consider are all of the form $(b+kd, a+kc)$ for integer $k \geq 1$, and we need a way to determine when none of these will work.  
 
 One simple idea is to simply stop once $a+c$ or $b+d$ exceed known bounds on the size of the shape, like its height or width, but it turns out that we would consider an unhealthy number of slopes this way.
 
@@ -272,7 +272,7 @@ The first mediant $\frac{2}{5}$ is pictured as the extended red ray, which does 
 
 When we get to this point in the slope search, we can throw out this interval, since $\frac{1}{2}$ will be the shallower endpoint of the next interval on our list. This cutoff behavior is summarized as
 
-> **Slope Search Cut.** Suppose $[\frac{a}{b}, \frac{c}{d}]$ is a slope search interval.  
+> **Slope Search Pruning.** Suppose $[\frac{a}{b}, \frac{c}{d}]$ is a slope search interval.  
 Also assume $\frac{a}{b}$ has been used as much as possible, so $(x+b, y-a)$ no longer fits.  
 If $x+b+d > x_1$ is out of bounds, or if $y-a-c < 0$ is out of bounds, abandon the interval, since the numerators and denominators of the mediants will only increase.  
 If $f'(x+b+d) \leq -\frac{c}{d}$, the blob is receding faster than we are able to catch up to it.   
@@ -282,12 +282,12 @@ In this case, split the interval at $\frac{a+c}{b+d}$.
 
 ## Generic Implementation
 
-It's time..
+It's time...
 
 The algorithm accepts an initial point ``(xInit, yInit)`` on the convex hull.  
 The final $x$-coordinate ``xFinal`` to define the domain `` xInit <= x <= xFinal`` is only implied, and is determined by the next functions.
 
-We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``cut(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob.  
+We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``prune(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob.  
 That should be all we need.
 
 The function will return the edges of the upper boundary of the convex hull as ``(x, y, dx, dy)``, which also determines the trapezoids with points ``(x, y), (x+dx, y-dy), (x+dx, 0), (x, 0)``.  
@@ -297,14 +297,14 @@ Here's how it looks in Nim.
 ```nim
 iterator chull(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
-              cut: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
+              prune: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
   ##Finds the convex hull of integer points
   ##with xInit <= x, and 0 <= y <= f(x).
   ##Yields (x, y, dx, dy), 
   ##where the next edge is from (x, y) to (x+dx, y-dy).
   ##A point is in the shape iff inside(x, y).
   ##The function inside() also enforces the maximum x coordinate.
-  ##Also provide cut(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
+  ##Also provide prune(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
   ##This works for f'(x) <= 0 and f''(x) <= 0.
   #---
   var (x, y) = (xInit, yInit)
@@ -348,8 +348,8 @@ iterator chull(xInit, yInit: int64,
         #stack has the intervals [my/mx, dy1/dx1], [dy1/dx1, ..], ...
         #active interval is [dy2/dx2, my/mx]
       else:
-        if cut(x+mx, y-my, dx1, dy1):
-          #slope search cut condition
+        if prune(x+mx, y-my, dx1, dy1):
+          #slope search prune condition
           #the intervals [(dy2+n*dy1)/(dx2+n*dx1), dy1/dx1] never work
           #fully discard dy2/dx2 and therefore the interval [dy2/dx2,dy1/dx1]
           break
@@ -364,11 +364,11 @@ The actual code is very short, I have just labelled all of the ideas to try to m
 ```nim
 proc convexLatticeCount(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
-              cut: (proc (x, y, dx, dy: int64): bool)): int64 =
+              prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
   ##under a decreasing convex function.
   ##Does NOT include points at the border with x = xInit.
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, cut):
+  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
     result += trapezoid(x, y, dx, dy)
 ```
 
@@ -376,10 +376,43 @@ Here, we give the same information as before, but now we're adding up the number
 
 ## Counting a Circle's Lattice Points
 
-Let's apply the function we made to the problem of counting all the lattice points inside a circle with $r^2 = 10^{18}$.  
-This is the sum $\sum_{0 \leq n \leq 10^{18}} r_2(n)$, if you forgot.  
+Let's apply the function we made to the problem of counting all the lattice points inside a circle.  
+This is the sum $R(n) = \sum_{0 \leq k \leq n} r_2(k)$, if you forgot.  
 
+We need to give ``chull`` a decreasing function whose derivative is also decreasing, so it is most natural to operate on the non-negative quarter circle. Even better, there is a way to decompose the lattice point count:
 
+<center><img src="/blog/docs/assets/images/wip/circ_quadrants.png"></center>
+<br>
+
+That way, if we compute the number $L$ of lattice points satisfying $x > 0$ and $y \geq 0$, we can get the count in the entire circle by computing $4L+1$. Even better, the way we do trapezoids will exclude the $y$ axis already. There is not actually much in the way of difficulty when it comes to getting the full circle count.
+
+The function ``inside(x, y)`` is easy, we can just check $x^2 + y^2$.
+
+When it comes to interval pruning, reecall that we are at a point $(u, v)$ with integer coordinates which failed to land inside the shape, and we have a slope $-p/q$, and we need to test $y' \leq -p/q$ at $x = u$.  
+Implicit differentiation of the curve $x^2 + y^2 = n$ gives $y' = -x/y$.  
+Certainly if $-u/v \leq -p/q$, then also $-u/y \leq -p/q$ where $y = \sqrt{n-u^2} < v$.  
+So we can actually just check $vq \geq up$ which is easier than doing floating points or dealing with unnecessarily ugly numbers. It's possible we could cut out earlier but this is fine.
+
+Here's an implementation: TODO mess with variable names in above paragraph + prune below?
+
+```nim
+proc circleLatticePointCount(n: int64): int64 =
+  let sqrtn = isqrt(n)
+  proc inside(x, y: int64): bool =
+    return x*x + y*y <= n and y >= 0
+  proc prune(x, y, dx, dy: int64): bool =
+    if x > sqrtn or y <= 0: return true
+    return dx * x >= dy * y
+  var L = convexLatticeCount(0, sqrtn, inside, prune)
+  return 4*L + 1
+```
+
+It takes about 0.03 seconds for $n = 10^{18}$, compared to the 1 second the easy algorithm gives.  
+Converted to Int128, it uses about a half a second for the same limit due to the overhead.  
+Once we are able to plug in larger $n$, though, this algorithm does much better.  
+It takes about 38 sec to compute the number of points $x^2 + y^2 \leq 10^{24}$.
+
+As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry. I've included it [at the end](#addendum-b---slightly-faster--using-more-symmetry).
 
 TODO show circle implementation + timings
 
@@ -397,7 +430,7 @@ TODO show hyperbola implementation + timings
 
 ---
 
-## Addendum
+## Addendum A - Another $R(n)$ Idea
 
 What if we did want to compute the sum $R(n)$ with multiplicative functions?  
 I only just started writing this article and I'm already distracted, oh no.
@@ -407,12 +440,12 @@ I'll go ahead and write $r_2(k) = 4g(k)$ for $k > 0$.
 
 It happens that $g(k)$ is the number of divisors of $k$ which are $1$ mod $4$ minus the number of divisors which are $3$ mod $4$. We can write this as $g(k) = \sum_{d \mid k} \chi(d)$, where $\chi$ is the nontrivial Dirichlet character modulo 4. In other words, $\chi$ is the periodic function whose values begin as $1, 0, -1, 0$, and so on repeating.
 
-This is not actually so hard to work with, since now
+Now we can use the [hyperbola method][mult1] on $g = u \ast \chi$ compute it in $O(\sqrt{n})$ terms as
 
-$$R(n) = 1 + 4\left[\sum_{k \leq \sqrt{n}} X(n/k) + \sum_{k \leq \sqrt{n}} X(k) \left\lfloor \frac{n}{k} \right\rfloor - X(\sqrt{n})\lfloor \sqrt{n}\rfloor\right]$$
+$$R(n) = 1 + 4\left[\sum_{k \leq \sqrt{n}} X(n/k) + \sum_{k \leq \sqrt{n}} \chi(k) \left\lfloor \frac{n}{k} \right\rfloor - X(\sqrt{n})\lfloor \sqrt{n}\rfloor\right]$$
 
 where $X(n) = \sum_{k \leq n} \chi(n)$ is also periodic, whose values begin as $1, 1, 0, 0$ and so on.  
-If you wanted to, you could implement this in $O(\sqrt n)$ time as
+We can implement it as
 
 ```nim
 proc R(n: int64): int64 =
@@ -425,6 +458,8 @@ proc R(n: int64): int64 =
 ```
 
 You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \ldots$ if you want.
+
+## Addendum B - Slightly Faster $R(n)$ Using More Symmetry
 
 ---
 

@@ -13,9 +13,9 @@ proc R(n: int64): int64 =
   result = 1 + 2*nsqrt
   var y = nsqrt
   for x in 1..nsqrt:
-    #do x and -x at once
     while x*x + y*y > n: 
       dec y #y--
+    #do x and -x at once
     result += 2 + 4 * y
 
 timer: echo R(1e18.int64)

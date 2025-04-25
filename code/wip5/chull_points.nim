@@ -1,13 +1,15 @@
+import ../utils/iops
+
 iterator chull(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
-              cut: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
+              prune: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
   ##Finds the convex hull of integer points
   ##with xInit <= x, and 0 <= y <= f(x).
   ##Yields (x, y, dx, dy), 
   ##where the next edge is from (x, y) to (x+dx, y-dy).
   ##A point is in the shape iff inside(x, y).
   ##The function inside() also enforces the maximum x coordinate.
-  ##Also provide cut(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
+  ##Also provide prune(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
   ##This works for f'(x) <= 0 and f''(x) <= 0.
   #---
   var (x, y) = (xInit, yInit)
@@ -51,8 +53,8 @@ iterator chull(xInit, yInit: int64,
         #stack has the intervals [my/mx, dy1/dx1], [dy1/dx1, ..], ...
         #active interval is [dy2/dx2, my/mx]
       else:
-        if cut(x+mx, y-my, dx1, dy1):
-          #slope search cut condition
+        if prune(x+mx, y-my, dx1, dy1):
+          #slope search prune condition
           #the intervals [(dy2+n*dy1)/(dx2+n*dx1), dy1/dx1] never work
           #fully discard dy2/dx2 and therefore the interval [dy2/dx2,dy1/dx1]
           break
@@ -79,35 +81,32 @@ proc upperTrapezoid(x0, y0, dx, dy, n: int64): int64 =
 
 proc convexLatticeCount(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
-              cut: (proc (x, y, dx, dy: int64): bool)): int64 =
+              prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
   ##under a decreasing convex function.
   ##Does NOT include points at the border with x = xInit.
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, cut):
+  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
     result += trapezoid(x, y, dx, dy)
 
 proc concaveLatticeCount(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
-              cut: (proc (x, y, dx, dy: int64): bool),
+              prune: (proc (x, y, dx, dy: int64): bool),
               maxCoord: int64): int64 =
   ##Uses the chull edges to find the number of lattice points
   ##under a decreasing concave function, like y = n/x.
   ##This needs a max
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, cut):
+  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
     result += trapezoid(x, y, dx, dy)
 
-import ../utils/iops
-const N = 1e18.int64
+proc circleLatticePointCount(n: int64): int64 =
+  let sqrtn = isqrt(n)
+  proc inside(x, y: int64): bool =
+    return x*x + y*y <= n and y >= 0
+  proc prune(x, y, dx, dy: int64): bool =
+    if x > sqrtn or y <= 0: return true
+    return dx * x >= dy * y
+  var L = convexLatticeCount(0, sqrtn, inside, prune)
+  return 4*L + 1
 
-proc inside(x, y: int64): bool =
-  return x*x + y*y <= N and y >= 0
-
-proc cut(x, y, dx, dy: int64): bool =
-  if x >= N or y <= 0: return true
-  return dx * x >= dy * y
-
-const v = 0'i64
-const u = isqrt(N)
-
-var test = convexLatticeCount(v, u, inside, cut)
-echo 4*test + 1
+import ../utils/eutil_timer
+timer: echo circleLatticePointCount(1e18.int64)
