@@ -384,7 +384,7 @@ We need to give ``chull`` a decreasing function whose derivative is also decreas
 <center><img src="/blog/docs/assets/images/wip/circ_quadrants.png"></center>
 <br>
 
-That way, if we compute the number $L$ of lattice points satisfying $x > 0$ and $y \geq 0$, we can get the count in the entire circle by computing $4L+1$. Even better, the way we do trapezoids will exclude the $y$ axis already. There is not actually much in the way of difficulty when it comes to getting the full circle count.
+That way, if we compute the number $L$ of lattice points satisfying $x > 0$ and $y \geq 0$, we can get the count in the entire circle by computing $4L+1$. Even better, the way we do trapezoids will exclude the $y$ axis already. There is not much difficulty when it comes to getting the full circle count.
 
 The function ``inside(x, y)`` is easy, we can just check $x^2 + y^2$.
 
@@ -412,12 +412,14 @@ Converted to Int128, it uses about a half a second for the same limit due to the
 Once we are able to plug in larger $n$, though, this algorithm does much better.  
 It takes about 38 sec to compute the number of points $x^2 + y^2 \leq 10^{24}$.
 
-As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry. I've included it [at the end](#addendum-b---slightly-faster--using-more-symmetry).
-
-TODO show circle implementation + timings
+Here is a visualization of the algorithm is actually doing.  
+The green rays are slopes on the stack which form endpoints of search intervals, and the red rays are those which fail to fit in the blob. Once a convex hull point is determined I've added it as a black vertex.
 
 <center><img src="/blog/docs/assets/images/wip/anim_circ_lg.gif"></center>
 <br>
+
+As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
+I've included it [at the end](#addendum-b---slightly-faster--using-more-symmetry).
 
 
 TODO show hyperbola implementation + timings
@@ -459,7 +461,7 @@ proc R(n: int64): int64 =
 
 You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \ldots$ if you want.
 
-## Addendum B - Slightly Faster $R(n)$ Using More Symmetry
+## Addendum B - Using More Symmetry
 
 ---
 
