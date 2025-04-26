@@ -10,6 +10,25 @@ proc isqrt*(x:int64): int64 =
     (a, b) = (c, a)
   return b
 
+proc idivpow*(x: int64, y: int64, n:Natural): int64 =
+  if n==0: x
+  elif n==1: x div y
+  elif n mod 2 == 0: (var v = idivpow(x, y, n div 2); idivpow(v, y, n div 2))
+  else: (var v = idivpow(x, y, n div 2); idivpow(v, y, (n div 2) + 1))
+
+proc iroot*(x: int64, n: int): int64 =
+  if n==1: return x
+  var L, R: int64
+  L = 1
+  R = x
+  #L^n <= x < R^n
+  while R-L>1:
+    var M = (L + R) div 2
+    #if M^n <= x
+    if 1 <= idivpow(x, M, n): L = M
+    else: R = M
+  return L
+
 proc powMod*(x: int64, y: int64, m: int64): int64 =
   ##Computes x^y mod m, where y >= 0.
   if y == 0: return 1

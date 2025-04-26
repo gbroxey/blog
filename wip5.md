@@ -20,7 +20,7 @@ $$R(n) = \sum_{0 \leq k \leq n} r_2(k)$$
 where I will be taking care not to use my personally preferred variable $x$ as a summation limit.[^1]
 
 It is possible to determine $r_2(k)$ given the prime factorization of $k$ (see [A004018][oeisa004018], or [Wikipedia][wikipedia-sum-sq]).  
-Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#addendum).
+Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#addendum-a---another--idea).
 
 Instead, we'll do something more sensible. Actually, I've been somewhat misleading in my presentation so far because this is just the number of lattice points in a circle of radius $\sqrt n$.
 
@@ -108,7 +108,7 @@ It could look something like this:
 
 As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately.
 
-A general trapezoid is defined by its upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
+The trapezoids that arise in this manner are defined by the upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
 
 Of course! The below trapezoid has $(x, y) = (0, 6)$, and $(dx, -dy) = (3, -2)$:
 
@@ -146,17 +146,8 @@ Oops. Okay, but helpfully, we are allowed to count whatever points we want, so i
 <center><img src="/blog/docs/assets/images/wip/hyperbola_flip.png"></center>
 <br>
 
-For the hyperbola $xy \leq n$, we mapped $(x, y) \to (n+1-x, n+1-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape. That's not so bad:
-
-```nim
-proc upperTrapezoid(x0, y0, dx, dy, n: int64): int64 =
-  ##The number of lattice points (x, y) inside the trapezoid
-  ##whose points are (x0, y0), (x0+dx, y0-dy), (x0+dx, n), (x0, n),
-  ##and such that x0 < x (so we are not counting the left border).
-  result = (dx + 1) * (n - y0 - dy) #rectangle
-  result += (((dx + 1) * (dy + 1)) shr 1) + 1 #triangle
-  result -= (n - y0) + 1 #left border
-```
+For the hyperbola $xy \leq n$, we mapped $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape.  
+We'll see how to do that later.
 
 
 ## Finding the Convex Hull
@@ -168,7 +159,7 @@ At this point is when I'd like to introduce this problem more generally.
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
 
 Additionally, we assume that $f$ has nonpositive derivative and second derivative on the interior of the interval, so that the set of points $(x, y)$ with $x_0 \leq x \leq x_1$ and $0 \leq y \leq f(x)$ forms a convex set.  
-In the previous examples, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$ and something worse for the hyperbola case.
+In the circle case, we had $f(x) = \sqrt{n - x^2}$ on the interval $[0, \sqrt{n}]$.
 
 From this point on when I make mention to 'the shape' or 'the blob', I'm referring to the convex set with boundaries described above. Hopefully that's easy enough to follow.
 
@@ -423,7 +414,7 @@ I've included it [at the end](#addendum-b---using-more-symmetry).
 
 ## Counting a Hyperbola's Lattice Points
 
-Now we're going to actually deal with the problem that $xy \leq n$ does not form a nice convex boundary. I mentioned before that once we map $(x, y) \to (n+1-x, n+1-y)$, the boundary does become convex, so we'll just see how that changes the use of ``chull`` function.
+Now we're going to actually deal with the problem that $xy \leq n$ does not form a nice convex boundary. I mentioned before that once we map $(x, y) \to (n-x, n-y)$, the boundary does become convex, so we'll just see how that changes the use of ``chull`` function.
 
 The original function which defined the boundary was $f_0(x) = n/x$, which is decreasing, but it has a positive second derivative. The function we actually pass into ``chull` should be 
 
@@ -434,11 +425,13 @@ TODO show hyperbola implementation + timings
 
 ---
 
+## Summing Divisor Function $\sigma$
+
 ## Counting Powerful Numbers Up To $10^{45}$
 
 ---
 
-## Addendum A - Another $R(n)$ Idea
+## Appendix A - Another $R(n)$ Idea
 
 What if we did want to compute the sum $R(n)$ with multiplicative functions?  
 I only just started writing this article and I'm already distracted, oh no.
