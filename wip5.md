@@ -83,18 +83,28 @@ But if we want to push it to something like $n = 10^{24}$, which is more around 
 
 ### Bigger Integers
 
-Oh, right, so the thing is, we want to have our inputs and outputs much larger than $10^{19}$ which is roughly the limit of a 64-bit signed integer. If you're doing this in something like Python where bigger integers are handled for you automatically then skip this section I guess.
+Oh, right, so the thing is, we want to have our inputs and outputs much larger than $10^{19}$ which is roughly the limit of a 64-bit signed integer. If you're doing this in something like Python where bigger integers are handled for you automatically then you don't really have to worry about this.
 
 The language I've been using so far, Nim, does not have a built in BigInt or Int128 type, which is what we'd love to be using for this. Because of that, we need to find a third party solution, or implement our own. Given that this article isn't about how to implement fast bigger integer data types, we would opt for something third party. What I found works best is [nint128][nint128], which is a package I use in my own Project Euler library. So, if you're using Nim and want to run these functions for the large inputs they're really built for, you can modify the code that is to follow so that it uses whatever package you choose.
 
 ## Convex Hulls
 
-Let's look at the set of integer points in a non-negative quarter circle.
+The idea that I'll be explaining in this post is something I've seen variously attributed to [Animus][animus] in a Project Euler problem thread, who attributes the idea to Lucy_Hedgehog. If you've solved the relevant problem then the link will work for you and lead you to Animus's post. 
+
+One of the better publicly available explanations of the following algorithm was written up by none other than [Min_25][min25], now living on the [Internet Archive][iarch]. I find that a lot of the minor details that I needed explained were basically left out of most writeups of this idea online, which made it somewhat difficult for me to realize why it actually worked. I do think the tricks that it uses are very natural, but for whatever reason it just hasn't clicked very well in my head. So, finally, I've taken the time to actually attempt to explain to myself (and you) how to do it.
+
+Returning now to thinking about counting the lattice points within a circle, our first thought should be to reduce the amount of work we have to do by using the symmetry of the circle.  
+Specifically, we can chop a circle up like this:
+
+<center><img src="/blog/docs/assets/images/wip/circ_quadrants.png"></center>
+<br>
+
+Therefore, if we count the points in the quadrant $x > 0$ and $y \geq 0$ as the quantity $L$, then the number of lattice points in the entire circle is just $4L + 1$. Let's look at the set of integer points in this quadrant:
 
 <center><img src="/blog/docs/assets/images/wip/circ_points.png"></center>
 <br>
 
-I've also decided to attach a black rubber band at the top left and bottom right points, and then allowed it to stretch tightly over the lattice points inside the circle. The polygon formed by the points touching this rubber band is known as the convex hull of the points inside the circle. The remainder of this article is about how we can exploit these convex hulls to count the lattice points inside a shape like this.
+I've also decided to attach a black rubber band at the top left and bottom right points, and then allowed it to stretch tightly over the lattice points inside the circle. The polygon formed by the points touching this rubber band is known as the convex hull of the lattice points inside the circle. The remainder of this article is about how we can exploit these convex hulls to count the lattice points inside a shape like this.
 
 Let's first pretend that we have a way to obtain the points on the convex hull extremely quickly, and see how it is possible to count the number of lattice points inside the shape.
 
@@ -106,7 +116,7 @@ It could look something like this:
 <center><img src="/blog/docs/assets/images/wip/large_small_circ_trapezoids.png"></center>
 <br>
 
-As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately.
+As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately, if we wish to include them. If you look back at our circle diagrams you'll remember we wanted to leave that axis out of the count from the start, so this is perfect.
 
 The trapezoids that arise in this manner are defined by the upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
 
@@ -141,14 +151,16 @@ Now we are convinced that, given the points of the convex hull of a shape, we ca
 
 ### Wait, a Hyperbola Does Not Make a Convex Set
 
-Oops. Okay, but helpfully, we are allowed to count whatever points we want, so instead we'll count the points outside of the hyperbola. We can rotate everything around like this:
+Oops. Okay, but helpfully, we are allowed to count whatever points we want, so instead we'll pretend we're counting the points outside of the hyperbola. We can rotate everything around like this:
 
 <center><img src="/blog/docs/assets/images/wip/hyperbola_flip.png"></center>
 <br>
 
-For the hyperbola $xy \leq n$, we mapped $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape.  
-We'll see how to do that later.
+The first thing I want you to notice is that we're now also counting all of the points with $y = 0$, as that's what the trapezoids we wrote already do. We'll deal with that when it's convenient.
 
+For the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape. I've marked those points as the red $\times$ shapes in the second figure above. If we consider the points with $(n-x)(n-y) > n$, we will see we can form a nice convex polygon again, shown on the right in red.  
+
+For each trapezoid, we also get a corresponding anti-trapezoid which sits above it, beginning one unit higher and reaching up to $n$ (which correpsonds to $y = 0$ in the original non rotated universe). We also may end up with one or more coordinates $x$ for which there are no trapezoids or anti-trapezoids, but we still want to count those points. Therefore we'll have to be somewhat careful with our counting later. More on anti-trapezoids later.
 
 ## Finding the Convex Hull
 
@@ -372,8 +384,7 @@ This is the sum $R(n) = \sum_{0 \leq k \leq n} r_2(k)$, if you forgot.
 
 We need to give ``chull`` a decreasing function whose derivative is also decreasing, so it is most natural to operate on the non-negative quarter circle. There is a way to decompose the lattice point count:
 
-<center><img src="/blog/docs/assets/images/wip/circ_quadrants.png"></center>
-<br>
+TODO REPLACE IMAGE
 
 That way, if we compute the number $L$ of lattice points satisfying $x > 0$ and $y \geq 0$, we can get the count in the entire circle by computing $4L+1$. Even better, the way we do trapezoids will exclude the $y$ axis already. There is not much difficulty when it comes to getting the full circle count.
 
@@ -473,6 +484,9 @@ Hi
 [aseprite]: https://www.aseprite.org/
 [cpalg-stern-brocot]: https://cp-algorithms.com/others/stern_brocot_tree_farey_sequences.html
 [adamant-cfrac]: https://cp-algorithms.com/algebra/continued-fractions.html
+[animus]: https://projecteuler.net/action=redirect;post_id=229299
+[min25]: https://web.archive.org/web/20211009144532/https://min-25.hatenablog.com/entry/2018/05/03/145505
+[iarch]: https://archive.org/donate
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 

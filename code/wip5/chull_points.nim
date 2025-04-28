@@ -109,12 +109,13 @@ proc circleLatticePointCount(n: int64): int64 =
   return 4*L + 1
 
 proc hyperbolaLatticePointCount(n: int64): int64 =
-  var x1 = n - iroot(n shl 1, 3)
-  for i in 1..<n-x1:
-    result += n div i
+  var x1 = n - 1
+  # for i in 1..<n-x1:
+  #   result += n div i
   let sqrtn = isqrt(n)
-  var x0 = n - sqrtn
+  var x0 = n - n
   var y0 = n - (n div (n-x0))
+  echo (x0, " .. ", x1)
   proc inside(x, y: int64): bool =
     return (n-x)*(n-y) > n and x <= x1 and y >= 0
   while not inside(x0, y0): dec y0
@@ -123,10 +124,11 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
     return dx * (n-y) >= dy * (n-x)
   var L = n div (n - x0)
   for (x, y, dx, dy) in chull(x0, y0, inside, prune):
+    echo (n-x-dx, n-y+dy, dx, dy)
     # L += n*dx - trapezoidL(x, y, dx, dy)
     L += trapezoidR(n-x-dx, n-y+dy-1, dx, dy) - 1
   result += L
   return 2*result - sqrtn*sqrtn
 
 import ../utils/eutil_timer
-timer: echo hyperbolaLatticePointCount(1e17.int64)
+timer: echo hyperbolaLatticePointCount(4.int64)
