@@ -17,6 +17,7 @@ iterator chull(xInit, yInit: int64,
   #stack of slopes (dx, dy) = -dy/dx
   #always kept in order of steepest slope to shallowest slope
   #adjacent values form slope search intervals
+  var mediants = 0
   while true:
     var (dx1, dy1) = stack.pop()
     #(dx1, dy1) is the shallowest possible slope in the convex hull
@@ -46,6 +47,7 @@ iterator chull(xInit, yInit: int64,
 
     #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
     while true:
+      inc mediants
       var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
       if inside(x + mx, y - my):
         (dx1, dy1) = (mx, my) 
@@ -62,6 +64,7 @@ iterator chull(xInit, yInit: int64,
         (dx2, dy2) = (mx, my)
     #the search is over
     #top of the stack contains the next active search interval
+  echo mediants, " mediants"
 
 proc trapezoidL(x0, y0, dx, dy: int64): int64 =
   ##The number of lattice points (x, y) inside the trapezoid
@@ -88,16 +91,6 @@ proc convexLatticeCount(xInit, yInit: int64,
   for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
     result += trapezoidL(x, y, dx, dy)
 
-proc concaveLatticeCount(xInit, yInit: int64, 
-              inside: (proc (x, y: int64): bool),
-              prune: (proc (x, y, dx, dy: int64): bool),
-              maxCoord: int64): int64 =
-  ##Uses the chull edges to find the number of lattice points
-  ##under a decreasing concave function, like y = n/x.
-  ##This needs a max
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
-    result += trapezoidR(maxCoord-x-dx, maxCoord-y+dy, dx, dy)
-
 proc circleLatticePointCount(n: int64): int64 =
   let sqrtn = isqrt(n)
   proc inside(x, y: int64): bool =
@@ -107,6 +100,64 @@ proc circleLatticePointCount(n: int64): int64 =
     return dx * x >= dy * y
   var L = convexLatticeCount(0, sqrtn, inside, prune)
   return 4*L + 1
+
+proc concaveLatticeCount(xInit, yInit: int64, 
+              xFinal, yFinal: int64,
+              inside: (proc (x, y: int64): bool),
+              prune: (proc (x, y, dx, dy: int64): bool)): int64 =
+  ##Uses the chull edges to find the number of lattice points
+  ##under a decreasing concave function, like y = n/x.
+  proc inBounds(x, y: int64): bool =
+    xInit <= x and x <= xFinal and yFinal <= y and y <= yInit
+  proc insideFlipped(x, y: int64): bool = 
+    inBounds(xFinal - x, yInit - y) and (not inside(xFinal - x, yInit - y + 1))
+  proc pruneFlipped(x, y, dx, dy: int64): bool = 
+    (not inBounds(xFinal - x, yInit - y)) or prune(xFinal - x, yInit - y, dx, dy)
+  #[
+  (xFinal, yFinal) is INSIDE the shape
+  so we should start at (0, yInit - yFinal - 1)
+  ]#
+  # var lastX = 0
+  var pts = 0
+  for (x, y, dx, dy) in chull(0, yInit - yFinal - 1, insideFlipped, pruneFlipped):
+    var term = trapezoidR(xFinal - x - dx, yInit - y + dy, dx, dy) + dx - 1
+    # var test = 0'i64
+    # echo (x, y, dx, dy)
+    # echo (xFinal - x - dx, yInit - y + dy - 1, dx, dy), ": ", term
+    # lastX = xFinal - x - 1
+    # for i in xFinal - x - dx .. xFinal - x - 1:
+    #   test += (1e3.int div i) + 1
+    # if test != term:
+    #   echo (xFinal - x - dx, yInit - y + dy - 1, dx, dy), ": ", term
+    #   echo (x, y, dx, dy)
+    #   echo "  ", test
+    # echo ""
+    inc pts
+    result += term
+  result += yFinal + 1
+  echo pts, " pts"
+  
+
+
+proc hyperbolaLatticePointCount1(n: int64): int64 =
+  let nrt = isqrt(n)
+  var x0 = iroot(2*n, 3)
+  var y0 = n div x0
+  var x1 = nrt
+  var y1 = n div x1
+  proc inside(x, y: int64): bool =
+    return x*y <= n
+  proc prune(x, y, dx, dy: int64): bool =
+    return dx * y >= dy * x
+  var L = concaveLatticeCount(x0, y0, x1, y1, inside, prune)
+  echo (x0, y0), " .. ", (x1, y1)
+  echo L
+  for i in 1..<x0: L += (n div i) + 1
+  L -= x1
+  return 2*L - nrt*nrt
+
+import ../utils/eutil_timer
+timer: echo hyperbolaLatticePointCount1(1e12.int64)
 
 proc hyperbolaLatticePointCount(n: int64): int64 =
   var x1 = n - 1
@@ -129,6 +180,3 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
     L += trapezoidR(n-x-dx, n-y+dy-1, dx, dy) - 1
   result += L
   return 2*result - sqrtn*sqrtn
-
-import ../utils/eutil_timer
-timer: echo hyperbolaLatticePointCount(4.int64)

@@ -158,15 +158,15 @@ Oops. Okay, but helpfully, we are allowed to count whatever points we want, so i
 
 The first thing I want you to notice is that we're now also counting all of the points with $y = 0$, as that's what the trapezoids we wrote already do. We'll deal with that when it's convenient.
 
-For the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape. I've marked those points as the red $\times$ shapes in the second figure above. If we consider the points with $(n-x)(n-y) > n$, we will see we can form a nice convex polygon again, shown on the right in red.  
+For the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape.  
+I've marked those points as the red $\times$ shapes in the second figure above.  
+If we consider the points with $(n-x)(n-y) > n$, we will see we can form a nice convex polygon again, shown on the right in red.  
 
-For each trapezoid, we also get a corresponding anti-trapezoid which sits above it, beginning one unit higher and reaching up to $n$ (which correpsonds to $y = 0$ in the original non rotated universe). We also may end up with one or more coordinates $x$ for which there are no trapezoids or anti-trapezoids, but we still want to count those points. Therefore we'll have to be somewhat careful with our counting later. More on anti-trapezoids later.
+For each trapezoid, we also get a corresponding anti-trapezoid which sits above it, beginning one unit higher and reaching up to $n$ (which corresponds to $y = 0$ in the original non rotated universe). We also may end up with one or more coordinates $x$ for which there are no trapezoids or anti-trapezoids, but we still want to count those points. Therefore we'll have to be somewhat careful with our counting later. More on anti-trapezoids later.
 
 ## Finding the Convex Hull
 
-This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull point to the next.
-
-At this point is when I'd like to introduce this problem more generally.
+This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull point to the next. At this point is also when I'd like to introduce this problem more generally.
 
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
 
@@ -382,15 +382,11 @@ Here, we give the same information as before, but now we're adding up the number
 Let's apply the function we made to the problem of counting all the lattice points inside a circle.  
 This is the sum $R(n) = \sum_{0 \leq k \leq n} r_2(k)$, if you forgot.  
 
-We need to give ``chull`` a decreasing function whose derivative is also decreasing, so it is most natural to operate on the non-negative quarter circle. There is a way to decompose the lattice point count:
-
-TODO REPLACE IMAGE
-
-That way, if we compute the number $L$ of lattice points satisfying $x > 0$ and $y \geq 0$, we can get the count in the entire circle by computing $4L+1$. Even better, the way we do trapezoids will exclude the $y$ axis already. There is not much difficulty when it comes to getting the full circle count.
+Recall from earlier that we will count the number $L$ of lattice points in the circle such that $x > 0$ and $y \geq 0$, and then get the answer as $4L+1$.
 
 The function ``inside(x, y)`` is easy, we can just check $x^2 + y^2$.
 
-When it comes to interval pruning, reecall that we are at a point $(u, v)$ with integer coordinates which failed to land inside the shape, and we have a slope $-p/q$, and we need to test $y' \leq -p/q$ at $x = u$.  
+When it comes to interval pruning, recall that we are at a point $(u, v)$ with integer coordinates which failed to land inside the shape, and we have a slope $-p/q$, and we need to test $y' \leq -p/q$ at $x = u$.  
 Implicit differentiation of the curve $x^2 + y^2 = n$ gives $y' = -x/y$.  
 Certainly if $-u/v \leq -p/q$, then also $-u/y \leq -p/q$ where $y = \sqrt{n-u^2} < v$.  
 So we can actually just check $vq \geq up$ which is easier than doing floating points or dealing with unnecessarily ugly numbers. It's possible we could cut out earlier but this is fine.
@@ -410,7 +406,7 @@ proc circleLatticePointCount(n: int64): int64 =
 ```
 
 It takes about 0.03 seconds for $n = 10^{18}$, compared to the 1 second the easy algorithm gives.  
-Converted to Int128, it uses about a half a second for the same limit due to the overhead.  
+Written using a library with Int128, it uses about a half a second for the same limit due to the overhead.  
 Once we are able to plug in larger $n$, though, this algorithm does much better.  
 It takes about 38 sec to compute the number of points $x^2 + y^2 \leq 10^{24}$.
 
@@ -425,13 +421,23 @@ I've included it [at the end](#addendum-b---using-more-symmetry).
 
 ## Counting a Hyperbola's Lattice Points
 
-Now we're going to actually deal with the problem that $xy \leq n$ does not form a nice convex boundary. I mentioned before that once we map $(x, y) \to (n-x, n-y)$, the boundary does become convex, so we'll just see how that changes the use of ``chull`` function.
+Now we're going to actually deal with the anti-trapezoids from earlier.
 
-The original function which defined the boundary was $f_0(x) = n/x$, which is decreasing, but it has a positive second derivative. The function we actually pass into ``chull` should be 
+We have a function $f_0$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
+This time, the function we're curious about is $f_0(x) = n/x$, which is not convex.
 
+For a concave function, we assume $f_0$ has nonpositive derivative but a nonnegative second derivative on the interior of the interval. We'll make a convex boundary out of it that we can use. 
 
-TODO show hyperbola implementation + timings
+We decided to do this by rotating the function around. For the standard hyperbola, the graph of the function fits roughly in a square, but in general it may be wider than it is tall or something, so we should treat it without the square assumption if we can avoid it.  
 
+Let's use the function $f(x) = y_1 - f_0(x_1 - x)$ on the domain $0 \leq x \leq x_1 - x_0$, where $y_1 \geq f(x_0)$ is the largest possible $y$ value for a point we're interested in.  
+It's possible to solve for it but probably we can just add it as another input to the program.
+
+How will the functions ``inside`` and ``prune`` change?
+
+The first is easy enough, we should use ``not inside(x1 - x, y1 - y)``.
+
+For ``prune(x, y, dx, dy)``, we need to see if $f'(x) = f_0'(x_1 - x)$ is at most $-dy/dx$, so we just use ``prune(x_1 - x, y_1 - y, dx, dy)``. It is all very straightforward.
 ## How Many Trapezoids?
 
 ---
