@@ -156,6 +156,8 @@ Oops. Okay, but helpfully, we are allowed to count whatever points we want, so i
 <center><img src="/blog/docs/assets/images/wip/hyperbola_flip.png"></center>
 <br>
 
+The set of points outside the hyperbola is now a nice convex set, and so we can make its convex hull and break it into trapezoids and so on, exactly as we plan to do in the case of the circle.
+
 One important feature here which helps to make the implementation simple is the fact that I have extended the range of the function very slightly. We know the maximal $y$ value for a point we wish to count, which is at the point $(0, 4)$ in the left diagram above. When we instead consider the group of points we don't want to count, it is most convenient to include the point $(0, 5)$.
 
 I want you to consider instead what would happen if I didn't extend the range of the function[^6]:
@@ -172,7 +174,7 @@ Once we have rotated these anti-trapezoids back so that they sit above the origi
 
 It is nearly the same situation as the regular trapezoids. They'll be slotting together the same way as previously described, so we'll throw out the left boundary.  
 
-This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually a point of the convex hull of the bad points.
+This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually on the boundary of the convex hull of the bad points.
 
 We'll come back to these anti-trapezoids later once we revisit the hyperbola case.
 

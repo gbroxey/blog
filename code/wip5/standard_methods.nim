@@ -1,4 +1,4 @@
-import ../utils/[eutil_timer, iops], math
+import ../utils/[eutil_timer, iops]
 
 proc D(n: int64): int64 =
   ##Computes d(1) + ... + d(n) in O(n^(1/2)) time.
