@@ -156,13 +156,26 @@ Oops. Okay, but helpfully, we are allowed to count whatever points we want, so i
 <center><img src="/blog/docs/assets/images/wip/hyperbola_flip.png"></center>
 <br>
 
-The first thing I want you to notice is that we're now also counting all of the points with $y = 0$, as that's what the trapezoids we wrote already do. We'll deal with that when it's convenient.
+One important feature here which helps to make the implementation simple is the fact that I have extended the range of the function very slightly. We know the maximal $y$ value for a point we wish to count, which is at the point $(0, 4)$ in the left diagram above. When we instead consider the group of points we don't want to count, it is most convenient to include the point $(0, 5)$.
 
-For the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$. It happens that we have a nice convex shape now, except we want to count points above the shape instead of inside the shape.  
-I've marked those points as the red $\times$ shapes in the second figure above.  
-If we consider the points with $(n-x)(n-y) > n$, we will see we can form a nice convex polygon again, shown on the right in red.  
+I want you to consider instead what would happen if I didn't extend the range of the function in this way[^6]:
 
-For each trapezoid, we also get a corresponding anti-trapezoid which sits above it, beginning one unit higher and reaching up to $n$ (which corresponds to $y = 0$ in the original non rotated universe). We also may end up with one or more coordinates $x$ for which there are no trapezoids or anti-trapezoids, but we still want to count those points. Therefore we'll have to be somewhat careful with our counting later. More on anti-trapezoids later.
+<center><img src="/blog/docs/assets/images/wip/hyperbola_flip_evil.png"></center>
+<br>
+
+As you can see, the convex hull of the points we don't want to count suddenly has a range strictly smaller than that of the original set of points. It's possible to reason about that in your code, and detect and adjust for this scenario, but who wants to do that? Not me. It was a path that led me only to despair. Meanwhile, just extending the function's range allows us to maintain the same domain for the bad points as for the good points, so everything is nice and simple.
+
+When we do this for the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$.  
+It happens that we have a nice convex shape now, except we want the convex hull of the points outside the shape instead of the ones inside the shape.  
+
+Once we have these anti-trapezoids which sit above the original shape, we can rotate them back and attempt to make sense of the points we actually wanted to count. Here's how it could look:
+
+<center><img src="/blog/docs/assets/images/wip/antitrapezoid_flip.png"></center>
+<br>
+
+It is nearly the same situation as the regular trapezoids. They'll be slotting together the same way as previously described, so we'll throw out the left boundary. This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually a point of the convex hull of the bad points.
+
+We'll come back to these anti-trapezoids later once we revisit the hyperbola case.
 
 ## Finding the Convex Hull
 
@@ -184,7 +197,7 @@ Let's suppose we are at a convex hull point $(x, y)$ and want to find the next.
 <center><img src="/blog/docs/assets/images/wip/blob_slopes.png"></center>
 <br>
 
-Generally there will be lots of options for vectors $(dx, -dy)$ to choose to get to the next point. In the above, we should clearly prefer the vector $(5, -3)$ over the vector $(3, -2)$ since the former is shallower[^6]. The next point on the convex hull will be at $(x+dx, y-dy)$ where $(dx, -dy)$ is the shallowest vector such that the resulting point fits in the blob we are considering. So the question becomes, how can we quickly find this shallowest $(dx, -dy)$?
+Generally there will be lots of options for vectors $(dx, -dy)$ to choose to get to the next point. In the above, we should clearly prefer the vector $(5, -3)$ over the vector $(3, -2)$ since the former is shallower[^7]. The next point on the convex hull will be at $(x+dx, y-dy)$ where $(dx, -dy)$ is the shallowest vector such that the resulting point fits in the blob we are considering. So the question becomes, how can we quickly find this shallowest $(dx, -dy)$?
 
 ### Stern-Brocot Binary Search Tree
 
@@ -247,7 +260,7 @@ If $p/q$ ends up in the shallower of the two intervals we split into, then there
 The steeper endpoint would have a denominator or numerator larger than that of $p/q$, violating Requirement 1. Therefore, we have to split the interval either at $p/q$ or at some more complicated fraction coming before $p/q$. $\newcommand{\proofqed}{\quad\quad\square}\proofqed$
 
 Alright, enough beating around the bush.  
-The Stern-Brocot tree splits the interval $[\frac{a}{b}, \frac{c}{d}]$ at the slope $p/q$ described above. Moreover, starting from $[\frac{0}{1}, \frac{1}{0}]$, we get intervals $[\frac{a}{b}, \frac{c}{d}]$ who split at $\frac{p}{q} = \frac{a+c}{b+d}$, the mediant of the two endpoints. These will always be reduced fractions. The sizes of the numerators and denominators imply that these choices will give us intervals satisfying Requirement 1. Also, every reduced fraction will show up as an endpoint of an interval, which is Requirement 2. It all works out very well, and people who were previously familiar with Stern-Brocot would say this is the most natural way to arrange reduced slopes into a binary search structure[^7]. This is the correct way to search for the next slope.
+The Stern-Brocot tree splits the interval $[\frac{a}{b}, \frac{c}{d}]$ at the slope $p/q$ described above. Moreover, starting from $[\frac{0}{1}, \frac{1}{0}]$, we get intervals $[\frac{a}{b}, \frac{c}{d}]$ who split at $\frac{p}{q} = \frac{a+c}{b+d}$, the mediant of the two endpoints. These will always be reduced fractions. The sizes of the numerators and denominators imply that these choices will give us intervals satisfying Requirement 1. Also, every reduced fraction will show up as an endpoint of an interval, which is Requirement 2. It all works out very well, and people who were previously familiar with Stern-Brocot would say this is the most natural way to arrange reduced slopes into a binary search structure[^8]. This is the correct way to search for the next slope.
 
 If you want to learn more about the Stern-Brocot tree, and its relation to continued fractions and best rational approximations, I recommend you read [this][cpalg-stern-brocot] from algmyr, adamant, and others on cp-algorithms, and this [other interesting article][adamant-cfrac] written by adamant.  
 It is widely applicable and a good thing to know about.
@@ -504,6 +517,8 @@ Hi
 
 [^5]: Actually you probably don't need $x$, but later you might be counting points of a specific form inside the trapezoid for which you may want information about the $x$ value.
 
-[^6]: We can consider $(0, -1)$ to be the steepest vector, and $(1, 0)$ to be the shallowest. So really we're finding $(dx, -dy)$ such that $dy/dx$ is as low as possible, and such that $(x+dx, y-dy)$ fits in the blob.
+[^6]: Which is how I was attempting to do it while writing this, until I realized I hated it when I had to debug a ton of stuff forever and never got it to work nicely in a way that made sense and was easy to communicate
 
-[^7]: It is
+[^7]: We can consider $(0, -1)$ to be the steepest vector, and $(1, 0)$ to be the shallowest. So really we're finding $(dx, -dy)$ such that $dy/dx$ is as low as possible, and such that $(x+dx, y-dy)$ fits in the blob.
+
+[^8]: It is
