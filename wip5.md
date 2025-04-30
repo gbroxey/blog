@@ -158,22 +158,21 @@ Oops. Okay, but helpfully, we are allowed to count whatever points we want, so i
 
 One important feature here which helps to make the implementation simple is the fact that I have extended the range of the function very slightly. We know the maximal $y$ value for a point we wish to count, which is at the point $(0, 4)$ in the left diagram above. When we instead consider the group of points we don't want to count, it is most convenient to include the point $(0, 5)$.
 
-I want you to consider instead what would happen if I didn't extend the range of the function in this way[^6]:
+I want you to consider instead what would happen if I didn't extend the range of the function[^6]:
 
 <center><img src="/blog/docs/assets/images/wip/hyperbola_flip_evil.png"></center>
 <br>
 
 As you can see, the convex hull of the points we don't want to count suddenly has a range strictly smaller than that of the original set of points. It's possible to reason about that in your code, and detect and adjust for this scenario, but who wants to do that? Not me. It was a path that led me only to despair. Meanwhile, just extending the function's range allows us to maintain the same domain for the bad points as for the good points, so everything is nice and simple.
 
-When we do this for the hyperbola $xy \leq n$, we map $(x, y) \to (n-x, n-y)$.  
-It happens that we have a nice convex shape now, except we want the convex hull of the points outside the shape instead of the ones inside the shape.  
-
-Once we have these anti-trapezoids which sit above the original shape, we can rotate them back and attempt to make sense of the points we actually wanted to count. Here's how it could look:
+Once we have rotated these anti-trapezoids back so that they sit above the original shape, we can attempt to make sense of the points we actually wanted to count. Here's how it could look:
 
 <center><img src="/blog/docs/assets/images/wip/antitrapezoid_flip.png"></center>
 <br>
 
-It is nearly the same situation as the regular trapezoids. They'll be slotting together the same way as previously described, so we'll throw out the left boundary. This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually a point of the convex hull of the bad points.
+It is nearly the same situation as the regular trapezoids. They'll be slotting together the same way as previously described, so we'll throw out the left boundary.  
+
+This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually a point of the convex hull of the bad points.
 
 We'll come back to these anti-trapezoids later once we revisit the hyperbola case.
 
