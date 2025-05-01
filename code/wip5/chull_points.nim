@@ -64,9 +64,9 @@ iterator chull(xInit, yInit: int64,
         (dx2, dy2) = (mx, my)
     #the search is over
     #top of the stack contains the next active search interval
-  echo mediants, " mediants"
+  # echo mediants, " mediants"
 
-proc trapezoidL(x0, y0, dx, dy: int64): int64 =
+proc trapezoid(x0, y0, dx, dy: int64): int64 =
   ##The number of lattice points (x, y) inside the trapezoid
   ##whose points are (x0, y0), (x0+dx, y0-dy), (x0+dx, 0), (x0, 0),
   ##and such that x0 < x (so we are not counting the left border).
@@ -74,14 +74,15 @@ proc trapezoidL(x0, y0, dx, dy: int64): int64 =
   result += (((dx + 1) * (dy + 1)) shr 1) + 1 #triangle
   result -= y0 + 1 #left border
 
-proc convexLatticeCount(xInit, yInit: int64, 
+proc concaveLatticeCount(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
-  ##under a decreasing convex function.
+  ##under a decreasing concave function.
+  ##This is for f' <= 0 and f'' <= 0.
   ##Does NOT include points at the border with x = xInit.
   for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
-    result += trapezoidL(x, y, dx, dy)
+    result += trapezoid(x, y, dx, dy)
 
 proc circleLatticePointCount(n: int64): int64 =
   let sqrtn = isqrt(n)
@@ -90,15 +91,17 @@ proc circleLatticePointCount(n: int64): int64 =
   proc prune(x, y, dx, dy: int64): bool =
     if x > sqrtn or y <= 0: return true
     return dx * x >= dy * y
-  var L = convexLatticeCount(0, sqrtn, inside, prune)
+  var L = concaveLatticeCount(0, sqrtn, inside, prune)
   return 4*L + 1
 
-proc concaveLatticeCount(xInit, yInit: int64, 
+proc convexLatticeCount(xInit, yInit: int64, 
               xFinal, yFinal: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
-  ##under a decreasing concave function, like y = n/x.
+  ##under a decreasing convex function.
+  ##This is for f' <= 0 and f'' >= 0.
+  ##Does NOT include points at the border with x = xInit.
   proc inBounds(x, y: int64): bool =
     xInit <= x and x <= xFinal and yFinal <= y and y <= yInit + 1
   proc insideFlipped(x, y: int64): bool = 
@@ -106,7 +109,7 @@ proc concaveLatticeCount(xInit, yInit: int64,
   proc pruneFlipped(x, y, dx, dy: int64): bool = 
     (not inBounds(xFinal - x, yInit - y)) or prune(xFinal - x, yInit - y, dx, dy)
   for (x, y, dx, dy) in chull(0, yInit - yFinal - 1, insideFlipped, pruneFlipped):
-    result += trapezoidL(xFinal - x - dx, yInit - y + dy, dx, dy) - 1
+    result += trapezoid(xFinal - x - dx, yInit - y + dy, dx, dy) - 1
 
 proc hyperbolaLatticePointCount(n: int64): int64 =
   let nrt = isqrt(n)
@@ -118,10 +121,7 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
     return x*y <= n
   proc prune(x, y, dx, dy: int64): bool =
     return dx * y >= dy * x
-  var L = concaveLatticeCount(x0, y0, x1, y1, inside, prune)
+  var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
   for i in 1..x0: L += (n div i) + 1
   L -= x1
   return 2*L - nrt*nrt
-
-import ../utils/eutil_timer
-timer: echo hyperbolaLatticePointCount(1e8.int64)

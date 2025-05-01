@@ -116,9 +116,10 @@ It could look something like this:
 <center><img src="/blog/docs/assets/images/wip/large_small_circ_trapezoids.png"></center>
 <br>
 
-As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4]. We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately, if we wish to include them. If you look back at our circle diagrams you'll remember we wanted to leave that axis out of the count from the start, so this is perfect.
+As I've indicated, the most natural thing to do to this polygon is to break it into trapezoids[^4].  
+We obviously don't want to be counting any lattice points twice, which would happen where the trapezoids border each other. Therefore we throw out the points on the left boundary of each trapezoid so they can slot together. Because of that, we have to count the points on the $y$-axis separately, if we wish to include them. If you look back at our circle diagrams you'll remember we wanted to leave that axis out of the count from the start, so this is perfect.
 
-The trapezoids that arise in this manner are defined by the upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
+The trapezoids that arise in this manner are defined by their upper left convex hull point $(x, y)$, and the vector $(dx, -dy)$ to the next convex hull point.[^5] Given these values, is it easy to count the number of lattice points in the trapezoid?  
 
 Of course! The below trapezoid has $(x, y) = (0, 6)$, and $(dx, -dy) = (3, -2)$:
 
@@ -379,15 +380,18 @@ iterator chull(xInit, yInit: int64,
 The actual code is very short, I have just labelled all of the ideas to try to make it as easy to reference as possible. We'll talk about the runtime of this function later, but for now let's use it:
 
 ```nim
-proc convexLatticeCount(xInit, yInit: int64, 
+proc concaveLatticeCount(xInit, yInit: int64, 
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
-  ##under a decreasing convex function.
+  ##under a decreasing concave function.
+  ##This is for f' <= 0 and f'' <= 0.
   ##Does NOT include points at the border with x = xInit.
   for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
     result += trapezoid(x, y, dx, dy)
 ```
+
+I've called it ``concaveLatticeCount`` because the boundary function is concave.
 
 Here, we give the same information as before, but now we're adding up the number of lattice points inside of each generated trapezoid. As discussed before, this does not include the count of points on the left $x$-boundary, with ``x = xInit``, so if you wanted to include those, please do not forget them.
 
@@ -398,14 +402,14 @@ This is the sum $R(n) = \sum_{0 \leq k \leq n} r_2(k)$, if you forgot.
 
 Recall from earlier that we will count the number $L$ of lattice points in the circle such that $x > 0$ and $y \geq 0$, and then get the answer as $4L+1$.
 
-The function ``inside(x, y)`` is easy, we can just check $x^2 + y^2$.
+The function ``inside(x, y)`` is easy, we can just check $x^2 + y^2 \leq n$.
 
-When it comes to interval pruning, recall that we are at a point $(u, v)$ with integer coordinates which failed to land inside the shape, and we have a slope $-p/q$, and we need to test $y' \leq -p/q$ at $x = u$.  
-Implicit differentiation of the curve $x^2 + y^2 = n$ gives $y' = -x/y$.  
-Certainly if $-u/v \leq -p/q$, then also $-u/y \leq -p/q$ where $y = \sqrt{n-u^2} < v$.  
-So we can actually just check $vq \geq up$ which is easier than doing floating points or dealing with unnecessarily ugly numbers. It's possible we could cut out earlier but this is fine.
+When it comes to interval pruning, we are given a point $(x, y)$ with integer coordinates which failed to land inside the shape, and we have a slope $-dy/dx$, and we need to test $f'(x) \leq -dy/dx$.  
+Implicit differentiation of the curve $x^2 + f(x)^2 = n$ gives $f'(x) = -x/f(x)$.  
+Certainly if $-x/y \leq -dy/dx$, then also $-x/f(x) \leq -dy/dx$ since $y > f(x)$.  
+So we can actually just check $dx \cdot x \geq dy \cdot y$ which is easier than doing floating points or dealing with unnecessarily ugly numbers. It's possible we could cut out earlier but this is fine.
 
-Here's an implementation: TODO mess with variable names in above paragraph + prune below?
+Here's an implementation:
 
 ```nim
 proc circleLatticePointCount(n: int64): int64 =
@@ -415,7 +419,7 @@ proc circleLatticePointCount(n: int64): int64 =
   proc prune(x, y, dx, dy: int64): bool =
     if x > sqrtn or y <= 0: return true
     return dx * x >= dy * y
-  var L = convexLatticeCount(0, sqrtn, inside, prune)
+  var L = concaveLatticeCount(0, sqrtn, inside, prune)
   return 4*L + 1
 ```
 
@@ -452,13 +456,16 @@ How will the functions ``inside`` and ``prune`` change?
 The first is easy enough, we should use ``not inside(x1 - x, y1 - y)``.
 
 For ``prune(x, y, dx, dy)``, we need to see if $f'(x) = f_0'(x_1 - x)$ is at most $-dy/dx$, so we just use ``prune(x_1 - x, y_1 - y, dx, dy)``. It is all very straightforward.
+
 ## How Many Trapezoids?
 
 ---
 
 ## Summing Divisor Function $\sigma$
 
-## Counting Powerful Numbers Up To $10^{45}$
+## Counting Primitive Integer Solutions to a Bivariate Quadratic
+
+## Counting Powerful Numbers (maybe?)
 
 ---
 
