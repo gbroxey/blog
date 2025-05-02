@@ -518,9 +518,10 @@ It is helpful to examine the first few steps of the convex hull walk on a shape 
 <center><img src="/blog/docs/assets/images/wip/anim_perb.gif"></center>
 <br>
 
-I've labeled a very wide, flat section of this boundary, which has length $\Theta(n)$ (maybe like $n/2$ or something).  
+I've labeled a very wide, flat section of this boundary, which has length $\Theta(n)$ (maybe like $n/2$).  
 This step, which takes forever to run, is descending the Stern-Brocot tree.  
-We're calculating mediants of the interval $[\frac{0}{1}, \frac{1}{0}]$ towards the shallower end, and every single time, that mediant fits. So we keep splitting the interval, descending to $[\frac{0}{1}, \frac{1}{1}]$, then $[\frac{0}{1}, \frac{1}{2}]$, then $[\frac{0}{1}, \frac{1}{3}]$, and so on. Our interval shrinks, in this case, until we get to about $[\frac{0}{1}, \frac{1}{\lfloor n/2 \rfloor}]$ or something, at which point we have $\Theta(n)$ endpoints sitting in the stack, which is completely horrible. The same thing would necessarily happen at an extremely steep section of a curve.
+We're calculating mediants of the interval $[\frac{0}{1}, \frac{1}{0}]$ towards the shallower end, and every single time, that mediant fits. So we keep splitting the interval, descending to $[\frac{0}{1}, \frac{1}{1}]$, then $[\frac{0}{1}, \frac{1}{2}]$, then $[\frac{0}{1}, \frac{1}{3}]$, and so on. Our interval shrinks, in this case, until we get to about $[\frac{0}{1}, \frac{1}{\lfloor n/2 \rfloor}]$, at which point we have $\Theta(n)$ endpoints sitting in the stack, which is completely horrible.  
+The same thing would necessarily happen at an extremely steep section of a curve.
 
 The solution is mentioned as a footnote in [Min_25's writeup][min25]:
 
