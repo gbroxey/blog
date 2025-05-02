@@ -524,7 +524,7 @@ We're calculating mediants of the interval $[\frac{0}{1}, \frac{1}{0}]$ towards 
 
 The solution is mentioned as a footnote in [Min_25's writeup][min25]:
 
-> $\sigma_0(n)$ の総和に対応します。$\newcommand{\apo}{'}f\apo{}\apo(x) = 2n/x^3$ なので、  
+> $\sigma_0(n)$ の総和に対応します。$f^{\prime\prime}(x) = 2n/x^3$ なので、  
 > $\sqrt[3]{2n} < x \leq \sqrt{n}$ の部分について、凸包を取ります。
 
 
