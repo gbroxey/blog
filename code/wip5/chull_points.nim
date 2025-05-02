@@ -148,9 +148,10 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
   proc prune(x, y, dx, dy: int64): bool =
     return dx * y >= dy * x
   var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
-  for i in 1..x0: L += (n div i) + 1
-  L -= x1
+  for i in 1..x0: #add in the points with x <= x0
+    L += (n div i) + 1
+  L -= x1 #get rid of the points on the x-axis
   return 2*L - nrt*nrt
 
 import ../utils/eutil_timer
-timer: echo hyperbolaLatticePointCountBad(1e6.int64)
+timer: echo hyperbolaLatticePointCount(1e17.int64)

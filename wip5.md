@@ -527,7 +527,40 @@ The solution is mentioned as a footnote in [Min_25's writeup][min25]:
 > $\sigma_0(n)$ の総和に対応します。$f^{\prime\prime}(x) = 2n/x^3$ なので、  
 > $\sqrt[3]{2n} < x \leq \sqrt{n}$ の部分について、凸包を取ります。
 
+They calculate the second derivative of $f$, and then deduce that you are supposed to use the convex hull strategy on the domain $\sqrt[3]{2n} < x \leq \sqrt{n}$. They elaborate a bit earlier in their article:
 
+> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する xx の範囲（例えば、$|f^{\prime\prime}(x)|<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
+
+Roughly, the regions where the slope is changing slowly, for instance with $|f^{\prime\prime}| < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low. Ideally this is the case, since then we can hop large distances without generating many trapezoids.
+
+On the other hand, if the slope of the boundary is too steep or too shallow, we get a situation like pictured above, in which we need to calculate too many mediants to proceed with the chull walk. There is [another way to deal with this](#appendix-c---binary-search-for-mediants-and-edges) later, but for now we will cut out the badly behaved sections of the curve and handle them separately.
+
+For the hyperbola, we'll avoid the initial region of extremely high slope by computing the sum $\sum \left\lfloor \frac{n}{x}\right\rfloor$ over $1 \leq x \leq (2n)^{1/3}$ separately, and then give the rest of the region up to $\sqrt{x}$ to the hull hopper.  
+
+Here's how it looks:
+
+```nim
+proc hyperbolaLatticePointCount(n: int64): int64 =
+  let nrt = isqrt(n)
+  var x0 = iroot(2*n, 3)
+  var y0 = n div x0
+  var x1 = nrt
+  var y1 = n div x1
+  proc inside(x, y: int64): bool =
+    return x*y <= n
+  proc prune(x, y, dx, dy: int64): bool =
+    return dx * y >= dy * x
+  var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
+  for i in 1..x0: #add in the points with x <= x0
+    L += (n div i) + 1
+  L -= x1 #get rid of the points on the x-axis
+  return 2*L - nrt*nrt
+```
+
+Now it finishes for $n = 10^{17}$ in about a half a second, compared to over two seconds for the simple algorithm. It overflows for $10^{18}$ (oops) but when converted to Int128s, it finishes calculating $D(10^{24})$ in about 5 minutes. The standard method would take hours without some other strange optimizations.
+
+At last, we've made our $R(n)$ and $D(n)$ faster!  
+But there's a question burning in our minds, which is
 
 ## How Many Trapezoids?
 
@@ -571,6 +604,8 @@ proc R(n: int64): int64 =
 You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \ldots$ if you want.
 
 ## Addendum B - Using More Symmetry
+
+## Appendix C - Binary Search for Mediants and Edges
 
 ---
 
