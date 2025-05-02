@@ -530,9 +530,9 @@ The solution is mentioned as a footnote in [Min_25's writeup][min25]:
 
 They calculate the second derivative of $f$, and then deduce that you are supposed to use the convex hull strategy on the domain $\sqrt[3]{2n} < x \leq \sqrt{n}$. They elaborate a bit earlier in their article:
 
-> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する xx の範囲（例えば、$|f^{\prime\prime}(x)|<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
+> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する xx の範囲（例えば、$\lvert f^{\prime\prime}(x)\rvert<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
 
-Roughly, the regions where the slope is changing slowly, for instance with $|f^{\prime\prime}| < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low. Ideally this is the case, since then we can hop large distances without generating many trapezoids.
+Roughly, the regions where the slope is changing slowly, for instance with $\lvert f^{\prime\prime} \rvert < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low. Ideally this is the case, since then we can hop large distances without generating many trapezoids.
 
 On the other hand, if the slope of the boundary is too steep or too shallow, we get a situation like pictured above, in which we need to calculate too many mediants to proceed with the chull walk. There is [another way to deal with this](#appendix-c---binary-search-for-mediants-and-edges) later, but for now we will cut out the badly behaved sections of the curve and handle them separately.
 
