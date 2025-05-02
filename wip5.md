@@ -44,6 +44,8 @@ proc R(n: int64): int64 =
 
 This takes about 1 sec to compute `R(10^18) = 3141592653589764829`.
 
+---
+
 ### Divisor Count Summatory Function
 
 We considered in [summing multiplicative functions 1][mult1] how to compute the partial sums of the function $d(n)$, defined as the number of divisors of $n$. The summatory function is written as
@@ -81,11 +83,15 @@ proc D(n: int64): int64 =
 For small values of $n$, this simple algorithm is certainly all you need. Even at $n = 10^{17}$ it is perfectly good at only a bit over two seconds to compute the answer.  
 But if we want to push it to something like $n = 10^{24}$, which is more around the range we're interested in today, we will need to do something more involved.[^3]
 
+---
+
 ### Bigger Integers
 
 Oh, right, so the thing is, we want to have our inputs and outputs much larger than $10^{19}$ which is roughly the limit of a 64-bit signed integer. If you're doing this in something like Python where bigger integers are handled for you automatically then you don't really have to worry about this.
 
 The language I've been using so far, Nim, does not have a built in BigInt or Int128 type, which is what we'd love to be using for this. Because of that, we need to find a third party solution, or implement our own. Given that this article isn't about how to implement fast bigger integer data types, we would opt for something third party. What I found works best is [nint128][nint128], which is a package I use in my own Project Euler library. So, if you're using Nim and want to run these functions for the large inputs they're really built for, you can modify the code that is to follow so that it uses whatever package you choose.
+
+---
 
 ## Convex Hulls
 
@@ -150,6 +156,8 @@ Now we are convinced that, given the points of the convex hull of a shape, we ca
 <center><img src="/blog/docs/assets/images/wip/circ_trapezoids.png"></center>
 <br>
 
+---
+
 ### Wait, a Hyperbola Does Not Make a Convex Set
 
 Oops. Okay, but helpfully, we are allowed to count whatever points we want, so instead we'll pretend we're counting the points outside of the hyperbola. We can rotate everything around like this:
@@ -178,6 +186,8 @@ It is nearly the same situation as the regular trapezoids. They'll be slotting t
 This time, however, we also want to throw out the upper right corner of each generated trapezoid, since that one is actually on the boundary of the convex hull of the bad points.
 
 We'll come back to these anti-trapezoids later once we revisit the hyperbola case.
+
+---
 
 ## Finding the Convex Hull
 
@@ -298,6 +308,8 @@ We can determine that no further mediants work, and we can abandon the interval.
 Otherwise, we may possibly find a shallower slope than $\frac{a}{b}$ somewhere.  
 In this case, split the interval at $\frac{a+c}{b+d}$.
 
+---
+
 ## Generic Implementation
 
 It's time...
@@ -396,6 +408,8 @@ I've called it ``concaveLatticeCount`` because the boundary function is concave.
 
 Here, we give the same information as before, but now we're adding up the number of lattice points inside of each generated trapezoid. As discussed before, this does not include the count of points on the left $x$-boundary, with ``x = xInit``, so if you wanted to include those, please do not forget them.
 
+---
+
 ## Counting a Circle's Lattice Points
 
 Let's apply the function we made to the problem of counting all the lattice points inside a circle.  
@@ -437,6 +451,8 @@ The green rays are slopes on the stack which form endpoints of search intervals,
 
 As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
 I've included it [at the end](#addendum-b---using-more-symmetry).
+
+---
 
 ## Counting a Hyperbola's Lattice Points
 
@@ -530,7 +546,7 @@ The solution is mentioned as a footnote in [Min_25's writeup][min25]:
 
 They calculate the second derivative of $f$, and then deduce that you are supposed to use the convex hull strategy on the domain $\sqrt[3]{2n} < x \leq \sqrt{n}$. They elaborate a bit earlier in their article:
 
-> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する xx の範囲（例えば、$\lvert f^{\prime\prime}(x)\rvert<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
+> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する $x$ の範囲（例えば、$\lvert f^{\prime\prime}(x)\rvert<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
 
 Roughly, the regions where the slope is changing slowly, for instance with $\lvert f^{\prime\prime} \rvert < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low. Ideally this is the case, since then we can hop large distances without generating many trapezoids.
 
@@ -569,9 +585,17 @@ But there's a question burning in our minds, which is
 
 ## Summing Divisor Function $\sigma$
 
+---
+
 ## Counting Primitive Integer Solutions to a Bivariate Quadratic
 
+---
+
 ## Counting Powerful Numbers (maybe?)
+
+---
+
+## Computing Whether $\pi(n)$ is Even or Odd
 
 ---
 
@@ -606,7 +630,7 @@ You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}
 
 ## Addendum B - Using More Symmetry
 
-## Appendix C - Binary Search for Mediants and Edges
+## Addendum C - Binary Search for Mediants and Edges
 
 ---
 
