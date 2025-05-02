@@ -302,8 +302,7 @@ In this case, split the interval at $\frac{a+c}{b+d}$.
 
 It's time...
 
-The algorithm accepts an initial point ``(xInit, yInit)`` on the convex hull.  
-The final $x$-coordinate ``xFinal`` to define the domain `` xInit <= x <= xFinal`` is only implied, and is determined by the next functions.
+The algorithm accepts an initial point ``(x0, y0)`` on the convex hull and a final coordinate ``x1``. It's a little nicer to give it ``x1`` instead of leaving its value implied by the restrictions of the next functions, since this way we can cut the sum a little earlier without modifying the rest of the inputs.
 
 We specifically require the use of ``inside(x, y)`` which is able to quickly determine whether a given point $(x, y)$ is inside the blob, and another function called ``prune(x, y, dx, dy)`` which determines whether any point $(x+n\cdot dx, y - n\cdot dy)$ could potentially land in the blob.  
 That should be all we need.
@@ -313,7 +312,8 @@ The function will return the edges of the upper boundary of the convex hull as `
 Here's how it looks in Nim.
 
 ```nim
-iterator chull(xInit, yInit: int64, 
+iterator chull(x0, y0: int64, 
+              x1: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
   ##Finds the convex hull of integer points
@@ -325,7 +325,7 @@ iterator chull(xInit, yInit: int64,
   ##Also provide prune(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
   ##This works for f'(x) <= 0 and f''(x) <= 0.
   #---
-  var (x, y) = (xInit, yInit)
+  var (x, y) = (x0, y0)
   var stack = @[(0'i64, 1'i64), (1'i64, 0'i64)]
   #stack of slopes (dx, dy) = -dy/dx
   #always kept in order of steepest slope to shallowest slope
@@ -337,7 +337,7 @@ iterator chull(xInit, yInit: int64,
       #no need to make any silly looking chull points
       break
     #use the slope -dy1/dx1 as much as possible
-    while inside(x+dx1, y-dy1):
+    while x + dx1 <= x1 and inside(x + dx1, y - dy1):
       yield (x, y, dx1, dy1)
       x += dx1
       y -= dy1
@@ -349,7 +349,7 @@ iterator chull(xInit, yInit: int64,
     while stack.len != 0:
       (dx1, dy1) = stack[^1]
       #here, [dy2/dx2, dy1/dx1] forms the shallowest slope search interval
-      if inside(x+dx1, y-dy1):
+      if x + dx1 <= x1 and inside(x + dx1, y - dy1):
         break #by requirement 1, this interval contains the next slope
       #otherwise it is useless, so we discard the interval,
       #while maintaining the steeper endpoint
@@ -360,13 +360,13 @@ iterator chull(xInit, yInit: int64,
     #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
     while true:
       var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
-      if inside(x + mx, y - my):
+      if x + mx <= x1 and inside(x + mx, y - my):
         (dx1, dy1) = (mx, my) 
         stack.add (mx, my)
         #stack has the intervals [my/mx, dy1/dx1], [dy1/dx1, ..], ...
         #active interval is [dy2/dx2, my/mx]
       else:
-        if prune(x+mx, y-my, dx1, dy1):
+        if x + mx > x1 or prune(x + mx, y - my, dx1, dy1):
           #slope search prune condition
           #the intervals [(dy2+n*dy1)/(dx2+n*dx1), dy1/dx1] never work
           #fully discard dy2/dx2 and therefore the interval [dy2/dx2,dy1/dx1]
@@ -380,14 +380,15 @@ iterator chull(xInit, yInit: int64,
 The actual code is very short, I have just labelled all of the ideas to try to make it as easy to reference as possible. We'll talk about the runtime of this function later, but for now let's use it:
 
 ```nim
-proc concaveLatticeCount(xInit, yInit: int64, 
+proc concaveLatticeCount(x0, y0: int64, 
+              x1: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
   ##under a decreasing concave function.
   ##This is for f' <= 0 and f'' <= 0.
   ##Does NOT include points at the border with x = xInit.
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
+  for (x, y, dx, dy) in chull(x0, y0, x1, inside, prune):
     result += trapezoid(x, y, dx, dy)
 ```
 
@@ -419,7 +420,7 @@ proc circleLatticePointCount(n: int64): int64 =
   proc prune(x, y, dx, dy: int64): bool =
     if x > sqrtn or y <= 0: return true
     return dx * x >= dy * y
-  var L = concaveLatticeCount(0, sqrtn, inside, prune)
+  var L = concaveLatticeCount(0, sqrtn, sqrtn, inside, prune)
   return 4*L + 1
 ```
 
@@ -442,20 +443,80 @@ I've included it [at the end](#addendum-b---using-more-symmetry).
 Now we're going to actually deal with the anti-trapezoids from earlier.
 
 We have a function $f_0$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
-This time, the function we're curious about is $f_0(x) = n/x$, which is not convex.
+This time, the function we're curious about is $f_0(x) = n/x$, which is not concave.
 
-For a concave function, we assume $f_0$ has nonpositive derivative but a nonnegative second derivative on the interior of the interval. We'll make a convex boundary out of it that we can use. 
+For a convex function like this, for which the set of points underneath it does not form a convex set[^9], we assume $f_0$ has nonpositive derivative but a nonnegative second derivative on the interior of the interval. We'll make a concave boundary out of it that we can use. 
 
 We decided to do this by rotating the function around. For the standard hyperbola, the graph of the function fits roughly in a square, but in general it may be wider than it is tall or something, so we should treat it without the square assumption if we can avoid it.  
 
-Let's use the function $f(x) = y_1 - f_0(x_1 - x)$ on the domain $0 \leq x \leq x_1 - x_0$, where $y_1 \geq f(x_0)$ is the largest possible $y$ value for a point we're interested in.  
-It's possible to solve for it but probably we can just add it as another input to the program.
+Let's use the function $f(x) = 1 + y_0 - f_0(x_1 - x)$ on the domain $0 \leq x \leq x_1 - x_0$, where $y_0 = \lfloor f_0(x_0) \rfloor$ is the largest possible $y$ value for a point we're interested in counting.  
+
+The starting point should correspond to the point directly above $(x_1, y_1)$ where $y_1 = \lfloor f_0(x_1) \rfloor$.  
+This gives us the starting point $(0, y_0 - y_1)$ in the rotated universe.  
+We'll add $(x_1, y_1)$ as an input to the program since that's easiest.
 
 How will the functions ``inside`` and ``prune`` change?
 
-The first is easy enough, we should use ``not inside(x1 - x, y1 - y)``.
+The first is easy enough, we should use ``not inside(x1 - x, 1 + y0 - y)``. Also, to ensure that we don't accidentally go out of bounds
 
-For ``prune(x, y, dx, dy)``, we need to see if $f'(x) = f_0'(x_1 - x)$ is at most $-dy/dx$, so we just use ``prune(x_1 - x, y_1 - y, dx, dy)``. It is all very straightforward.
+For ``prune(x, y, dx, dy)``, we need to see if $f'(x) = f_0'(x_1 - x)$ is at most $-dy/dx$.  
+So we just use ``prune(x_1 - x, 1 + y_0 - y, dx, dy)``. It is all very straightforward.
+
+Finally, we recall from [earlier](#wait-a-hyperbola-does-not-make-a-convex-set) that when we get a trapezoid defined by ``(x, y, dx, dy)`` in the rotated universe, we can figure out what we actually want to count. Here's the image again so you don't have to scroll back up:
+
+<center><img src="/blog/docs/assets/images/wip/antitrapezoid_flip.png"></center>
+<br>
+
+Indeed, when it is rotated back so it sits above the boundary function $f_0$, we can draw a new blue trapezoid defined by ``(x1 - x - dx, 1 + y0 - y + dy, dx, dy)``. We don't want its left boundary or top right corner. Therefore, we should add up ``trapezoid(x1 - x - dx, 1 + y0 - y + dy, dx, dy) - 1`` over every antitrapezoid we get after flipping the boundary upside down.
+
+Here is what that all looks like:
+
+```nim
+proc convexLatticeCount(x0, y0: int64, 
+              x1, y1: int64,
+              inside: (proc (x, y: int64): bool),
+              prune: (proc (x, y, dx, dy: int64): bool)): int64 =
+  ##Uses the chull edges to find the number of lattice points
+  ##under a decreasing convex function.
+  ##This is for f' <= 0 and f'' >= 0.
+  ##Does NOT include points at the border with x = xInit.
+  proc inBounds(x, y: int64): bool =
+    x0 <= x and x <= x1 and y1 <= y and y <= y0 + 1
+  proc insideFlipped(x, y: int64): bool = 
+    inBounds(x1 - x, 1 + y0 - y) and (not inside(x1 - x, 1 + y0 - y))
+  proc pruneFlipped(x, y, dx, dy: int64): bool = 
+    (not inBounds(x1 - x, 1 + y0 - y)) or prune(x1 - x, 1 + y0 - y, dx, dy)
+  for (x, y, dx, dy) in chull(0, y0 - y1, x1, insideFlipped, pruneFlipped):
+    result += trapezoid(x1 - x - dx, 1 + y0 - y + dy, dx, dy) - 1
+```
+
+And finally we can implement the code which computes $D(n)$.
+
+```nim
+proc hyperbolaLatticePointCountBad(n: int64): int64 =
+  let nrt = isqrt(n)
+  var x0 = 1'i64
+  var y0 = n div x0
+  var x1 = nrt
+  var y1 = n div x1
+  proc inside(x, y: int64): bool =
+    return x*y <= n
+  proc prune(x, y, dx, dy: int64): bool =
+    return dx * y >= dy * x
+  var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
+  L += 1 + y0 #add in the points on the left boundary
+  L -= x1 #get rid of the points on the x-axis
+  return 2*L - nrt*nrt
+```
+
+If you test this for $D(10^{17})$, unfortunately, you will have to wait for a while. It's a shame, but actually, the way the chull algorithm is written gives us a terrible $O(n)$ runtime for this case. That's significantly worse than the [easy method](#summing-divisor-function) from earlier, which ran in $O(\sqrt{n})$. So what's happening here?
+
+## What's Happening Here
+
+It is helpful to examine the first few steps of the convex hull walk on a shape which has a large section which is extremely shallow or steep, like the ends of the hyperbola:
+
+<center><img src="/blog/docs/assets/images/wip/anim_perb.gif"></center>
+<br>
 
 ## How Many Trapezoids?
 
@@ -530,3 +591,5 @@ Hi
 [^7]: We can consider $(0, -1)$ to be the steepest vector, and $(1, 0)$ to be the shallowest. So really we're finding $(dx, -dy)$ such that $dy/dx$ is as low as possible, and such that $(x+dx, y-dy)$ fits in the blob.
 
 [^8]: It is
+
+[^9]: This was unnecessarily confusing honestly. A convex function is one where the set of points ABOVE it form a convex set. This is why we have to flip it upside down in that case. A concave function is one where the points underneath it form a convex set, which is the case for the circle function.

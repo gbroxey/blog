@@ -1,6 +1,7 @@
 import ../utils/iops
 
-iterator chull(xInit, yInit: int64, 
+iterator chull(x0, y0: int64, 
+              x1: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
   ##Finds the convex hull of integer points
@@ -12,12 +13,11 @@ iterator chull(xInit, yInit: int64,
   ##Also provide prune(x, y, dx, dy) which returns whether f'(x) <= -dy/dx.
   ##This works for f'(x) <= 0 and f''(x) <= 0.
   #---
-  var (x, y) = (xInit, yInit)
+  var (x, y) = (x0, y0)
   var stack = @[(0'i64, 1'i64), (1'i64, 0'i64)]
   #stack of slopes (dx, dy) = -dy/dx
   #always kept in order of steepest slope to shallowest slope
   #adjacent values form slope search intervals
-  var mediants = 0
   while true:
     var (dx1, dy1) = stack.pop()
     #(dx1, dy1) is the shallowest possible slope in the convex hull
@@ -25,7 +25,7 @@ iterator chull(xInit, yInit: int64,
       #no need to make any silly looking chull points
       break
     #use the slope -dy1/dx1 as much as possible
-    while inside(x+dx1, y-dy1):
+    while x + dx1 <= x1 and inside(x + dx1, y - dy1):
       yield (x, y, dx1, dy1)
       x += dx1
       y -= dy1
@@ -37,7 +37,7 @@ iterator chull(xInit, yInit: int64,
     while stack.len != 0:
       (dx1, dy1) = stack[^1]
       #here, [dy2/dx2, dy1/dx1] forms the shallowest slope search interval
-      if inside(x+dx1, y-dy1):
+      if x + dx1 <= x1 and inside(x + dx1, y - dy1):
         break #by requirement 1, this interval contains the next slope
       #otherwise it is useless, so we discard the interval,
       #while maintaining the steeper endpoint
@@ -47,15 +47,14 @@ iterator chull(xInit, yInit: int64,
 
     #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
     while true:
-      inc mediants
       var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
-      if inside(x + mx, y - my):
+      if x + mx <= x1 and inside(x + mx, y - my):
         (dx1, dy1) = (mx, my) 
         stack.add (mx, my)
         #stack has the intervals [my/mx, dy1/dx1], [dy1/dx1, ..], ...
         #active interval is [dy2/dx2, my/mx]
       else:
-        if prune(x+mx, y-my, dx1, dy1):
+        if x + mx > x1 or prune(x + mx, y - my, dx1, dy1):
           #slope search prune condition
           #the intervals [(dy2+n*dy1)/(dx2+n*dx1), dy1/dx1] never work
           #fully discard dy2/dx2 and therefore the interval [dy2/dx2,dy1/dx1]
@@ -64,7 +63,6 @@ iterator chull(xInit, yInit: int64,
         (dx2, dy2) = (mx, my)
     #the search is over
     #top of the stack contains the next active search interval
-  # echo mediants, " mediants"
 
 proc trapezoid(x0, y0, dx, dy: int64): int64 =
   ##The number of lattice points (x, y) inside the trapezoid
@@ -74,14 +72,15 @@ proc trapezoid(x0, y0, dx, dy: int64): int64 =
   result += (((dx + 1) * (dy + 1)) shr 1) + 1 #triangle
   result -= y0 + 1 #left border
 
-proc concaveLatticeCount(xInit, yInit: int64, 
+proc concaveLatticeCount(x0, y0: int64, 
+              x1: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
   ##under a decreasing concave function.
   ##This is for f' <= 0 and f'' <= 0.
   ##Does NOT include points at the border with x = xInit.
-  for (x, y, dx, dy) in chull(xInit, yInit, inside, prune):
+  for (x, y, dx, dy) in chull(x0, y0, x1, inside, prune):
     result += trapezoid(x, y, dx, dy)
 
 proc circleLatticePointCount(n: int64): int64 =
@@ -91,11 +90,23 @@ proc circleLatticePointCount(n: int64): int64 =
   proc prune(x, y, dx, dy: int64): bool =
     if x > sqrtn or y <= 0: return true
     return dx * x >= dy * y
-  var L = concaveLatticeCount(0, sqrtn, inside, prune)
+  var L = concaveLatticeCount(0, sqrtn, sqrtn, inside, prune)
   return 4*L + 1
 
-proc convexLatticeCount(xInit, yInit: int64, 
-              xFinal, yFinal: int64,
+proc circleLatticePointCount2(n: int64): int64 =
+  let sqrtn = isqrt(n)
+  proc inside(x, y: int64): bool =
+    return x*x + y*y <= n and y >= 0
+  proc prune(x, y, dx, dy: int64): bool =
+    if x > sqrtn or y <= 0: return true
+    return dx * x >= dy * y
+  var x1 = isqrt(n div 2)
+  var L = 1 + sqrtn + concaveLatticeCount(0, sqrtn, x1, inside, prune)
+  L = (2*L - (1+x1)*(1+x1)) - sqrtn - 1
+  return 4*L + 1
+
+proc convexLatticeCount(x0, y0: int64, 
+              x1, y1: int64,
               inside: (proc (x, y: int64): bool),
               prune: (proc (x, y, dx, dy: int64): bool)): int64 =
   ##Uses the chull edges to find the number of lattice points
@@ -103,13 +114,28 @@ proc convexLatticeCount(xInit, yInit: int64,
   ##This is for f' <= 0 and f'' >= 0.
   ##Does NOT include points at the border with x = xInit.
   proc inBounds(x, y: int64): bool =
-    xInit <= x and x <= xFinal and yFinal <= y and y <= yInit + 1
+    x0 <= x and x <= x1 and y1 <= y and y <= y0 + 1
   proc insideFlipped(x, y: int64): bool = 
-    inBounds(xFinal - x, yInit - y) and (not inside(xFinal - x, yInit - y))
+    inBounds(x1 - x, 1 + y0 - y) and (not inside(x1 - x, 1 + y0 - y))
   proc pruneFlipped(x, y, dx, dy: int64): bool = 
-    (not inBounds(xFinal - x, yInit - y)) or prune(xFinal - x, yInit - y, dx, dy)
-  for (x, y, dx, dy) in chull(0, yInit - yFinal - 1, insideFlipped, pruneFlipped):
-    result += trapezoid(xFinal - x - dx, yInit - y + dy, dx, dy) - 1
+    (not inBounds(x1 - x, 1 + y0 - y)) or prune(x1 - x, 1 + y0 - y, dx, dy)
+  for (x, y, dx, dy) in chull(0, y0 - y1, x1, insideFlipped, pruneFlipped):
+    result += trapezoid(x1 - x - dx, 1 + y0 - y + dy, dx, dy) - 1
+
+proc hyperbolaLatticePointCountBad(n: int64): int64 =
+  let nrt = isqrt(n)
+  var x0 = 1'i64
+  var y0 = n div x0
+  var x1 = nrt
+  var y1 = n div x1
+  proc inside(x, y: int64): bool =
+    return x*y <= n
+  proc prune(x, y, dx, dy: int64): bool =
+    return dx * y >= dy * x
+  var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
+  L += 1 + y0 #add in the points on the left boundary
+  L -= x1 #get rid of the points on the x-axis
+  return 2*L - nrt*nrt
 
 proc hyperbolaLatticePointCount(n: int64): int64 =
   let nrt = isqrt(n)
@@ -125,3 +151,6 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
   for i in 1..x0: L += (n div i) + 1
   L -= x1
   return 2*L - nrt*nrt
+
+import ../utils/eutil_timer
+timer: echo hyperbolaLatticePointCountBad(1e6.int64)
