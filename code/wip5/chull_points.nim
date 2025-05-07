@@ -220,5 +220,5 @@ proc D(n: int64): int64 =
   result -= nsqrt*nsqrt
 
 import ../utils/eutil_timer
-timer: echo D(1e6.int64)
-timer: echo hyperbolaLatticePointCountBad(1e6.int64)
+timer: echo D(1e17.int64)
+timer: echo hyperbolaLatticePointCount(1e17.int64)

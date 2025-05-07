@@ -594,18 +594,22 @@ This step, which takes forever to run, is descending the Stern-Brocot tree.
 We're calculating mediants of the interval $[\frac{0}{1}, \frac{1}{0}]$ towards the shallower end, and every single time, that mediant fits. So we keep splitting the interval, descending to $[\frac{0}{1}, \frac{1}{1}]$, then $[\frac{0}{1}, \frac{1}{2}]$, then $[\frac{0}{1}, \frac{1}{3}]$, and so on. Our interval shrinks, in this case, until we get to about $[\frac{0}{1}, \frac{1}{\lfloor n/2 \rfloor}]$, at which point we have $\Theta(n)$ endpoints sitting in the stack, which is completely horrible.  
 The same thing would necessarily happen at an extremely steep section of a curve.
 
-The solution is mentioned as a footnote in [Min_25's writeup][min25]:
+So, if we're aiming to count the number of points under a certain curve, it is beneficial to completely cut out the sections where the slope is extremely high. Helpfully, when this happens, the function's value will be changing very quickly, so these regions should be relatively small. The regions where the slope is changing extremely slowly can be handled by summing over $y$ rather than $x$, if necessary.
+
+More relevant information is mentioned as a footnote in [Min_25's writeup][min25]:
 
 > $\sigma_0(n)$ の総和に対応します。$f^{\prime\prime}(x) = 2n/x^3$ なので、  
 > $\sqrt[3]{2n} < x \leq \sqrt{n}$ の部分について、凸包を取ります。
 
 They calculate the second derivative of $f$, and then deduce that you are supposed to use the convex hull strategy on the domain $\sqrt[3]{2n} < x \leq \sqrt{n}$. They elaborate a bit earlier in their article:
 
-> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する $x$ の範囲（例えば、$\lvert f^{\prime\prime}(x)\rvert<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。実際、$f(x)=\sqrt{n^2 - x^2}$​ は $\Theta(n^{2/3})$ 個、$f(x)=n/x$ は $\Theta(n^{1/3}\log(n))$ (?) 個ほどの頂点によって凸包を構成できます。
+> ただ、これらの関数 ($f(x)= \sqrt{n^2 - x^2}$, $f(x)=n/x$) は傾きが緩やかに変化する $x$ の範囲（例えば、$\lvert f^{\prime\prime}(x)\rvert<1$ の範囲）が比較的広く、整数点集合 $P(n):=\{(x,\lfloor f(x)\rfloor) \mid 1 \leq x \leq n\}$ に対する凸包の端点数は少ないです。
 
-Roughly, the regions where the slope is changing slowly, for instance with $\lvert f^{\prime\prime} \rvert < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low. Ideally this is the case, since then we can hop large distances without generating many trapezoids.
+Roughly, the regions where the slope is changing slowly, for instance with $\lvert f^{\prime\prime} \rvert < 1$, are relatively wide. As a result, the number of vertices on the convex hull on those regions is comparatively low.
 
-On the other hand, if the slope of the boundary is too steep or too shallow, we get a situation like pictured above, in which we need to calculate too many mediants to proceed with the chull walk. There is [another way to deal with this](#appendix-c---binary-search-for-mediants-and-edges) later, but for now we will cut out the badly behaved sections of the curve and handle them separately.
+Ideally this is the case, since then we can hop large distances without generating many trapezoids.
+
+On the other hand, if the slope of the boundary is too steep or too shallow, we get a situation like pictured above, in which we need to calculate too many mediants to proceed with the chull walk.
 
 For the hyperbola, we'll avoid the initial region of extremely high slope by computing the sum $\sum \left\lfloor \frac{n}{x}\right\rfloor$ over $1 \leq x \leq (2n)^{1/3}$ separately, and then give the rest of the region up to $\sqrt{x}$ to the hull hopper.  
 
@@ -617,19 +621,18 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
   var x0 = iroot(2*n, 3)
   var y0 = n div x0
   var x1 = nrt
-  var y1 = n div x1
   proc inside(x, y: int64): bool =
     return x*y <= n
   proc prune(x, y, dx, dy: int64): bool =
-    return dx * y >= dy * x
-  var L = convexLatticeCount(x0, y0, x1, y1, inside, prune)
+    return dx * y <= dy * x
+  var L = convexLatticeCount(x0, y0 + 1, x1, inside, prune)
   for i in 1..x0: #add in the points with x <= x0
     L += (n div i) + 1
   L -= x1 #get rid of the points on the x-axis
   return 2*L - nrt*nrt
 ```
 
-Now it finishes for $n = 10^{17}$ in about a half a second, compared to over two seconds for the simple algorithm. It overflows for $10^{18}$ (oops) but when converted to Int128s, it finishes calculating $D(10^{24})$ in about 5 minutes. The standard method would take hours without some other strange optimizations.
+Now it finishes for $n = 10^{17}$ in about a 0.06 seconds, compared to over two seconds for the simple algorithm. It overflows for $10^{18}$ (oops) but when converted to Int128s, it finishes calculating $D(10^{24})$ in about 3 minutes. The standard method would take hours without some other strange optimizations.
 
 At last, we've made our $R(n)$ and $D(n)$ faster!  
 But there's a question burning in our minds, which is
