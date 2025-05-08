@@ -1,6 +1,6 @@
 ---
 title: "Convex Hulls Title WIP"
-tags: [algorithms]
+tags: [algorithms, number theory]
 date: 1970-01-01
 ---
 
@@ -639,6 +639,16 @@ But there's a question burning in our minds, which is
 
 ## How Many Trapezoids?
 
+Not that many.
+
+One simple result in the desired direction is a comment by **dacin21** on [this Codeforces blog post][cf-cvx-edge-bound]:
+
+> A convex lattice polygon with coordinates in $[0, N]$ has at most $O(N^{2/3})$ vertices.
+
+I'll present a very slightly tweaked version here.
+
+> 
+
 ---
 
 ## Slope Stack Compression
@@ -712,6 +722,7 @@ Hi
 [animus]: https://projecteuler.net/action=redirect;post_id=229299
 [min25]: https://web.archive.org/web/20211009144532/https://min-25.hatenablog.com/entry/2018/05/03/145505
 [iarch]: https://archive.org/donate
+[cf-cvx-edge-bound]: https://codeforces.com/blog/entry/62183
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 
