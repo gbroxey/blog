@@ -645,13 +645,14 @@ One simple result in the desired direction is a comment by dacin21 on [this Code
 
 > **Lemma 3.** A convex lattice polygon with coordinates in $[0, N]$ has at most $O(N^{2/3})$ vertices.
 
-It turns out, after researching this topic for a while, this sort of idea has been a popular one to study. A more flexible theorem was proved by V. I. Arnol'd in a 1980 paper titled _Statistics of Integral Convex Polygons_:
+It turns out, after researching this topic for a while, this sort of idea has been a popular one to study.  
+A more flexible theorem was proved byArnol'd in a paper titled _Statistics of Integral Convex Polygons_:
 
 > **Lemma 4.** The number of vertices of a convex polygon of area $\mu/2$ with vertices at integral points of the plane does not exceed $16\mu^{1/3}$.
 
 It's phrased in terms of $\mu$, twice the area of the polygon, since that is necessarily an integer (see [Pick's Theorem][picks]). The previous theorem on the number of vertices of a convex lattice polygon follows by noticing that the area of a convex polygon living in $[0, N]^2$ is certainly at most $N^2$, so it must have at most $16*2^{1/3} N^{2/3}$ vertices.
 
-Another paper by [Stanley Rabinowitz][rabinowitz-convex-ngon-bound] improves the constant term considerably. I highly recommend reading the paper, as the result is intriguing and the proof is short and beautiful. The obtained result is
+[Another paper, by Stanley Rabinowitz,][rabinowitz-convex-ngon-bound] improves the constant term considerably. I highly recommend reading it, as the result is intriguing and the proof is short and beautiful. The obtained result is
 
 > **Lemma 5.** If $A$ is the area of a convex lattice $n$-gon, then  
 > 
@@ -670,7 +671,8 @@ For now, we can easily apply the mentioned theorems to show that the number of d
 Applying these results to the hyperbola is slightly more involved.  
 The convex shape involved for $xy = n$ has an area not greater than $n^2$, which gives us a bound of $O(n^{2/3})$ on the number of slopes required, which is pretty horrible.  
 
-We can do slightly better by using the bounding rectangle $[(2n)^{1/3}, \sqrt{n}] \times [\sqrt{n}, 2^{-1/3} n^{2/3}]$ which covers the short segment of the hyperbola that we actually feed to the chull algorithm. It has an area of $O(n^{7/6})$, which then tells us that the number of distinct slopes used in the convex hull over that interval is $O(n^{7/18})$.
+We can do slightly better by using the bounding rectangle $[(2n)^{1/3}, \sqrt{n}] \times [\sqrt{n}, 2^{-1/3} n^{2/3}]$ which covers the short segment of the hyperbola that we actually feed to the chull algorithm.  
+It has an area of $O(n^{7/6})$, which then tells us that the number of distinct slopes used in the convex hull over that interval is $O(n^{7/18})$.
 
 The best known (?) estimate is not actually very hard to obtain from here.  
 First, [Min_25][min25] presents the bound $O(n^{1/3} \log(n))$ on the number of trapezoids. They do include a small question mark since they do not provide a proof or a link to a proof. The correct idea is not too difficult to find, and the logarithmic factor makes a very good hint if you want to try it yourself.
@@ -691,7 +693,7 @@ We can look inside each rectangle specifically and see how the points inside beh
 <center><img src="/blog/docs/assets/images/wip/hyperbola_one_rectangle.png"></center>
 <br>
 
-Shown is one rectangle (we will describe how they are chosen shortly) and the portion of the convex hull which lies inside, on the left. Considering all of the lattice points which lie inside the rectangle and strictly above the hyperbola, we can also take _their_ convex hull, which is shown on the right.  
+Shown is one rectangle (we will describe how they are chosen shortly) and the portion of the convex hull which lies inside, on the left. Considering all of the lattice points which lie inside the rectangle and strictly above the hyperbola, we can also take _their_ convex hull, which is shown on the right[^10].  
 It seems we have more points.
 
 > **Lemma 6.** A vertex $v$ of the convex hull above the hyperbola is also a vertex of the convex hull of the restricted set of points inside a rectangle containing $v$.
@@ -814,6 +816,7 @@ Hi
 [voronoi]: https://gdz.sub.uni-goettingen.de/id/PPN243919689_0126?tify=%7B%22view%22:%22info%22,%22pages%22:%5B245%5D%7D
 [hyperbola-chull-bound]: https://arxiv.org/pdf/2501.19193
 [rabinowitz-convex-ngon-bound]: http://old.stanleyrabinowitz.com/bibliography/bounds.pdf
+[rabinowitz-convex-census]: http://stanleyrabinowitz.com/download/census-revised.pdf
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 
@@ -832,3 +835,5 @@ Hi
 [^8]: It is
 
 [^9]: This was unnecessarily confusing honestly. A convex function is one where the set of points ABOVE it form a convex set. This is why we have to flip it upside down in that case. A concave function is one where the points underneath it form a convex set, which is the case for the circle function.
+
+[^10]: The convex lattice polygon on the right contains exactly one interior point. It is a representative of one of the 16 equivalence classes of convex lattice polygons which contain only one interior point, up to lattice equivalence. Very curious.. see [this other Rabinowitz paper][rabinowitz-convex-census] to see more about that.
