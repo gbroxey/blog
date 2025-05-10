@@ -711,11 +711,34 @@ $$\left(\frac{2^8\pi^2(k-1)^2}{k}m\right)^{\frac{1}{3}} (\log_k m + 2)$$
 
 Here, $k \geq 2$ is the geometric series ratio that determines the rectangle coordinates, which has some other restrictions, and $m$ is related to our $n$ by the determinant of the chosen lattice. In our case the lattice is just $\mathbb Z^2$ so $m = n$ and we get something $O(n^{1/3} \log(n))$ but wow, complicated looking.
 
-Anyway, we choose whatever geometric series looking thing we want for the $x$ coordinates of the rectangles, and then decide how tall the rectangles will be.
+Anyway, we choose whatever geometric series looking thing we want, say $2^0, 2^1, \ldots, 2^{\ell - 1}, 2^\ell$.  
+We choose $\ell$ such that $2^{\ell - 1} < n \leq 2^\ell$, so we have $\ell = O(\log n)$.
+
+Now we form a sequence of points $r_0, r_1, \ldots, r_\ell$ as $r_i = (2^i, n/2^i)$, which are all on the hyperbola. Note that these are likely not lattice points, and they may extend well past the end of the hyperbola, but who cares.
+
+We will form $\ell$ rectangles from these points. In our case, we took the convex hull of the lattice points strictly above the hyperbola, whereas Alcántara also included the points on the hyperbola. There's not much difference, but that means for me it's a bit simpler to have slightly taller rectangles.
+
+Rectangle $i$, for $0 \leq i < \ell$, will have its top left point at $r_i + (0, 1)$, and its bottom right point at $r_{i+1}$.  
+This way, every point $(x, y)$ which is at most one unit above the hyperbola will be covered by a rectangle. This is enough to ensure we've covered the entire convex hull we are thinking about.
+
+Rectangle $i$ has an area of
+
+$$\begin{align*}
+(2^{i+1} - 2^i) * \left(\frac{n}{2^i} + 1 - \frac{n}{2^{i+1}}\right) &= 2^i * \left(\frac{n}{2^{i+1}} + 1\right)\\
+&= \frac{n}{2} + 2^i \leq \frac{3}{2}n
+\end{align*}$$
+
+Plenty good enough, as now the convex hulls inside of each rectangle have $O(n^{1/3})$ vertices each, for a total of $O(n^{1/3} \log(n))$ vertices for the hyperbola, as desired.
+
+If you want a more detailed analysis of this idea, please read [the paper by Alcántara and others][hyperbola-chull-bound]. My work here was somewhat sloppy, but this article is long enough as it is, and we somehow have more I want to get to.
+
+So, we've figured out the order of magnitude of the number of slopes on the convex hull for the circle and for the hyperbola. Obviously in the general case you'd have to do your analysis tailored to the function you're using. But even now, after all this work, there's a question burning in our minds, which is
+
+## Really, How Many Trapezoids? 
 
 ---
 
-## Slope Stack Compression
+## Memory Usage, and Slope Stack Compression
 
 ---
 
