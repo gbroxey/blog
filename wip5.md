@@ -632,7 +632,7 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
   return 2*L - nrt*nrt
 ```
 
-Now it finishes for $n = 10^{17}$ in about a 0.06 seconds, compared to over two seconds for the simple algorithm. It overflows for $10^{18}$ (oops) but when converted to Int128s, it finishes calculating $D(10^{24})$ in about 3 minutes. The standard method would take hours without some other strange optimizations.
+Now it finishes for $n = 10^{17}$ in about 0.06 seconds, compared to over two seconds for the simple algorithm. It overflows for $10^{18}$ (oops) but when converted to Int128s, it finishes calculating $D(10^{24})$ in about 3 minutes. The standard method would take hours without some other strange optimizations.
 
 At last, we've made our $R(n)$ and $D(n)$ faster!  
 But there's a question burning in our minds, which is
