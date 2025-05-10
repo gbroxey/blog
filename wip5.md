@@ -691,7 +691,8 @@ We can look inside each rectangle specifically and see how the points inside beh
 <center><img src="/blog/docs/assets/images/wip/hyperbola_one_rectangle.png"></center>
 <br>
 
-Shown is one rectangle (we will describe how they are chosen shortly) and the portion of the convex hull which lies inside, on the left. Considering all of the lattice points which lie inside the rectangle and strictly above the hyperbola, we can also take _their_ convex hull, which is shown on the right. It seems we have more points.
+Shown is one rectangle (we will describe how they are chosen shortly) and the portion of the convex hull which lies inside, on the left. Considering all of the lattice points which lie inside the rectangle and strictly above the hyperbola, we can also take _their_ convex hull, which is shown on the right.  
+It seems we have more points.
 
 > **Lemma 6.** A vertex $v$ of the convex hull above the hyperbola is also a vertex of the convex hull of the restricted set of points inside a rectangle containing $v$.
 
@@ -700,6 +701,17 @@ Basically, looking at the different segments of the hyperbola will not mysteriou
 _Proof._ Given a set of points $A \subset \mathbb Z^2$ and a subset $B \subset A$, the convex hull of $B$ is a subset of the convex hull of $A$. If a vertex $v$ were an interior point of the convex hull inside a rectangle, then it would also be an interior point of the entire convex hull above the hyperbola. Similarly if $v$ were a boundary point of the convex hull inside a rectangle, then it would necessarily be a boundary point or interior point of the larger convex hull. $\proofqed$
 
 This justifies counting the number of vertices of the convex hull of the points inside each rectangle and above the hyperbola. The total of these would constitute a (perhaps loose) limit on the number of vertices of the convex hull we're interested in. Also notice that the same strategy of proof, and a similar bound, would apply to whatever hyperbola segment we really care about here.
+
+Now, following Alcántara, we choose the $x$ coordinates of the rectangles as a geometric series. The specifics sort of don't really matter for us, as we're not looking for a super specific estimate. Actually, let's look at the expression that Alcántara produces, just for fun:
+
+> ... Hence, the total number of vertices (including the first and last) is at
+most
+> 
+$$\left(\frac{2^8\pi^2(k-1)^2}{k}m\right)^{\frac{1}{3}} (\log_k m + 2)$$
+
+Here, $k \geq 2$ is the geometric series ratio that determines the rectangle coordinates, which has some other restrictions, and $m$ is related to our $n$ by the determinant of the chosen lattice. In our case the lattice is just $\mathbb Z^2$ so $m = n$ and we get something $O(n^{1/3} \log(n))$ but wow, complicated looking.
+
+Anyway, we choose whatever geometric series looking thing we want for the $x$ coordinates of the rectangles, and then decide how tall the rectangles will be.
 
 ---
 
