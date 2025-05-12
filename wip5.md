@@ -761,9 +761,9 @@ In particular, for the above values, we have at most $0.113n^{1/3}\log(n)$ slope
 It seems, on average, that each distinct slope is only used a few times. The average multiplicity of a slope grows so slowly with $n$ that I would be comfortable calling it effectively constant. Due to this, there is essentially no point doing any sort of binary search or something else to figure out how many times to use a slope. The binary search overhead will be higher, for most slopes, than the savings we end up getting for the slopes with higher multiplicity that we'd be profiting from. 
 
 On the other hand, the maximum multiplicity does seem to grow at a decent rate. It seems somewhat similar to the growth rate of the number of slopes, albeit much smaller.  
-Something like $O(n^{1/3} \log(n))$ or $O(n^{1/3})$ or even $O(n^{1/3} / \log(n))$ seems appropriate here, though this is totally guessing. It's fairly small though.
+Something like $O(n^{1/3} \log(n))$ or $O(n^{1/3})$ or even $O(n^{1/3} / \log(n))$ seems appropriate here, though this is totally guessing.
 
-Looking at the max stack length is worrying, though.  
+Looking at the max stack length is worrying.  
 
 Recall that the stack contains a list of the currently active slope search intervals, and each member of the stack has a pair of int64s (or a Int128s or BigInts for much larger $n$). In the above data, the max stack length is at most $0.64 n^{1/3}$, which seems like a decent fit. If we wished to use $n = 10^{24}$, which we will shortly, we would need to store over 2 gigabytes of slope intervals at a given time. If we wanted to chop up the hyperbola more and parallelize it, we would likely use far more memory.  
 Very bad, especially when [other methods](#addendum-c---other-methods-for) claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
@@ -807,6 +807,10 @@ And here is another log-log plot for $n = 10^{12}$:
 
 <center><img src="/blog/docs/assets/images/wip/multiplicities_1e12_loglog.png"></center>
 <br>
+
+We can make the very reasonable guess that the number of slopes which are used $k$ times is bounded by something like $O(n^{1/3}\log(n)/k)$, which would give us at most $O(n^{1/3} \log(n)^2)$ trapezoids. Looking at the above plots, it seems there is some initial segment (maybe of length $O(n^{1/6})$ or something) which is nice, and then the rest becomes shallower and more chaotic. This initial segment behaves like $O(n^{1/3}\log(n)/k^2)$, which is definitely nice. If this holds for the first $n^{1/6}$ or so multiplicities, then we would get a bound of $O(n^{1/3} \log(n))$ on the number of trapezoids as desired.
+
+Instead of thinking longer about how to prove this, let's just move on to fixing our memory usage.
 
 
 ---
