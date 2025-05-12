@@ -646,7 +646,7 @@ One simple result in the desired direction is a comment by dacin21 on [this Code
 > **Lemma 3.** A convex lattice polygon with coordinates in $[0, N]$ has at most $O(N^{2/3})$ vertices.
 
 It turns out, after researching this topic for a while, this sort of idea has been a popular one to study.  
-A more flexible theorem was proved byArnol'd in a paper titled _Statistics of Integral Convex Polygons_:
+A more flexible theorem was proved by Arnol'd in a paper titled _Statistics of Integral Convex Polygons_:
 
 > **Lemma 4.** The number of vertices of a convex polygon of area $\mu/2$ with vertices at integral points of the plane does not exceed $16\mu^{1/3}$.
 
@@ -738,6 +738,73 @@ So, we've figured out the order of magnitude of the number of slopes on the conv
 
 ## Really, How Many Trapezoids? 
 
+It seems more difficult to obtain an estimate for the number of trapezoids, since each of the $O(n^{1/3} \log(n))$ different slopes may be used multiple times. We can do an experiment though, since we can just pick a very large $n$ and make some observations about the generated convex hull above the hyperbola.
+
+The statistics we'll measure are the number of distinct slopes used, the number of trapezoids, the maximum multiplicity of a single slope, and maximum length of the stack of slope search interval endpoints during the algorithm. After that we'll look at the counts of each slope multiplicity.  
+Remember that this data is for the section of the hyperbola with $\sqrt[3]{2n} \leq x \leq \sqrt{n}$.
+
+Let's start with a few modest $n$, and see how things look.
+
+|n|Slopes|Trapezoids|Avg. Multiplicity|Max Multiplicity|Max Stack Length|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|10<sup>9</sup>|2237|7324|3.27|117|632|
+|10<sup>10</sup>|5579|17432|3.12|315|1358|
+|10<sup>11</sup>|13031|43506|3.34|600|2925|
+|10<sup>12</sup>|30687|103375|3.37|1112|6300|
+|10<sup>13</sup>|72467|240746|3.32|1465|13572|
+|10<sup>14</sup>|167445|573413|3.42|3262|29241|
+|10<sup>15</sup>|389357|1343516|3.45|6344|62996|
+
+The number of slopes is bounded by $O(n^{1/3}\log(n))$.  
+In particular, for the above values, we have at most $0.113n^{1/3}\log(n)$ slopes.
+
+It seems, on average, that each distinct slope is only used a few times. The average multiplicity of a slope grows so slowly with $n$ that I would be comfortable calling it effectively constant. Due to this, there is essentially no point doing any sort of binary search or something else to figure out how many times to use a slope. The binary search overhead will be higher, for most slopes, than the savings we end up getting for the slopes with higher multiplicity that we'd be profiting from. 
+
+On the other hand, the maximum multiplicity does seem to grow at a decent rate. It seems somewhat similar to the growth rate of the number of slopes, albeit much smaller. Something like $O(n^{1/3} \log(n))$ or $O(n^{1/3})$ or even $O(n^{1/3} / \log(n))$ seems appropriate here, though this is totally guessing. It's fairly small though.
+
+Looking at the max stack length is worrying, though.  
+
+Recall that the stack contains a list of the currently active slope search intervals, and each member of the stack has a pair of int64s (or a Int128s or BigInts for much larger $n$). In the above data, the max stack length is at most $0.64 n^{1/3}$, which seems like a decent fit. If we wished to use $n = 10^{24}$, which we will shortly, we would need to store over 2 gigabytes of slope intervals at a given time. If we wanted to chop up the hyperbola more and parallelize it, we would likely use far more memory, if we are not smart about it. Very bad, especially when [other methods](#addendum-c---other-methods-for) claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
+
+Here are the numbers for some larger $n$, using Int128. I also added the runtime of the program I used, which is basically just a port of the previous code for convex functions with int64s.
+
+|n|Slopes|Trapezoids|Avg. Multiplicity|Max Multiplicity|Max Stack Length|Runtime|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|10<sup>20</sup>|24232058|87348561|3.60|99999|2924019|4.2 sec|
+|10<sup>21</sup>|54865170|199175250|3.63|153409|6299607|9.5 sec|
+|10<sup>22</sup>|123923353|453309124|3.66|316227|13572089|21 sec|
+|10<sup>23</sup>|279302259|1027345368|3.68|403183|29240178|47 sec|
+|10<sup>24</sup>|628376523|2325031997|3.70|1070221|62996054|107 sec|
+|10<sup>25</sup>|1411018650|5244999315|3.71|1939594|135720882|238 sec|
+|10<sup>26</sup>|3163435042|11809504985|3.73|3162277|292401775|543 sec|
+|10<sup>27</sup>|7081112826|26550420656|3.75|4349964|629960526|1224 sec|
+
+Note that the calculation for $n = 10^{27}$ used nearly 30 gigabytes of ram.  
+We'll fix that soon and then retest the max stack length and runtimes.
+
+Close to the situation before, the number of slopes is at most $0.114 n^{1/3} \log(n)$ this time. The growth rate is very very consistent, and it appears to me that it is the correct growth rate for the number of slopes.
+
+The runtime also appears to be proportional to $n^{1/3} \log(n)$. Computing the value for $n = 10^{36}$, which happens to be the [largest value on the OEIS][oeisa057494], would take 447 hours singlethreaded, assuming we had fast access to 30 terabytes of ram. Horrifying. Soon we'll have a version which only uses $O(\log(n))$ ram, thankfully.
+
+Well, we've had lots and lots of fun plugging in big numbers and waiting. And making tables of data is also lots of fun, but now we're going to make some charts instead.
+
+The average multiplicity of a slope seems to be roughly constant between 3 and 4, but I'm curious about the actual distribution of multiplicities. We can see what this looks like for $n = 10^9$ by making a scatter plot.
+
+<center><img src="/blog/docs/assets/images/wip/multiplicities_1e9_scatter.png"></center>
+<br>
+
+This is somewhat hard to parse, since it is so heavily weighted towards low multiplicities.  
+Here's a log-log plot of the nonzero multiplicities instead:
+
+<center><img src="/blog/docs/assets/images/wip/multiplicities_1e9_loglog.png"></center>
+<br>
+
+And here is another log-log plot for $n = 10^{12}$:
+
+<center><img src="/blog/docs/assets/images/wip/multiplicities_1e12_loglog.png"></center>
+<br>
+
+
 ---
 
 ## Memory Usage, and Slope Stack Compression
@@ -795,7 +862,9 @@ You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}
 
 ## Addendum B - Using More Symmetry
 
-## Addendum C - Binary Search for Mediants and Edges
+## Addendum C - Other Methods for $D(n)$
+
+Talk about Sladkey and Lifchitz, and perhaps Yamanouchi TODO
 
 ---
 
@@ -817,6 +886,7 @@ Hi
 [hyperbola-chull-bound]: https://arxiv.org/pdf/2501.19193
 [rabinowitz-convex-ngon-bound]: http://old.stanleyrabinowitz.com/bibliography/bounds.pdf
 [rabinowitz-convex-census]: http://stanleyrabinowitz.com/download/census-revised.pdf
+[oeisa057494]: https://oeis.org/A057494
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 
