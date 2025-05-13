@@ -257,7 +257,7 @@ _Proof._ Since our interval choices should work no matter what the blob looks li
 <center><img src="/blog/docs/assets/images/wip/lemma1.png"></center>
 <br>
 
-Here I've chosen the parameters $\frac{p}{q} = \frac{3}{5}$, and I've also added the endpoints of the interval $[\frac{1}{5}, \frac{2}{1}]$.
+Here I've chosen the parameters $\frac{p}{q} = \frac{3}{5}$, and I've also added the endpoints of the interval $[\frac{1}{6}, \frac{2}{1}]$.
 
 Requirement 1 says that the steeper endpoint (here $\frac{c}{d} = \frac{2}{1}$) should be such that $(0+d, p-c)$ is inside the triangle, since $(q, p)$ is in the blob. Actually this makes things very obvious, since any point $\frac{c}{d}$ we could use as an endpoint will necessarily land inside the triangle, and so we have $c \leq p$ and $d \leq q$.
 
