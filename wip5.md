@@ -8,6 +8,8 @@ date: 1970-01-01
 
 ---
 
+# Preliminaries
+
 The first thing I'd like to do here is briefly discuss the two main examples we'll be dealing with.
 
 ### Sum of Squares Function $r_2$
@@ -93,7 +95,7 @@ The language I've been using so far, Nim, does not have a built in BigInt or Int
 
 ---
 
-## Convex Hulls
+# Convex Hulls
 
 The idea that I'll be explaining in this post is something I've seen variously attributed to [Animus][animus] in a Project Euler problem thread, who attributes the idea to Lucy_Hedgehog. If you've solved the relevant problem then the link will work for you and lead you to Animus's post. 
 
@@ -814,6 +816,8 @@ Instead of thinking longer about how to prove this, let's just move on to fixing
 
 ---
 
+# Optimizations
+
 ## Memory Usage, and Slope Stack Compression
 
 The previous data suggested that, for the hyperbola, the maximum size of the stack of slope search interval endpoints seemed to grow like $O(n^{1/3})$. Here I'll show why it's at least that bad.
@@ -856,6 +860,35 @@ What if we had a more complex stack to represent?
 <center><img src="/blog/docs/assets/images/wip/slope_stack_10_17.png"></center>
 <br>
 
+I took the liberty of not drawing any lines from the convex hull point at the top, which I'd done in previous diagrams. The rays all get very close together and it's hard to make out.
+
+The slope stack, with the current strict upper bound on the slope at the right, evolves as
+
+$$\begin{align*}
+&\left[\frac{0}{1}\right] & \frac{1}{0}\\
+&\left[\frac{0}{1}\right] & \frac{1}{1}\\
+&\left[\frac{0}{1}, \frac{1}{2}\right] & \frac{1}{1}\\
+&\left[\frac{0}{1}, \frac{1}{2}\right] & \frac{2}{3}\\
+&\left[\frac{0}{1}, \frac{1}{2}\right] & \frac{3}{5}\\
+&\left[\frac{0}{1}, \frac{1}{2}, \frac{4}{7}\right] & \frac{3}{5}\\
+&\left[\frac{0}{1}, \frac{1}{2}, \frac{4}{7}, \frac{7}{12}\right] & \frac{3}{5}\\
+&\left[\frac{0}{1}, \frac{1}{2}, \frac{4}{7}, \frac{7}{12}, \frac{10}{17}\right] & \frac{3}{5}\\
+\end{align*}$$
+
+Here the slope stack does not grow so large, but we can still represent the final state as
+
+$$\left[\left(\frac{1}{2}, \frac{1}{1}\right), \left(\frac{10}{17}, \frac{3}{5}\right)\right]$$
+
+We're saving basically two integers in this example, but for a much more severe case, we would be making immense savings here. The unfortunate thing is that when we're storing a lot of endpoints implicitly, we have to do two subtractions when we want to use one. This version of the algorithm is more complicated and slightly slower. Even so, this is the way to avoid massive memory problems.
+
+If your goal is to compute $D(n)$ for an int64 $n$, so say $n \leq 10^{18}$ or something, then you should simply let the computer store all the endpoints explicitly, if your memory allows. The requirements for these smaller $n$ are much more bearable. Even for $n = 10^{24}$ it's still sort of ok, but if we want to compute $D(10^{30})$, which is tantalizing, it's necessary to use this compression trick.
+
+So, how do we actually implement this?
+
+We'll modify the function ``chullConvex`` together, and I'll leave a modified ``chullConcave`` in the GitHub repository if you want to reference it.
+
+TODO
+
 
 ---
 
@@ -863,11 +896,13 @@ What if we had a more complex stack to represent?
 
 ---
 
+# More Applications
+
 ## Summing Divisor Function $\sigma$
 
 ---
 
-## Counting Primitive Integer Solutions to a Bivariate Quadratic
+## Quadratic Diophantine Equations
 
 ---
 
@@ -875,7 +910,9 @@ What if we had a more complex stack to represent?
 
 ---
 
-## Computing Whether $\pi(n)$ is Even or Odd
+## Computing $\pi(n) \bmod 2$
+
+---
 
 ---
 
