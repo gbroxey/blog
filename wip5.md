@@ -191,7 +191,7 @@ We'll come back to these anti-trapezoids later once we revisit the hyperbola cas
 
 ## Finding the Convex Hull
 
-This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull point to the next. At this point is also when I'd like to introduce this problem more generally.
+This is the really important part of this algorithm. All of the stuff with trapezoids is completely useless if we can't quickly find them! This section is about how we can efficiently jump from one chull (convex hull) point to the next. At this point is also when I'd like to introduce this problem more generally.
 
 We have a function $f$ defined on some interval $[x_0, x_1]$ which takes non-negative real values.  
 
@@ -812,10 +812,50 @@ We can make the very reasonable guess that the number of slopes which are used $
 
 Instead of thinking longer about how to prove this, let's just move on to fixing our memory usage.
 
-
 ---
 
 ## Memory Usage, and Slope Stack Compression
+
+The previous data suggested that, for the hyperbola, the maximum size of the stack of slope search interval endpoints seemed to grow like $O(n^{1/3})$. Here I'll show why it's at least that bad.
+
+The first steps of the algorithm will attempt to narrow the slope search interval by computing mediants between $\frac{0}{1}$ and $\frac{1}{0}$, in this case towards the steeper end. We start at around $x_0 \approx (2n)^{1/3}$.
+
+<center><img src="/blog/docs/assets/images/wip/hyperbola_section_cbrt_stack.png"></center>
+<br>
+
+Above is what the relevant section of the hyperbola might look like.  
+Given that we start at the inital point $(x_0, y_0 = 1 + \lfloor n/x_0 \rfloor)$, the stack will grow like
+
+$$\begin{align*}
+&\left[\frac{0}{1}\right]\\
+&\left[\frac{0}{1}, \frac{1}{1}\right]\\
+&\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}\right]\\
+&\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}, \frac{3}{1}\right]\\
+&\ldots\\
+&\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}, \frac{3}{1}, \frac{4}{1}, \ldots, \frac{k}{1}\right]
+\end{align*}$$
+
+where finally $k$ is the largest positive integer such that $(x_0+1)(y_0-k) > n$.  
+
+Clearly if $k$ is too large this is intolerable. Indeed, back in [an earlier section](#whats-happening-here) we dealt with an issue where $k$ was as large as $n$. The issue was that the slope near $x = 1$ was too extreme, and therefore very high slopes could fit above the blob. Naturally, the solution was to start somewhere less steep, but here that's not really an option.  
+
+We can approximate the slope of the hyperbola at $x_0$ by 
+
+$$\frac{\mathrm d}{\mathrm dx} \frac{n}{x} = -\frac{n}{x^2} \quad \mapsto \quad -\frac{n}{(\sqrt[3]{2n})^2} = -\frac{n^{1/3}}{2^{2/3}}$$
+
+and so the initial search interval splitting is going to add $\Theta(n^{1/3})$ endpoints to our stack.
+
+The good news is that there is a decent way of avoiding the storage of almost all of the generated endpoints, since we really only need to use the steepest one (in the case of the hyperbola) at any moment. The pattern $\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}, \frac{3}{1}, \frac{4}{1}, \ldots, \frac{k}{1}\right]$ can be represented as a single pair
+
+$$\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}, \frac{3}{1}, \frac{4}{1}, \ldots, \frac{k}{1}\right] \quad \sim \quad \left[\left(\frac{k}{1}, \frac{1}{0}\right) \right]$$
+
+where the first member of the pair, $\frac{dy}{dx} = \frac{k}{1}$, is the last endpoint, and the second member $\frac{p}{q} = \frac{1}{0}$ is the right parent of $\frac{k}{1}$ in the SB tree. Or more practically, $\frac{p}{q}$ tells us the gap from $\frac{dy}{dx}$ backwards to the endpoint that precedes it. We can just happily hop backwards from $\frac{k}{1}$ all the way down to $\frac{0}{1}$ and never get lost, and everything behaves exactly how it normally would in the chull algorithm.
+
+What if we had a more complex stack to represent?
+
+<center><img src="/blog/docs/assets/images/wip/slope_stack_10_17.png"></center>
+<br>
+
 
 ---
 
