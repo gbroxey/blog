@@ -883,11 +883,91 @@ We're saving basically two integers in this example, but for a much more severe 
 
 If your goal is to compute $D(n)$ for an int64 $n$, so say $n \leq 10^{18}$ or something, then you should simply let the computer store all the endpoints explicitly, if your memory allows. The requirements for these smaller $n$ are much more bearable. Even for $n = 10^{24}$ it's still sort of ok, but if we want to compute $D(10^{30})$, which is tantalizing, it's necessary to use this compression trick.
 
-So, how do we actually implement this?
+Here's one way we can implement these changes.
 
-We'll modify the function ``chullConvex`` together, and I'll leave a modified ``chullConcave`` in the GitHub repository if you want to reference it.
+TODO explain, also idea O(1) memory
 
-TODO
+```nim
+iterator chullConvex(x0, y0: int64, 
+              x1: int64,
+              inside: (proc (x, y: int64): bool),
+              prune: (proc (x, y, dx, dy: int64): bool)): (int64, int64, int64, int64) =
+  ##Finds the convex hull of integer points
+  ##with xInit <= x <= x1, and f(x) < y, where f is convex.
+  ##Yields (x, y, dx, dy), 
+  ##where the next edge is from (x, y) to (x+dx, y-dy).
+  ##(x0, y0) is the top left point of the hull, and satisfies f(x0) < y0.
+  ##A point is in the shape iff inside(x, y).
+  ##Also provide prune(x, y, dx, dy) which returns whether f'(x) >= -dy/dx.
+  ##Note the order of the above inequality compared to chullConcave.
+  ##This works for f'(x) <= 0 and f''(x) >= 0.
+  #---
+  var (x, y) = (x0, y0)
+  var stack = @[(1'i64, 0'i64, -1'i64, -1'i64), (0'i64, 1'i64, -1'i64, -1'i64)]
+  #stack of slopes (dx, dy, p, q) representing a progression of slopes
+  #..., -(-2q+dy)/(-2p+dx), -(-q+dy)/(-p+dx), -dy/dx
+  #if p = -1 or q = -1 then it just represents a single slope -dy/dx
+  #always kept in order of shallowest slope to steepest slope
+  #adjacent values form slope search intervals
+  while true:
+    var (dx1, dy1, p1, q1) = stack.pop()
+    #(dx1, dy1) is the steepest possible slope in the convex hull
+    #dx1 == 0 should never happen in the case we deal with
+    #use the slope -dy1/dx1 as much as possible
+    while x + dx1 <= x1 and not inside(x + dx1, y - dy1):
+      yield (x, y, dx1, dy1)
+      x += dx1
+      y -= dy1
+    #test if we are at the end already..
+    #again this is not going to happen for the case we deal with
+    if y == 0: break
+
+    #get current slope search interval
+    var (dx2, dy2, p2, q2) = (dx1, dy1, p1, q1)
+    while stack.len != 0:
+      var virtual = false #is the slope -dy1/dx1 really on the stack?
+      if p2 != -1 and dx2 >= p2 and dy2 >= q2:
+        virtual = true
+        (dx1, dy1, p1, q1) = (dx2 - p2, dy2 - q2, p2, q2)
+      else:
+        (dx1, dy1, p1, q1) = stack[^1]
+      #here, [dy1/dx1, dy2/dx2] forms the steepest slope search interval
+      if x + dx1 <= x1 and not inside(x + dx1, y - dy1):
+        break #by requirement 1, this interval contains the next slope
+      #otherwise it is useless, so we discard the interval,
+      #while maintaining the shallower endpoint
+      if not virtual: discard stack.pop
+      (dx2, dy2, p2, q2) = (dx1, dy1, p1, q1)
+    if stack.len == 0: break #probably unecessary to add this here
+
+    #the steepest slope is somewhere in [dy1/dx1,dy2/dx2]
+    while true:
+      var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
+      var usedAny = false
+      while x + mx <= x1 and not inside(x + mx, y - my):
+        usedAny = true
+        (mx, my) = (mx + dx2, my + dy2)
+      if usedAny:
+        if p1 != -1 and dx1 >= p1 and dy1 >= q1:
+          stack.add (dx1, dy1, p1, q1)
+        #mx - dx2, my - dy2 was the last mediant that fit.
+        (dx1, dy1, p1, q1) = (mx - dx2, my - dy2, dx2, dy2) 
+        #stack has the endpoints [..., (my-2dy2)/(mx-2dx2), (my-dy2)/(mx-dx2)] implicitly
+        #active interval is [my/mx, dy2/dx2]
+      else:
+        if x + mx > x1 or prune(x + mx, y - my, dx1, dy1):
+          #slope search prune condition
+          #the intervals [dy1/dx1, (dy2+n*dy1)/(dx2+n*dx1)] never work
+          #fully discard dy2/dx2 and therefore the interval [dy1/dx1, dy2/dx2]
+          if p1 != -1 and dx1 >= p1 and dy1 >= q1:
+            stack.add (dx1, dy1, p1, q1)
+          break
+        #refine the search to [dy1/dx1, my/mx]
+        (dx2, dy2) = (mx, my)
+        #there is no need to update p2, q2 here, as they are no longer used
+    #the search is over
+    #top of the stack contains the next active search interval
+```
 
 
 ---
