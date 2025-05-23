@@ -881,11 +881,9 @@ $$\left[\left(\frac{1}{2}, \frac{1}{1}\right), \left(\frac{10}{17}, \frac{3}{5}\
 
 We're saving basically two integers in this example, but for a much more severe case, we would be making immense savings here. The unfortunate thing is that when we're storing a lot of endpoints implicitly, we have to do two subtractions when we want to use one. This version of the algorithm is more complicated and slightly slower. Even so, this is the way to avoid massive memory problems.
 
-If your goal is to compute $D(n)$ for an int64 $n$, so say $n \leq 10^{18}$ or something, then you should simply let the computer store all the endpoints explicitly, if your memory allows. The requirements for these smaller $n$ are much more bearable. Even for $n = 10^{24}$ it's still sort of ok, but if we want to compute $D(10^{30})$, which is tantalizing, it's necessary to use this compression trick.
+If your goal is to compute $D(n)$ for an int64 $n$, so say $n \leq 10^{18}$ or something, then you should simply let the computer store all the endpoints explicitly, if your memory allows. The requirements for these smaller $n$ are much more bearable. Even for $n = 10^{24}$ it's still sort of ok, but if we want to compute $D(10^{30})$, which is tantalizing, it's necessary to use some compression trick.
 
-Here's one way we can implement these changes.
-
-TODO explain, also idea O(1) memory
+Here's one way we can implement this change.
 
 ```nim
 iterator chullConvex(x0, y0: int64, 
@@ -968,6 +966,18 @@ iterator chullConvex(x0, y0: int64,
     #the search is over
     #top of the stack contains the next active search interval
 ```
+
+It's possible to add some binary searchy type stuff in there but I'm not sure it would give you a very impressive speedup. I'll leave that to you guys to mess around with for now, and maybe I'll return here and add something later.
+
+A modified version of ``chullConcave`` is also available [on my GitHub][code].
+
+Plugging this in for int128s was really finnicky when it came to runtime. I was able to get anywhere from about 5 seconds to as high as 8 seconds for $D(10^{20})$ depending on how many function calls and int128 initializations I could remove. Recall from before that the $O(n^{1/3})$ memory version needed 4.2 sec for this case.
+
+The important bit, though, is that the low memory usage allows us to easily parallelize this version by chopping up the hyperbola into a bunch of segments. The work by [Alcántara and others][hyperbola-chull-bound] that I used in a [previous section](#how-many-trapezoids) is useful in providing us the hueristic that we should likely split it up dyadically. My best results, however, were obtained by splitting the hyperbola at points that looked like $x = ck^3$ for a suitable constant $c$.
+
+Here's a short table of runtimes for my CPU-parallelized version, along with the maximum slope search interval stack length taken over any single instance of the algorithm running on a particular hyperbola segment.
+
+
 
 
 ---
@@ -1052,6 +1062,7 @@ Hi
 [rabinowitz-convex-ngon-bound]: http://old.stanleyrabinowitz.com/bibliography/bounds.pdf
 [rabinowitz-convex-census]: http://stanleyrabinowitz.com/download/census-revised.pdf
 [oeisa057494]: https://oeis.org/A057494
+[code]: https://www.google.com
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
 

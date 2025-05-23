@@ -149,7 +149,6 @@ iterator chullConvex(x0, y0: int64,
   #always kept in order of shallowest slope to steepest slope
   #adjacent values form slope search intervals
   while true:
-    echo (x, y), " ", stack
     var (dx1, dy1, p1, q1) = stack.pop()
     #(dx1, dy1) is the steepest possible slope in the convex hull
     #dx1 == 0 should never happen in the case we deal with
