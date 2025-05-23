@@ -264,7 +264,7 @@ _Proof._ First note that the sum of $1/p$ over primes in the range $[n, n(1+\var
 
 Suppose $n$ is large and consider the sets $S_n = \mathbb P \cap [n, n^{\log(n)})$.
 
-The exponent $\log(n)$ is unimportant other than going to zero slowly.
+The exponent $\log(n)$ is unimportant other than going to infinity slowly.
 
 Elementary considerations show $H(S_n) \to \infty$, but using Lemma 16 here is not quite enough to show the primes it produces are as close together as we want them to be.
 
