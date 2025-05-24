@@ -475,7 +475,10 @@ All of the analysis is the same as what we've already done once before.
 The condition for pruning an interval is also helpfully extremely similar.  
 Rather than checking $f'(x) \leq -dy/dx$, we should check $f'(x) \geq -dy/dx$.
 
-Here's how it could look:
+Here's the code:
+
+<details markdown="1">
+<summary><i>Nim Code</i></summary>
 
 ```nim
 iterator chullConvex(x0, y0: int64, 
@@ -542,6 +545,7 @@ iterator chullConvex(x0, y0: int64,
     #the search is over
     #top of the stack contains the next active search interval
 ```
+</details><br>
 
 And, as before, we have
 
@@ -889,7 +893,8 @@ Here's one way we can implement this change.
 
 
 <details markdown="1">
-<summary><b>Nim Implementation</b></summary>
+<summary><i>Nim Code</i></summary>
+
 ```nim
 iterator chullConvex(x0, y0: int64, 
               x1: int64,
@@ -971,7 +976,7 @@ iterator chullConvex(x0, y0: int64,
     #the search is over
     #top of the stack contains the next active search interval
 ```
-</details>
+</details><br>
 
 It's possible to add some binary searchy type stuff in there but I'm not sure it would give you a very impressive speedup. I'll leave that to you guys to mess around with for now, and maybe I'll return here and add something later.
 
@@ -1006,13 +1011,14 @@ The memory optimization is wildly successful here (ignoring how much slower it i
 We may want to avoid only some of the extra arithmetic, and store more interval endpoints. I paid for 64 gigabytes, after all. We don't want to suffer so much when it comes to runtime, but we would like to reduce the memory usage compared to the original version. I've seen this done successfully by Project Euler user **uau** in the [community Discord server][pediscord], by essentially only compressing the very first slope search progression $[\frac{0}{1}, \frac{1}{1}, \ldots, \frac{k}{1}]$. Here's one way to do this:
 
 <details markdown="1">
-<summary><b>Nim Implementation</b></summary>
+<summary><i>Nim Code</i></summary>
+
 ```nim
 proc helloWorld() =
   echo "Hello World!"
 helloWorld()
 ```
-</details>
+</details><br>
 
 ---
 
