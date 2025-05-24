@@ -545,7 +545,7 @@ iterator chullConvex(x0, y0: int64,
     #the search is over
     #top of the stack contains the next active search interval
 ```
-</details>
+</details><br>
 
 And, as before, we have
 
@@ -976,7 +976,7 @@ iterator chullConvex(x0, y0: int64,
     #the search is over
     #top of the stack contains the next active search interval
 ```
-</details>
+</details><br>
 
 It's possible to add some binary searchy type stuff in there but I'm not sure it would give you a very impressive speedup. I'll leave that to you guys to mess around with for now, and maybe I'll return here and add something later.
 
@@ -1018,7 +1018,7 @@ proc helloWorld() =
   echo "Hello World!"
 helloWorld()
 ```
-</details>
+</details><br>
 
 ---
 
