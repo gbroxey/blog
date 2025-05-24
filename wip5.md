@@ -734,7 +734,9 @@ $$\begin{align*}
 
 Plenty good enough, as now the convex hulls inside of each rectangle have $O(n^{1/3})$ vertices each, for a total of $O(n^{1/3} \log(n))$ vertices for the hyperbola, as desired.
 
-If you want a more detailed analysis of this idea, please read [the paper by Alcántara and others][hyperbola-chull-bound]. My work here was somewhat sloppy, but this article is long enough as it is, and we somehow have more I want to get to.
+If you want a more detailed analysis of this idea, please read [the paper by Alcántara and others][hyperbola-chull-bound].  
+
+My work here was somewhat sloppy, but this article is long enough as it is, and we somehow have more I want to get to.
 
 So, we've figured out the order of magnitude of the number of slopes on the convex hull for the circle and for the hyperbola. Obviously in the general case you'd have to do your analysis tailored to the function you're using. But even now, after all this work, there's a question burning in our minds, which is
 
@@ -975,14 +977,46 @@ Plugging this in for int128s was really finnicky when it came to runtime. I was 
 
 The important bit, though, is that the low memory usage allows us to easily parallelize this version by chopping up the hyperbola into a bunch of segments. The work by [Alcántara and others][hyperbola-chull-bound] that I used in a [previous section](#how-many-trapezoids) is useful in providing us the hueristic that we should likely split it up dyadically. My best results, however, were obtained by splitting the hyperbola at points that looked like $x = ck^3$ for a suitable constant $c$.
 
-Here's a short table of runtimes for my CPU-parallelized version, along with the maximum slope search interval stack length taken over any single instance of the algorithm running on a particular hyperbola segment.
+I'm curious about whether GPU programming (like CUDA or something) would allow for an extremely fast implementation of this algorithm. I'm not experienced in GPU programming, though, and so I'm putting this off for now. I'll likely investigate this some other time, but if you try it first please let me know.
 
+Here's a short table of data for the single-threaded version.  
+You'll see the runtime is worse by a factor of about 1.85, since we're doing much more arithmetic.
 
+|n|Max Stack Len (old)|Max Stack Len (new)|Runtime (old)|Runtime (new)|
+|:---:|:---:|:---:|:---:|:---:|
+|10<sup>20</sup>|2924019|10|4.2 sec|7.4 sec|
+|10<sup>21</sup>|6299607|10|9.5 sec|17 sec|
+|10<sup>22</sup>|13572089|11|21 sec|39 sec|
+|10<sup>23</sup>|29240178|11|47 sec|89 sec|
+|10<sup>24</sup>|62996054|11|107 sec|200 sec|
+|10<sup>25</sup>|135720882|12|238 sec|449 sec|
+|10<sup>26</sup>|292401775|12|543 sec|1008 sec|
+|10<sup>27</sup>|629960526|1224 sec|
 
+The memory optimization is wildly successful here (ignoring how much slower it is).
+
+> **Lemma 7.** The maximum stack length is at most $\log_\phi(n\sqrt{5})$ where $\phi = \frac{1+\sqrt{5}}{2}$.
+
+### Partial Compression
+
+We may want to avoid only some of the extra arithmetic, and store more interval endpoints. I paid for 64 gigabytes, after all. We don't want to suffer so much when it comes to runtime, but we would like to reduce the memory usage compared to the original version. I've seen this done successfully by Project Euler user **uau** in the [community Discord server][pediscord], by essentially only compressing the very first slope search progression $[\frac{0}{1}, \frac{1}{1}, \ldots, \frac{k}{1}]$. Here's one way to do this:
+
+<details>
+<summary>Nim Implementation</summary>
+```nim
+proc helloWorld() =
+  echo "Hello World!"
+helloWorld()
+```
+</details>
 
 ---
 
 ## Avoiding Multiplications
+
+This is the final section on optimizing $D(n)$.  
+
+One of the slowest parts of the algorithms presented so far has been performing multiplications of 128 bit integers. We need to do this whenever we check whether a point is above the hyperbola and whenever we check the interval pruning condition. It is clear that we can reuse some multiplications, and in some cases, convert some multiplications into additions while storing some more data.
 
 ---
 
@@ -1062,6 +1096,7 @@ Hi
 [rabinowitz-convex-ngon-bound]: http://old.stanleyrabinowitz.com/bibliography/bounds.pdf
 [rabinowitz-convex-census]: http://stanleyrabinowitz.com/download/census-revised.pdf
 [oeisa057494]: https://oeis.org/A057494
+[pediscord]: https://discord.gg/4w6fwE9cbW
 [code]: https://www.google.com
 
 [^1]: Obviously the reason is that we are using $(x, y)$ as coordinates on a grid, and I would rather avoid the confusion. So from here on, we will be using $n$ as our summation limit, and $k$ as the free variable in the summation. The letters $x, y$ will always be used to refer to some sort of coordinates.
