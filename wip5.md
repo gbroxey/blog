@@ -22,7 +22,7 @@ $$R(n) = \sum_{0 \leq k \leq n} r_2(k)$$
 where I will be taking care not to use my personally preferred variable $x$ as a summation limit.[^1]
 
 It is possible to determine $r_2(k)$ given the prime factorization of $k$ (see [A004018][oeisa004018], or [Wikipedia][wikipedia-sum-sq]).  
-Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#addendum-a---another--idea).
+Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#appendix-a---another--idea).
 
 Instead, we'll do something more sensible. Actually, I've been somewhat misleading in my presentation so far because this is just the number of lattice points in a circle of radius $\sqrt n$.
 
@@ -453,7 +453,7 @@ The green rays are slopes on the stack which form endpoints of search intervals,
 <br>
 
 As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
-I've included it [at the end](#addendum-b---using-more-symmetry).
+I've included it [at the end](#appendix-b---using-more-symmetry).
 
 ---
 
@@ -775,7 +775,7 @@ Something like $O(n^{1/3} \log(n))$ or $O(n^{1/3})$ or even $O(n^{1/3} / \log(n)
 Looking at the max stack length is worrying.  
 
 Recall that the stack contains a list of the currently active slope search intervals, and each member of the stack has a pair of int64s (or a Int128s or BigInts for much larger $n$). In the above data, the max stack length is at most $0.64 n^{1/3}$, which seems like a decent fit. If we wished to use $n = 10^{24}$, which we will shortly, we would need to store over 2 gigabytes of slope intervals at a given time. If we wanted to chop up the hyperbola more and parallelize it, we would likely use far more memory.  
-Very bad, especially when [other methods](#addendum-c---other-methods-for) claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
+Very bad, especially when [other methods](#appendix-c---other-methods-for) claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
 
 Here are the numbers for some larger $n$, using Int128. I also added the runtime of the program I used, which is basically just a port of the previous code for convex functions with int64s.
 
@@ -884,7 +884,9 @@ $$\begin{align*}
 
 Here the slope stack does not grow so large, but we can still represent the final state as
 
-$$\left[\left(\frac{1}{2}, \frac{1}{1}\right), \left(\frac{10}{17}, \frac{3}{5}\right)\right]$$
+$$\left[\frac{0}{1}, \left(\frac{1}{2}, \frac{1}{1}\right), \left(\frac{10}{17}, \frac{3}{5}\right)\right]$$
+
+I'm opting to exclude the smallest member of each progression, in this case $\frac{0}{1}$ and $\frac{1}{2}$, since they are the largest member of the previous progression. This way each slope is hit once.
 
 We're saving basically two integers in this example, but for a much more severe case, we would be making immense savings here. The unfortunate thing is that when we're storing a lot of endpoints implicitly, we have to do two subtractions when we want to use one. This version of the algorithm is more complicated and slightly slower. Even so, this is the way to avoid massive memory problems.
 
@@ -984,11 +986,11 @@ It's possible to add some binary searchy type stuff in there but I'm not sure it
 
 A modified version of ``chullConcave`` is also available [on my GitHub][code].
 
-Plugging this in for int128s was really finnicky when it came to runtime. I was able to get anywhere from about 5 seconds to as high as 8 seconds for $D(10^{20})$ depending on how many function calls and int128 initializations I could remove. Recall from before that the $O(n^{1/3})$ memory version needed 4.2 sec for this case.
+Plugging this in for int128s was really finnicky when it came to runtime. I was able to get anywhere from about 5 seconds to as high as 8 seconds for $D(10^{20})$ depending on how many function calls and int128 initializations I could remove. Recall that the $O(n^{1/3})$ memory version needed 4.2 sec for this case.
 
-The important bit, though, is that the low memory usage allows us to easily parallelize this version by chopping up the hyperbola into a bunch of segments. The work by [Alcántara and others][hyperbola-chull-bound] that I used in a [previous section](#how-many-trapezoids) is useful in providing us the hueristic that we should likely split it up dyadically. My best results, however, were obtained by splitting the hyperbola at points that looked like $x = ck^3$ for a suitable constant $c$.
+The important bit, though, is that the low memory usage allows us to easily parallelize this version by chopping up the hyperbola into a bunch of segments. The work by [Alcántara and others][hyperbola-chull-bound] that I used in a [previous section](#how-many-trapezoids) is useful in providing us the hueristic that we should likely split it up dyadically. My best results, however, were obtained by splitting the hyperbola at points that looked like $x = ck^3$ for a suitable constant $c$. I haven't done any actual analysis on this so it's probably not optimal.
 
-I'm curious about whether GPU programming (like CUDA or something) would allow for an extremely fast implementation of this algorithm. I'm not experienced in GPU programming, though, and so I'm putting this off for now. I'll likely investigate this some other time, but if you try it first please let me know.
+I'm curious about whether GPU programming (like CUDA or something) would allow for an extremely fast implementation of this algorithm. I'm not experienced in GPU programming so I'm putting this off for now. I'll likely investigate this some other time, but if you try it first please let me know.
 
 Here's a short table of data for the single-threaded version.  
 You'll see the runtime is worse by a factor of about 1.85, since we're doing much more arithmetic.
@@ -1002,11 +1004,13 @@ You'll see the runtime is worse by a factor of about 1.85, since we're doing muc
 |10<sup>24</sup>|62996054|11|107 sec|200 sec|
 |10<sup>25</sup>|135720882|12|238 sec|449 sec|
 |10<sup>26</sup>|292401775|12|543 sec|1008 sec|
-|10<sup>27</sup>|629960526|1224 sec|
+|10<sup>27</sup>|629960526|12|1224 sec|2253 sec|
 
 The memory optimization is wildly successful here (ignoring how much slower it is).
 
-> **Lemma 7.** The maximum stack length is at most $\log_\phi(n\sqrt{5})$ where $\phi = \frac{1+\sqrt{5}}{2}$.
+> **Lemma 7.** The maximum stack length is $O(\log n)$.
+
+_Proof._ TODO - basically continued fractions and fibonacci numbers
 
 ### Partial Compression
 
@@ -1082,9 +1086,9 @@ proc R(n: int64): int64 =
 
 You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \ldots$ if you want.
 
-## Addendum B - Using More Symmetry
+## Appendix B - Using More Symmetry
 
-## Addendum C - Other Methods for $D(n)$
+## Appendix C - Other Methods for $D(n)$
 
 Talk about Sladkey and Lifchitz, and perhaps Yamanouchi TODO
 

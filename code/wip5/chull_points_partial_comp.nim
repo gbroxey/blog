@@ -1,7 +1,7 @@
 import ../utils/iops
 
 #[
-Modified version of chull_points, which has O(log n) memory usage
+Modified version of chull_points, which has O(n^(1/4)) storage?
 Not really useful for int64 maybe
 ]#
 
