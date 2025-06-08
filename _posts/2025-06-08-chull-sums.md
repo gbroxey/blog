@@ -23,7 +23,7 @@ $$R(n) = \sum_{0 \leq k \leq n} r_2(k)$$
 where I will be taking care not to use my personally preferred variable $x$ as a summation limit.[^1]
 
 It is possible to determine $r_2(k)$ given the prime factorization of $k$ (see [A004018][oeisa004018], or [Wikipedia][wikipedia-sum-sq]).  
-Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#appendix-a---another--idea).
+Because of those formulas, it's technically possible to compute $R(n)$ using multiplicative function techniques, but it's totally unnecessary, so [let's not do that](#appendix).
 
 Instead, we'll do something more sensible. Actually, I've been somewhat misleading in my presentation so far because this is just the number of lattice points in a circle of radius $\sqrt n$.
 
@@ -1056,7 +1056,7 @@ I also want to review how these methods can be used to count solutions to some q
 
 ---
 
-## Appendix A - Another $R(n)$ Idea
+## Appendix
 
 What if we did want to compute the sum $R(n)$ with multiplicative functions?  
 I only just started writing this article and I'm already distracted, oh no.
