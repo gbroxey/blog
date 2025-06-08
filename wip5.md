@@ -453,7 +453,24 @@ The green rays are slopes on the stack which form endpoints of search intervals,
 <br>
 
 As a short final aside for the circle case, it is possible to get a small but significant runtime improvement by restricting the segment of the quarter circle slightly to make better use of symmetry.  
-I've included it [at the end](#appendix-b---using-more-symmetry).
+
+We can sum over $0 < x \leq \sqrt{n/2}$ and use the symmetry of the circle over the line $y = x$ to compute the answer as follows:
+
+```nim
+proc circleLatticePointCount2(n: int64): int64 =
+  let sqrtn = isqrt(n)
+  proc inside(x, y: int64): bool =
+    return x*x + y*y <= n and y >= 0
+  proc prune(x, y, dx, dy: int64): bool =
+    if x > sqrtn or y <= 0: return true
+    return dx * x >= dy * y
+  var x1 = isqrt(n div 2)
+  var L = 1 + sqrtn + concaveLatticeCount(0, sqrtn, x1, inside, prune)
+  L = (2*L - (1+x1)*(1+x1)) - sqrtn - 1
+  return 4*L + 1
+```
+
+Using Int128 and parallelizing, this computes $R(10^{24})$ in 2.6 seconds, compared to 8.4 seconds to sum over all $0 < x \leq \sqrt{n}$. To compute $R(10^{36})$ this way would take about 7-8 hours on my cpu.
 
 ---
 
@@ -775,7 +792,7 @@ Something like $O(n^{1/3} \log(n))$ or $O(n^{1/3})$ or even $O(n^{1/3} / \log(n)
 Looking at the max stack length is worrying.  
 
 Recall that the stack contains a list of the currently active slope search intervals, and each member of the stack has a pair of int64s (or a Int128s or BigInts for much larger $n$). In the above data, the max stack length is at most $0.64 n^{1/3}$, which seems like a decent fit. If we wished to use $n = 10^{24}$, which we will shortly, we would need to store over 2 gigabytes of slope intervals at a given time. If we wanted to chop up the hyperbola more and parallelize it, we would likely use far more memory.  
-Very bad, especially when [other methods](#appendix-c---other-methods-for) claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
+Very bad, especially when [other methods][sladkey] claim to use only $O(\log(n))$ memory. Clearly we need to think about optimizing the stack, which we will do [in the next section](#memory-usage-and-slope-stack-compression).
 
 Here are the numbers for some larger $n$, using Int128. I also added the runtime of the program I used, which is basically just a port of the previous code for convex functions with int64s.
 
@@ -1067,12 +1084,6 @@ proc R(n: int64): int64 =
 
 You can think about this longer and eventually get $\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \ldots$ if you want.
 
-## Appendix B - Using More Symmetry
-
-## Appendix C - Other Methods for $D(n)$
-
-Talk about Sladkey and Lifchitz, and perhaps Yamanouchi TODO
-
 ---
 
 Hi
@@ -1094,6 +1105,7 @@ Hi
 [rabinowitz-convex-ngon-bound]: http://old.stanleyrabinowitz.com/bibliography/bounds.pdf
 [rabinowitz-convex-census]: http://stanleyrabinowitz.com/download/census-revised.pdf
 [oeisa057494]: https://oeis.org/A057494
+[sladkey]: https://arxiv.org/pdf/1206.3369
 [pediscord]: https://discord.gg/4w6fwE9cbW
 [code]: https://www.google.com
 
