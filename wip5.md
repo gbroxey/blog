@@ -993,67 +993,48 @@ The important bit, though, is that the low memory usage allows us to easily para
 I'm curious about whether GPU programming (like CUDA or something) would allow for an extremely fast implementation of this algorithm. I'm not experienced in GPU programming so I'm putting this off for now. I'll likely investigate this some other time, but if you try it first please let me know.
 
 Here's a short table of data for the single-threaded version.  
-You'll see the runtime is worse by a factor of about 1.85, since we're doing much more arithmetic.
+You'll see the runtime is worse by a factor of about 1.3, since we're doing more arithmetic.
 
-|n|Max Stack Len (old)|Max Stack Len (new)|Runtime (old)|Runtime (new)|
-|:---:|:---:|:---:|:---:|:---:|
-|10<sup>20</sup>|2924019|10|4.2 sec|7.4 sec|
-|10<sup>21</sup>|6299607|10|9.5 sec|17 sec|
-|10<sup>22</sup>|13572089|11|21 sec|39 sec|
-|10<sup>23</sup>|29240178|11|47 sec|89 sec|
-|10<sup>24</sup>|62996054|11|107 sec|200 sec|
-|10<sup>25</sup>|135720882|12|238 sec|449 sec|
-|10<sup>26</sup>|292401775|12|543 sec|1008 sec|
-|10<sup>27</sup>|629960526|12|1224 sec|2253 sec|
+|n|Max Stack Len (old)|Max Stack Len (new)|Runtime (old)|Runtime (new)|Runtime (parallelized)[^11]|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|10<sup>20</sup>|2924019|10|4.2 sec|5.4 sec|0.6 sec|
+|10<sup>21</sup>|6299607|10|9.5 sec|12 sec|1.3 sec|
+|10<sup>22</sup>|13572089|11|21 sec|28 sec|3 sec|
+|10<sup>23</sup>|29240178|11|47 sec|64 sec|7 sec|
+|10<sup>24</sup>|62996054|11|107 sec|142 sec|15 sec|
+|10<sup>25</sup>|135720882|12|238 sec|322 sec|33 sec|
+|10<sup>26</sup>|292401775|12|543 sec|697 sec|77 sec|
+|10<sup>27</sup>|629960526|12|1224 sec|1604 sec|172 sec|
 
-The memory optimization is wildly successful here (ignoring how much slower it is).
+The memory optimization is wildly successful here (ignoring how much slower it is singlethreaded).  
+The upside of doing it this way is that the algorithm is now better suited for parallelization, as it has very little memory usage. It is in fact perfectly possible to implement this algorithm while maintaining only $O(1)$ integers instead of $O(\log n)$ of them, but I don't see a point in doing this. I included some runtimes I got using this version of the algorithm with Int128s and splitting the hyperbola up into a bunch of chunks.
 
 > **Lemma 7.** The maximum stack length is $O(\log n)$.
 
-_Proof._ TODO - basically continued fractions and fibonacci numbers
+_Proof._ Consider the following example state the stack can be in (given here in the convex case):
 
-### Partial Compression
+$$\left[\frac{0}{1}, \left(\frac{1}{1}, \frac{1}{0}\right), \left(\frac{3}{2}, \frac{2}{1}\right), \left(\frac{11}{7}, \frac{8}{5}\right), \left(\frac{30}{19}, \frac{19}{12}\right), \left(\frac{79}{50}, \frac{49}{31}\right), \left(\frac{207}{131}, \frac{128}{81}\right)\right]$$
 
-We may want to avoid only some of the extra arithmetic, and store more interval endpoints. I paid for 64 gigabytes, after all. We don't want to suffer so much when it comes to runtime, but we would like to reduce the memory usage compared to the original version. I've seen this done successfully by Project Euler user **uau** in the [community Discord server][pediscord], by essentially only compressing the very first slope search progression $[\frac{0}{1}, \frac{1}{1}, \ldots, \frac{k}{1}]$. Here's one way to do this:
+The avid continued fraction enjoyer would compute the sequence of convergents to $207/131$:
 
-<details markdown="1">
-<summary><i>Nim Code</i></summary>
+$$\left[\frac{0}{1}, \frac{1}{1}, \frac{2}{1}, \frac{3}{2}, \frac{8}{5}, \frac{11}{7}, \frac{19}{12}, \frac{30}{19}, \frac{49}{31}, \frac{79}{50}, \frac{207}{131}\right]$$
 
-```nim
-proc helloWorld() =
-  echo "Hello World!"
-helloWorld()
-```
-</details>
-<p style="margin:0.5em;"></p>
+Naturally we decide that the values in the stack correspond to some of the convergents to a rational number.  
+The number of convergents for a rational number $dy/dx$ with $dx, dy \leq n$ is $O(\log n)$.  
+I don't really want to go into it in much more detail, if you're curious I'll again recommend the blog by [adamant][adamant-cfrac] and the page on the [Stern Brocot tree][cpalg-stern-brocot]. This is good enough for now. $\proofqed$
+
+The highest value $D(10^n)$ I've seen computed was $D(10^{36})$.  
+This approach would take about 65 hours to get this value.
 
 ---
 
-## Avoiding Multiplications
+# Next Time
 
-This is the final section on optimizing $D(n)$.  
+I'm cutting the article off here for now, but I have some other topics I want to get to later.
 
-One of the slowest parts of the algorithms presented so far has been performing multiplications of 128 bit integers. We need to do this whenever we check whether a point is above the hyperbola and whenever we check the interval pruning condition. It is clear that we can reuse some multiplications, and in some cases, convert some multiplications into additions while storing some more data.
+The most important of those is computing big partial sums of $\sigma_1$, which is done in the same way except we need some more difficult sums over the trapezoids. [Min25][min25] mentions how to do it basically, but I'll outline it in a followup blog post once I actually implement it myself.
 
----
-
-# More Applications
-
-## Summing Divisor Function $\sigma$
-
----
-
-## Quadratic Diophantine Equations
-
----
-
-## Counting Powerful Numbers (maybe?)
-
----
-
-## Computing $\pi(n) \bmod 2$
-
----
+I also want to review how these methods can be used to count solutions to some quadratic diophantine equations, to count powerful numbers up to some huge limit (maybe, I'm still wrestling bigint operations), and computing $\pi(n) \bmod 2$. I'll include those in the followup later if they work out.
 
 ---
 
@@ -1135,3 +1116,5 @@ Hi
 [^9]: This was unnecessarily confusing honestly. A convex function is one where the set of points ABOVE it form a convex set. This is why we have to flip it upside down in that case. A concave function is one where the points underneath it form a convex set, which is the case for the circle function.
 
 [^10]: The convex lattice polygon on the right contains exactly one interior point. It is a representative of one of the 16 equivalence classes of convex lattice polygons which contain only one interior point, up to lattice equivalence. Very curious.. see [this other Rabinowitz paper][rabinowitz-convex-census] to see more about that.
+
+[^11]: I also avoided some int128 multiplications here for a bit better performance, but it's by no means completely optimized. This is just to get an idea of how fast we can make this. I computed these using an AMD Ryzen 3700x.

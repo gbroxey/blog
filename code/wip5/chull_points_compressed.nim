@@ -149,6 +149,7 @@ iterator chullConvex(x0, y0: int64,
   #always kept in order of shallowest slope to steepest slope
   #adjacent values form slope search intervals
   while true:
+    echo stack
     var (dx1, dy1, p1, q1) = stack.pop()
     #(dx1, dy1) is the steepest possible slope in the convex hull
     #dx1 == 0 should never happen in the case we deal with
@@ -217,6 +218,7 @@ proc convexLatticeCount(x0, y0: int64,
   ##Does NOT include points at the border with x = xInit.
   ##The point (x0, y0) is the top left point satisfying f(x0) < y0.
   for (x, y, dx, dy) in chullConvex(x0, y0, x1, inside, prune):
+    echo (x, y, dx, dy)
     result += trapezoid(x, y, dx, dy) - 1
 
 proc hyperbolaLatticePointCountBad(n: int64): int64 =
@@ -248,5 +250,8 @@ proc hyperbolaLatticePointCount(n: int64): int64 =
   L -= x1 #get rid of the points on the x-axis
   return 2*L - nrt*nrt
 
-import ../utils/eutil_timer
-timer: echo hyperbolaLatticePointCount(1e16.int64)
+proc inside(x, y: int64): bool = x*10105+y*7051<10105*7051
+proc prune(x, y, dx, dy: int64): bool = false
+
+echo convexLatticeCount(0, 10105, 7051, inside, prune)
+echo trapezoid(0, 10105, 7051, 10105)

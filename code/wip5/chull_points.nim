@@ -44,7 +44,7 @@ iterator chullConcave(x0, y0: int64,
       discard stack.pop
       (dx2, dy2) = (dx1, dy1)
     if stack.len == 0: break #probably unecessary to add this here
-
+    echo "Interval ", (dx2, dy2, dx1, dy1)
     #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
     while true:
       var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
@@ -105,6 +105,8 @@ proc circleLatticePointCount2(n: int64): int64 =
   var L = 1 + sqrtn + concaveLatticeCount(0, sqrtn, x1, inside, prune)
   L = (2*L - (1+x1)*(1+x1)) - sqrtn - 1
   return 4*L + 1
+
+echo circleLatticePointCount2(1000)
 
 iterator chullConvex(x0, y0: int64, 
               x1: int64,

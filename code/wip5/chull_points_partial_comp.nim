@@ -14,16 +14,31 @@ iterator chullConcave(x0, y0: int64,
   ##This works for f'(x) <= 0 and f''(x) <= 0.
   #---
   var (x, y) = (x0, y0)
-  var stack = @[(0'i64, 1'i64), (1'i64, 0'i64)]
+  var stack = newSeq[(int64, int64)]()
   #stack of slopes (dx, dy) = -dy/dx
   #always kept in order of steepest slope to shallowest slope
   #adjacent values form slope search intervals
+
+  #deal with slope 0/1 first
+  while inside(x+1, y):
+    yield (x, y, 1'i64, 0'i64)
+    inc x
+  
+  #now determine the first interval sequence
+  #1/0, 1/1, 1/2, 1/3, ..., 1/k
+  #you can do this by binary search if you care
+  var k = 0'i64
+  while x + k + 1 <= x1 and inside(x + k + 1, y - 1): inc k
+  
   while true:
-    var (dx1, dy1) = stack.pop()
+    var dx1, dy1: int64
+    if stack.len == 0:
+      if k <= 0: break #no need to process this slope
+      (dx1, dy1) = (k, 1)
+      dec k
+    else: 
+      (dx1, dy1) = stack.pop()
     #(dx1, dy1) is the shallowest possible slope in the convex hull
-    if dx1 == 0: #going straight down
-      #no need to make any silly looking chull points
-      break
     #use the slope -dy1/dx1 as much as possible
     while x + dx1 <= x1 and inside(x + dx1, y - dy1):
       yield (x, y, dx1, dy1)
@@ -34,17 +49,21 @@ iterator chullConcave(x0, y0: int64,
 
     #get current slope search interval
     var (dx2, dy2) = (dx1, dy1)
-    while stack.len != 0:
-      (dx1, dy1) = stack[^1]
+    while k >= 0:
+      if stack.len == 0:
+        (dx1, dy1) = (k, 1)
+      else: 
+        (dx1, dy1) = stack[^1]
       #here, [dy2/dx2, dy1/dx1] forms the shallowest slope search interval
       if x + dx1 <= x1 and inside(x + dx1, y - dy1):
         break #by requirement 1, this interval contains the next slope
       #otherwise it is useless, so we discard the interval,
       #while maintaining the steeper endpoint
-      discard stack.pop
+      if stack.len == 0:
+        dec k
+      else:
+        discard stack.pop
       (dx2, dy2) = (dx1, dy1)
-    if stack.len == 0: break #probably unecessary to add this here
-
     #the shallowest slope is somewhere in [dy2/dx2,dy1/dx1]
     while true:
       var (mx, my) = (dx1 + dx2, dy1 + dy2) #interval mediant
@@ -106,6 +125,17 @@ proc circleLatticePointCount2(n: int64): int64 =
   L = (2*L - (1+x1)*(1+x1)) - sqrtn - 1
   return 4*L + 1
 
+proc R(n: int64): int64 =
+  var nsqrt = isqrt(n)
+  #do x = 0 first
+  result = 1 + 2*nsqrt
+  var y = nsqrt
+  for x in 1..nsqrt:
+    while x*x + y*y > n: 
+      dec y #y--
+    #do x and -x at once
+    result += 2 + 4 * y
+
 iterator chullConvex(x0, y0: int64, 
               x1: int64,
               inside: (proc (x, y: int64): bool),
@@ -121,12 +151,30 @@ iterator chullConvex(x0, y0: int64,
   ##This works for f'(x) <= 0 and f''(x) >= 0.
   #---
   var (x, y) = (x0, y0)
-  var stack = @[(1'i64, 0'i64), (0'i64, 1'i64)]
+  var stack = newSeq[(int64, int64)]()
   #stack of slopes (dx, dy) = -dy/dx
   #always kept in order of shallowest slope to steepest slope
   #adjacent values form slope search intervals
+  
+  #no need to deal with the slope 1/0, since
+  #we assume (x0, y0) is the top left point of the hull
+  #and therefore inside(x0, y0-1) == true
+  assert inside(x0, y0-1) #if you please
+  
+  #now determine the first interval sequence
+  #0/1, 1/1, 2/1, 3/1, ..., k/1
+  #you can do this by binary search if you care
+  var k = 0'i64
+  while not inside(x + 1, y - k - 1): inc k
+
   while true:
-    var (dx1, dy1) = stack.pop()
+    var dx1, dy1: int64
+    if stack.len == 0:
+      if k < 0: break
+      (dx1, dy1) = (1, k)
+      dec k
+    else: 
+      (dx1, dy1) = stack.pop()
     #(dx1, dy1) is the steepest possible slope in the convex hull
     #dx1 == 0 should never happen in the case we deal with
     #use the slope -dy1/dx1 as much as possible
@@ -140,16 +188,21 @@ iterator chullConvex(x0, y0: int64,
 
     #get current slope search interval
     var (dx2, dy2) = (dx1, dy1)
-    while stack.len != 0:
-      (dx1, dy1) = stack[^1]
+    while k >= 0:
+      if stack.len == 0:
+        (dx1, dy1) = (1, k)
+      else: 
+        (dx1, dy1) = stack[^1]
       #here, [dy1/dx1, dy2/dx2] forms the steepest slope search interval
       if x + dx1 <= x1 and not inside(x + dx1, y - dy1):
         break #by requirement 1, this interval contains the next slope
       #otherwise it is useless, so we discard the interval,
       #while maintaining the shallower endpoint
-      discard stack.pop
+      if stack.len == 0:
+        dec k
+      else:
+        discard stack.pop
       (dx2, dy2) = (dx1, dy1)
-    if stack.len == 0: break #probably unecessary to add this here
 
     #the steepest slope is somewhere in [dy1/dx1,dy2/dx2]
     while true:
@@ -182,20 +235,6 @@ proc convexLatticeCount(x0, y0: int64,
   for (x, y, dx, dy) in chullConvex(x0, y0, x1, inside, prune):
     result += trapezoid(x, y, dx, dy) - 1
 
-proc hyperbolaLatticePointCountBad(n: int64): int64 =
-  let nrt = isqrt(n)
-  var x0 = 1'i64
-  var y0 = n div x0
-  var x1 = nrt
-  proc inside(x, y: int64): bool =
-    return x*y <= n
-  proc prune(x, y, dx, dy: int64): bool =
-    return dx * y <= dy * x
-  var L = convexLatticeCount(x0, y0 + 1, x1, inside, prune)
-  L += 1 + y0 #add in the points on the left boundary
-  L -= x1 #get rid of the points on the x-axis
-  return 2*L - nrt*nrt
-
 proc hyperbolaLatticePointCount(n: int64): int64 =
   let nrt = isqrt(n)
   var x0 = iroot(2*n, 3)
@@ -217,3 +256,5 @@ proc D(n: int64): int64 =
   for k in 1..nsqrt:
     result += 2*(n div k)
   result -= nsqrt*nsqrt
+
+echo hyperbolaLatticePointCount(1e17.int64)
