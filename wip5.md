@@ -470,7 +470,7 @@ proc circleLatticePointCount2(n: int64): int64 =
   return 4*L + 1
 ```
 
-Using Int128 and parallelizing, this computes $R(10^{24})$ in 2.6 seconds, compared to 8.4 seconds to sum over all $0 < x \leq \sqrt{n}$. To compute $R(10^{36})$ this way would take about 7-8 hours on my cpu.
+There is one more optimization we make [later](#memory-usage-and-slope-stack-compression) which I can also apply to this case, to reduce the memory used by the stack. I'll get into that after we talk about the hyperbola case. Anyway, with this extra optimization, switching to Int128 and parallelizing, this computes $R(10^{24})$ in 2.6 seconds, compared to 8.4 seconds to sum over all $0 < x \leq \sqrt{n}$. To compute $R(10^{36})$ this way would take about 7-8 hours on my cpu.
 
 ---
 
