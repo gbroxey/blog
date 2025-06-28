@@ -61,13 +61,13 @@ For the following, $B$ is a set of pairwise coprime naturals such that $H(B) = \
 We're going to start with some lemmas which will assist us with using only finitely many primes.  
 To avoid confusion with the lemmas we'll reference from the previous post we'll start numbering with..
 
-> **Lemma 13.** For any set of naturals $S$, we have
+> **Lemma 11.** For any set of naturals $S$, we have
 > 
 $$\prod_{x \in S} \frac{x-1}{x} \leq \exp[-H(S)]$$
 
 _Proof._ Use $1+y \leq e^y$ applied to $y = -\frac{1}{x}$. $\proofqed$
 
-> **Lemma 14.** Suppose $S$ is a finite set of pairwise coprime naturals, not containing $1$.  
+> **Lemma 12.** Suppose $S$ is a finite set of pairwise coprime naturals, not containing $1$.  
 If $\NN_k^S$ is the set of integers divisible by exactly $k$ members of $S$, then  
 > 
 $$\dnat(\NN_k^S) \leq (H(S) + 1)^k \exp \lbrack -H(S) \rbrack$$
@@ -89,7 +89,7 @@ The first inequality in the last line follows from noting that when expanding th
 
 $$\sum_{x \in S} \frac{1}{x-1} = \sum_{x \in S} \frac{1}{x} + \sum_{x \in S} \frac{1}{x(x-1)} \leq H(S) + 1$$
 
-and Lemma 13. $\proofqed$
+and Lemma 11. $\proofqed$
 
 This is in general a terrible upper bound on $\dnat(\NN_k^S)$, usually providing no nontrivial information. However, it does provide nice results as $H(S)$ becomes extremely large:
 
@@ -103,7 +103,7 @@ we must have $\dnat(\NN_{\leq k}^B) = \dnat(\NN_k^B) = 0$.
 
 Before we proceed we should make clear a reduction we've used before.
 
-> **Lemma 15.** Suppose $A \perp S$ for some finite $S$.  
+> **Lemma 13.** Suppose $A \perp S$ for some finite $S$.  
 > Then there exists a set $A' \subseteq A$ with $\dsup(A) = \dsup(A')$ such that $A'$ has disjoint $S$-dilations.
 > Therefore if we only care about bounding the upper or lower density of $A$, we are safe to assume that every product $a*s$ for $a \in A$ and $s \in S$ is unique.
 
@@ -119,7 +119,7 @@ Since $\dnat(u_1 A \cap u_2 A) = 0$, we have $\dsup(A) = \dsup(A')$. $\proofqed$
 
 Now we can come to the most important lemma:
 
-> **Lemma 16.** Assume $A \perp S$, where $S$ is a finite set of naturals.  
+> **Lemma 14.** Assume $A \perp S$, where $S$ is a finite set of naturals.  
 Also let $\varepsilon > 0$ and $0 \leq k \leq |S|$ be arbitrary. Then
 > 
 $$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\NN_{\leq k}^S)$$
@@ -133,7 +133,7 @@ The other small problem we have to get around is that we can't probabilistically
 
 When $\varepsilon$ is chosen optimally this bound behaves roughly like $O\left(\sqrt{\frac{\log(k)}{k}}\right) + \dnat(\NN_{\leq k}^S)$.
 
-_Proof._ Write $[n]$ for the set $\lbrace 1, 2, \ldots, n\rbrace$, and also assume by Lemma 15 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
+_Proof._ Write $[n]$ for the set $\lbrace 1, 2, \ldots, n\rbrace$, and also assume by Lemma 13 that, without any loss of generality, for any $s_1 < s_2 \in S$, we have $s_1 A \cap s_2 A = 0$.
 
 Let $U_{\leq n}$ be a a random variable whose values are subsets of $[n]$ with expected size $\frac{\varepsilon^2}{2}n$.  
 More specifically[^1] each integer $x \leq n$ should be independently included with probability $\frac{\varepsilon^2}{2}$.
@@ -177,7 +177,7 @@ So choose each $U_{\leq n}$ such that $\vert U_{\leq n}\vert  \leq \varepsilon n
 
 $$\left\vert (U_{\leq n} \times S) \cap [n]\right\vert  \geq n - \left(\varepsilon + \dnat(\NN_{\leq k}^S) + \left(1 - \frac{\varepsilon^2}{2}\right)^{k+1}\right)n - o_k(n)$$
 
-Next we measure the degree to which $U_{\leq n} \times S$ covers $A$. We'll assume thanks to Lemma 15 that products $a*s$ are unique, where $a \in A$ and $s \in S$.
+Next we measure the degree to which $U_{\leq n} \times S$ covers $A$. We'll assume thanks to Lemma 13 that products $a*s$ are unique, where $a \in A$ and $s \in S$.
 
 Let $A'$ be the set $A \cap (U_{\leq n} \times S) \subseteq A$. This has
 
@@ -202,7 +202,7 @@ We're now in a position to prove Conjecture 1 in the case $H(B) = \infty$ with $
 
 _Proof._ Again let $S$ be large finite subsets of $B$, such that $\dnat(\NN_{\leq k}^{S}) \to 0$.
 
-Then, using Lemma 16 and letting $H(S) \to \infty$, we have (for any $\varepsilon > 0$ and $k \geq 0$)
+Then, using Lemma 14 and letting $H(S) \to \infty$, we have (for any $\varepsilon > 0$ and $k \geq 0$)
 
 $$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
 
@@ -210,10 +210,10 @@ If $\varepsilon$ is fixed and nonzero, we can let $k \to \infty$ to get $\dsup(A
 
 So, the proof of this case has ended up conceptually very similar to the previous one, but only technically much more complicated.
 
-One thing we can notice is that, in Lemma 16, we don't really need all of the elements of $S$ to be in a single set. Here's what I mean:
+One thing we can notice is that, in Lemma 14, we don't really need all of the elements of $S$ to be in a single set. Here's what I mean:
 
-> **Lemma 17.** Suppose we have a collection of $m$ sets, $S_1, \ldots, S_m$, each with $A \perp S_i$.  
-> Write $S = \bigcup S_i$ for their union. Then if $\min S \geq m$, the inequality in Lemma 16 holds.  
+> **Lemma 15.** Suppose we have a collection of $m$ sets, $S_1, \ldots, S_m$, each with $A \perp S_i$.  
+> Write $S = \bigcup S_i$ for their union. Then if $\min S \geq m$, the inequality in Lemma 14 holds.  
 > That is, if $\varepsilon > 0$ and $0 \leq k \leq |S|$ are arbitrary, then
 > 
 $$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1} + \dnat(\NN_{\leq k}^S)$$
@@ -244,7 +244,7 @@ Now, for each $1 \leq i \leq m$, let
 
 $$A'_i = A \cap (U_{\leq n} \times S_i)$$
 
-such that $A' \subseteq \bigcup A'_i$. Then for the reasons given in Lemma 16, we have 
+such that $A' \subseteq \bigcup A'_i$. Then for the reasons given in Lemma 14, we have 
 
 $$\vert A'_i \cap [n]\vert \leq \vert U_{\leq n}\vert$$
 
@@ -255,24 +255,24 @@ The rest of the proof is identical to the one given before. $\proofqed$
 
 I want to put a note here that we can't actually use arbitrary singletons for $S_i$ (for which $A \perp S_i$ vacuously) and expect to produce any sort of meaningful result. The fact that we need $\min(S) \geq m$ means that we'd have $H(S) \leq \log(2)$ or so, which is insufficient to prove $\dnat(\NN_{\leq k}^S)$ is close to zero.
 
-This does, however, allow us to prove things entirely out of reach of Lemma 16.
+This does, however, allow us to prove things entirely out of reach of Lemma 14.
 
 > **Corollary 2.** Suppose $\dsup(A) > 0$ and fix $\delta > 0$.  
 > Then one may find arbitrarily large primes $p < q < p(1+\delta)$ such that $\dsup(pA \cap qA) > 0$.
 
-_Proof._ First note that the sum of $1/p$ over primes in the range $[n, n(1+\varepsilon)]$ in fact tends to zero with $n$, so Lemma 16 is utterly useless here if applied directly.
+_Proof._ First note that the sum of $1/p$ over primes in the range $[n, n(1+\varepsilon)]$ in fact tends to zero with $n$, so Lemma 14 is utterly useless here if applied directly.
 
 Suppose $n$ is large and consider the sets $S_n = \mathbb P \cap [n, n^{\log(n)})$.
 
 The exponent $\log(n)$ is unimportant other than going to infinity slowly.
 
-Elementary considerations show $H(S_n) \to \infty$, but using Lemma 16 here is not quite enough to show the primes it produces are as close together as we want them to be.
+Elementary considerations show $H(S_n) \to \infty$, but using Lemma 14 here is not quite enough to show the primes it produces are as close together as we want them to be.
 
 Instead we split $S_n$ into $n$ sets $S_{n,1}, S_{n,2}, \ldots S_{n,n}$ in the manner
 
 $$\Large S_{n,j} = \mathbb P \cap [n^{\log(n)^{(j-1)/n}}, n^{\log(n)^{j/n}})$$
 
-If $A \perp S_{n,j}$ for all $k$, then by Lemma 17 as $n \to \infty$ we would have
+If $A \perp S_{n,j}$ for all $k$, then by Lemma 15 as $n \to \infty$ we would have
 
 $$\dsup(A) \leq 2\varepsilon + \left(1-\frac{\varepsilon^2}{2}\right)^{k+1}$$
 

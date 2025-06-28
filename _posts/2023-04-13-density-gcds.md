@@ -340,7 +340,7 @@ Recall from Lemma 8 that the density of $R_0 \times R_1$, the set of bucket repr
 
 We have one last property of this setup to verify.
 
-> **Lemma 12.** Bucket membership is closed under $\gcd$:  
+> **Lemma 10.** Bucket membership is closed under $\gcd$:  
 > If $a_1$ and $a_2$ are in the same bucket, then $\gcd(a_1, a_2)$ would be in that bucket too.
 
 _Proof._ There is a bucket representative $r \in R_0 \times R_1$ so that $a_1, a_2 \in r R_2$.  
@@ -350,7 +350,7 @@ Then $\gcd(a_1, a_2) = r \gcd(t_1, t_2)$ is also a member of $r R_2$, since $\gc
 We're ready to prove the GCD problem now.
 
 Choose a value of $k$ large enough so that $H(R_2)^{-1} < \dsup(A)$.  
-This is possible by Lemma 10.
+This is possible by Lemma 8.
 
 Let's write $\delta = H(R_2)^{-1}$.
 
@@ -376,7 +376,7 @@ $$\frac{\dsup(A)-\delta-2\varepsilon}{\sigma_0(k!)}n$$
 
 In each such bucket, we can pick two distinct $a_1, a_2 \leq n$ and produce $\gcd(a_1, a_2) \in G$.  
 These GCDs we're generating are no greater than $n$.  
-Thanks to Lemma 12, they are also all distinct, and so we have
+Thanks to Lemma 10, they are also all distinct, and so we have
 
 $$G(n) \geq \frac{\dsup(A)-\delta-2\varepsilon}{\sigma_0(k!)}n$$
 
