@@ -21,7 +21,8 @@ I've submitted a handful of problems to Project Euler myself, you can find them 
 [599: Distinct Colourings of a Rubik's Cube](https://projecteuler.net/problem=599)  
 [648: Skipping Squares](https://projecteuler.net/problem=648)  
 [670: Colouring a Strip](https://projecteuler.net/problem=670) and [671: Colouring a Loop](https://projecteuler.net/problem=671)[^1]  
-[821: 123-Separable](https://projecteuler.net/problem=821) 
+[821: 123-Separable](https://projecteuler.net/problem=821)[^2]  
+[989: Fibonacci Sum](https://projecteuler.net/problem=989)[^3]
 
 <center><img src="https://projecteuler.net/project/images/p671_loop_acceptable.png"></center>
 
@@ -38,3 +39,5 @@ Given that a lot of what I work on is computational it makes sense, I think, for
 **RAM**: 64 GB Corsair
 
 [^1]: Problem 671 is an extension to 670 created by the PE development team.
+[^2]: Problem 821 was developed by me and Drake Thomas.
+[^3]: Problem 989 was developed by me and hacatu.
