@@ -41,3 +41,6 @@ bin/
 
 #blank blog post
 post-format.md
+
+#latex rendering stuff
+*.synctex.gz

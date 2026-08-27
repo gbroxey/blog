@@ -1,5 +1,5 @@
 ---
-title: "Nearly Disjoint Dilations: Finite Case"
+title: "Nearly Disjoint Dilations: Some Finite Cases"
 ---
 
 > **Abstract.** Returning to density, we examine our main conjecture in the finite case.  
@@ -12,8 +12,7 @@ We will be drawing lots of colorful squares.$\newcommand{\NN}{\mathbb N}
 
 ---
 
-This is the third post in a series on density.  
-Read [Density and GCDs][density1] and [Nearly Disjoint Dilations: Primes][density2] first.
+This is the third post in a series on density, which is the least popular subject on my blog but perhaps my favorite one to talk about - very unfortunate for everybody. Make sure to read [Density and GCDs][density1] and [Nearly Disjoint Dilations: Primes][density2] first!
 
 Here is the conjecture we continue to contemplate:
 
@@ -31,6 +30,8 @@ Let's start by tallying up our current score against it:
 > By a limiting argument, we can use the trivial finite cases to prove some divergent infinite cases like $B = \NN$ or $B = \lbrace 2k+1 \mid k \geq 0 \rbrace$ for example, as in [the gcd problem][density1].
 > 
 > With complicated probabilistic arguments, one can use a variant of Lemma 9 to prove the divergent coprime case, when $H(B)$ diverges and the elements of $B$ are relatively prime. This is the topic of the [second density post][density2], see the proof of Theorem 1. This includes $B = \PP$.
+> 
+> That last bit has some strange consequences - including for example that if $\dsup(A) > 0$, then we may find arbitrarily large primes $p, q$ such that $p < q < 1.001p$ and $\dsup(pA \cap qA) > 0$.
 
 This is roughly where we left off.  
 Our goal for today is to examine the general finite case and prove as much as we can.  
@@ -71,12 +72,9 @@ Let $U_0$ be the set of all proper divisors of $p$, and let $U_1$ be the set $\l
 Also let $U_2$ be the set of all integers relatively prime to $p$.  
 We can set $U = U_0 \times U_1 \times U_2$ and then $U \times B$ is a direct factor pair!
 
-We don't even need Saffari's result here. Factor $p = q_1^{e_1} q_2^{e_2} \ldots q_k^{e_k}$ where $q_i$ are different primes.  
-Now consider a general $n = q_1^{r_1} q_2^{r_2} \ldots q_k^{r_k} m$ where $m$ is relatively prime to $p$, and observe that we can consider the $r_i$ mod $5e_i$ and then mod $e_i$ to uniquely write $n$ as a product in $U_0 \times U_1 \times U_2 \times B$. The details are not exactly immediate, but writing them out here is not as enlightening as having you do it yourself, especially if it's not intuitively obvious why it works.
-
 Okay, but what about something like $B = \lbrace 1, p^2, p^3 \rbrace$, where it's not part of a direct factor pair?
 
-For this and other similar cases, we introduce a natural way of displaying these sets graphically.  
+For this and other similar cases, there is a natural way of displaying these sets graphically.  
 
 Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\NN = V_{\text{div}} \times V_\text{pow} \times V_\text{rel}$, where
 - $V_{\text{div}}$ is the set of proper divisors of $p$
@@ -86,12 +84,12 @@ Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposin
 This is the big idea:
 
 > **Lemma TODO.** Assume $A \perp B$ where $B$ is a finite subset of $\lbrace 1, p, p^2, \ldots \rbrace$.  
-> In this case, since $B$ is finite, assume that each $b_1 A \cap b_2 A$ is empty (see [Lemma 15][density2]).  
+> In this case, since $B$ is finite, assume that each $b_1 A \cap b_2 A$ is empty (see [Lemma 13][density2]).  
 > For each $v \in V_\text{div} \times V_\text{rel}$, we examine the set $W = A \cap v V_\text{pow}$.  
 > Then the condition on $A$ is equivalent to that $b_1 W \cap b_2 W$ is empty for $b_1 \neq b_2 \in B$.  
 > This way we reduce the study to subsets of geometric series in $p$.
 
-The behavior of $A \cap v V_\text{pow}$ is essentially independent of $v$, but when we look at prefixes of $A$ then the relative size of $v$ will play a part in determining how the chunk is filled.
+The behavior of $A \cap v V_\text{pow}$ is essentially independent of $v$, but when we look at prefixes of $A$ then the relative size of $v$ will play a part in determining how that prefix is filled. The nature of one specific slice $A \cap v V_\text{pow}$ doesn't have much bearing on the density of the set $A$, but we can study how those slices look in general and get quite a bit of good information.
 
 Since we are now examining parts of $A$ which are subsets of certain geometric series, we will visualize this as a sequence of squares as in the following diagram.
 
@@ -125,7 +123,7 @@ TODO
 
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
-The first thing to notice is that thanks to [Lemma 15][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
+The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
 
 ---
 
@@ -207,9 +205,7 @@ We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \f
 
 From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
 
-Immediately (by [Lemma 7][density1]) we have
-
-$$\dnat(Q) = \left(\sum_{i, j \geq 0} \frac{1}{2^i 3^j}\right)^{-1} = \frac{1}{3}$$
+Immediately $\dnat(Q) = \varphi(6)/6 = 1/3$.  
 
 This setup is particularly useful to us in this problem.
 
@@ -401,7 +397,7 @@ The code for this blog post is available nowhere.
 
 [density1]: /blog/2023/04/13/density-gcds.html
 [density2]: /blog/2023/04/18/dilations-primes.html
-[saffari]: https://old.renyi.hu/~p_erdos/1979-10.pdf
+[saffari]: https://www.renyi.hu/~p_erdos/1979-10.pdf
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 
 
