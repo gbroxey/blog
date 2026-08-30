@@ -72,24 +72,28 @@ Let $U_0$ be the set of all proper divisors of $p$, and let $U_1$ be the set $\l
 Also let $U_2$ be the set of all integers relatively prime to $p$.  
 We can set $U = U_0 \times U_1 \times U_2$ and then $U \times B$ is a direct factor pair!
 
-Okay, but what about something like $B = \lbrace 1, p^2, p^3 \rbrace$, where it's not part of a direct factor pair?
+Okay, but what about something like 
+
+## $B = \lbrace 1, p^2, p^3 \rbrace$
+
+where it's not part of a direct factor pair?
 
 For this and other similar cases, there is a natural way of displaying these sets graphically.  
 
-Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\NN = V_{\text{div}} \times V_\text{pow} \times V_\text{rel}$, where
+Assuming $B \subseteq \lbrace 1, p, p^2, \ldots \rbrace$, we start by decomposing $\NN = V_{\text{div}} \times V_\text{rel} \times V_\text{pow}$, where
 - $V_{\text{div}}$ is the set of proper divisors of $p$
-- $V_\text{pow}$ is the set of powers of $p$
 - $V_\text{rel}$ is the set of integers relatively prime to $p$
+- $V_\text{pow}$ is the set of powers of $p$
 
 This is the big idea:
 
-> **Lemma TODO.** Assume $A \perp B$ where $B$ is a finite subset of $\lbrace 1, p, p^2, \ldots \rbrace$.  
+> **Lemma 16.** Assume $A \perp B$ where $B$ is a finite subset of $\lbrace 1, p, p^2, \ldots \rbrace$.  
 > In this case, since $B$ is finite, assume that each $b_1 A \cap b_2 A$ is empty (see [Lemma 13][density2]).  
 > For each $v \in V_\text{div} \times V_\text{rel}$, we examine the set $W = A \cap v V_\text{pow}$.  
 > Then the condition on $A$ is equivalent to that $b_1 W \cap b_2 W$ is empty for $b_1 \neq b_2 \in B$.  
-> This way we reduce the study to subsets of geometric series in $p$.
+> It's important as well that each $v$ we can pick gives us a different slice of $A$, and that each slice we get is just some subset of an infinite geometric series. All of the slices have zero density.
 
-The behavior of $A \cap v V_\text{pow}$ is essentially independent of $v$, but when we look at prefixes of $A$ then the relative size of $v$ will play a part in determining how that prefix is filled. The nature of one specific slice $A \cap v V_\text{pow}$ doesn't have much bearing on the density of the set $A$, but we can study how those slices look in general and get quite a bit of good information.
+The behavior of $A \cap v V_\text{pow}$ is essentially independent of $v$, but when we look at prefixes of $A$ then the relative size of $v$ will play a part in determining how that prefix is filled. The nature of one specific (infinite) slice $A \cap v V_\text{pow}$ doesn't have much bearing on the density of the set $A$, but we can study how those slices look in general and get quite a bit of good information.
 
 Since we are now examining parts of $A$ which are subsets of certain geometric series, we will visualize this as a sequence of squares as in the following diagram.
 
@@ -102,22 +106,74 @@ $$W = A \cap v V_\text{pow} = \lbrace v, v \cdot p^5, v \cdot p^9 \rbrace$$
 $$W \cap p^2 W = W \cap p^3 W = p^2 W \cap p^3 W = \emptyset$$
 
 We see we're slotting together disconnected blobs with no overlap.  
-You should notice that in the shown configuration there is unnecessary empty space at $v \cdot p^4$, we are able to slide everything afterwards towards the left one square and achieve a "better" packing.
+You should notice that in the shown configuration there is unnecessary empty space at $v \cdot p^4$, so we are able to slide everything afterwards towards the left one square and achieve a "better" packing.
 
 You should also notice that the empty square inside the blob will never be filled! In fact,
 
-> **Lemma.** If $A \perp \lbrace 1, p^2, p^3 \rbrace$, then $A \perp \lbrace 1, p, p^2, p^3 \rbrace$ so 
+> **Lemma 17.** If $A \perp \lbrace 1, p^2, p^3 \rbrace$, then $A \perp \lbrace 1, p, p^2, p^3 \rbrace$ so 
 > 
 $$\dsup(A) \leq H(\lbrace 1, p, p^2, p^3 \rbrace)^{-1} < H(\lbrace 1, p^2, p^3 \rbrace)^{-1}$$
 
-_Proof._ We have $A \cap pA = \frac{1}{p^2} \left(p^2A \cap p^3A\right)$ has density zero.  
+_Proof._ The intersection $A \cap pA = \frac{1}{p^2} \left(p^2A \cap p^3A\right)$ has density zero.  
 The set $\lbrace 1, p, p^2, p^3 \rbrace$ is trivial so we are done. $\proofqed$
 
 So maybe this is not quite the most interesting case ever but we'll pretend otherwise because I can only draw so many squares without going insane.
 
 Instead of that observation, it is slightly more interesting to consider the whole idea of reducing wasted space by sliding the shapes downwards. First we have to actually relate this to density.
 
-TODO
+> **Lemma 18 (Improvement).** Suppose $A_0$ is a set of natural numbers, and for each $n \geq 1$ the set $A_n$ is identical to $A_{n-1}$ except for making one element smaller (that means removing an element and adding some smaller natural number which was not already in $A_{n-1}$).
+> If this sequence is finite then obviously $A_0$ and $A_n$ differ by at most $n$ elements, so they have the same upper and lower density. But, if the sequence is infinite, then we can define $A_\infty$ pretty easily, since each prefix $A_n \cap [k]$ can only change a finite number of times. Just say $k \in A_\infty$ iff $k$ is a member of all but finitely many of the $A_n$.
+> In this case, $\dsup(A_0) \leq \dsup(A_\infty)$ and $\dinf(A_0) \leq \dinf(A_\infty)$.
+> Also, if $A_n \perp B$ for all $n$, then $A_\infty \perp B$ also.
+
+_Proof._ It is always true that $|A_0 \cap [k]| \leq |A_\infty \cap [k]|$. Divide by $k$ and do lim sup or inf to get the inequalities.  
+The last bit is true because if $b_1 A_\infty \cap b_2 A_\infty$ were nonempty, then the same would be true of $A_n$ where $n$ is taken large enough so that a long enough prefix of $A_n$ matches $A_\infty$.  $\proofqed$
+
+This gives us a pretty natural and intuitive result, which is that any set $A \perp B$ which we intend to maximize whatever density we're looking at should never waste space. If you can replace some integer in $A$ with some smaller integer, you should, and you can do this infinitely many times until you've obtained a new set $A$ for which doing so is no longer possible, and the density can only have increased. Neat.
+
+We're now able to deal with slightly grosser looking one-dimensional sets like 
+
+## $B = \lbrace 1, p^3, p^4 \rbrace$
+
+Notice that $B$ can actually slot into itself this time:
+
+TODO PICTURE
+
+But thankfully we can make sense of it, and the packing you think is optimal is indeed the best.  
+Consider these rules about the slice $W = A \cap v V_{\text{pow}}$:
+- If $v p^0$ is not in $W$, just slide the entire slice down (divide it by a suitable power of $p$) until it is
+- If $v p^i$ is in $W$, and $v p^{i+1}$ and $v p^{i+2}$ aren't in $W \times B$, then replace the next smallest member of $W$ with $v p^{i+2}$
+- If $v p^i$ is in $W$, and $v p^{i+5}$ isn't in $W \times B$, then replace the next smallest member of $W$ with $v p^{i+5}$
+
+First, we need to be convinced that these actions will always preserve $A \perp B$. The first one is pretty clear, but the other two are more obvious with these diagrams:
+
+TODO PICTURE
+
+Now, so long as I say the magic words "perform whichever action minimizes the value of the smallest integer changed in the set $A$", we obtain by magic a set $A_{\infty}$ of possibly higher density for which none of those listed improvements are possible.  
+
+It turns out that the improvements I listed actually totally determine $W$, which can be seen by just looking at each $v p^0, v p^1, \ldots$ in order. By the first rule, $v p^0 \in W$. Since $A \perp B$, we can't include $v p^1$, and by the second rule, we have to have $v p^2 \in W$. Together that covers everything up to $v p^6$, and then the third rule tells us $v p^7 \in W$, and so on.
+
+TODO PICTURE
+
+So there is a set $A$ which maximizes density, and its density is[^0]
+
+$$\frac{p^4(p^2+1)(p-1)}{p^7-1}$$
+
+and, by algebra, if we multiply this by $H(B) = 1 + \frac{1}{p^3} + \frac{1}{p^4}$ and simplify, we get
+
+$$\frac{1 + p + p^2 + p^3 + p^4 + p^6}{1 + p + p^2 + p^3 + p^4 + p^5 + p^6} < 1$$
+
+so in fact $\dsup(A) < H(B)^{-1}$ here. $\proofqed$
+
+We managed to handle this one because any possible holes could always be plugged, and the shape of $B$ wasn't so vicious as to prevent this from happening. Here's a contrived example which is less friendly.
+
+## TODO
+
+Alright then, it's time to move onto the 
+
+## "Two-Dimensional" Case
+
+You can probably guess what's coming here, which is that we're now going to be looking at subsets of $\lbrace p^i q^j \rbrace$ for suitable $p, q$.
 
 ## $B = \lbrace 1, 2, 3\rbrace$
 
@@ -400,9 +456,7 @@ The code for this blog post is available nowhere.
 [saffari]: https://www.renyi.hu/~p_erdos/1979-10.pdf
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 
-
-[^0]: We actually hope to find a proof for all $B = \lbrace 1, p, q \rbrace$ where $1 < p < q$.
-[^1]: Because if 4 and 6 were both in $A$, then $2A$ and $3A$ would both contain $12$.
+[^0]: Here $V_\text{div} \times V_\text{rel}$ has density $1/\sum p^{-k} = (1-p)/p$, and we're taking the product of that set with $\lbrace 1, p^2, p^7, p^9, \ldots \rbrace$. See [Lemma 7][density1] again if you want.
 [^2]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
 
 ---
