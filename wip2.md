@@ -1,5 +1,5 @@
 ---
-title: "Nearly Disjoint Dilations: Some Finite Cases"
+title: "Nearly Disjoint Dilations: Some Finite Cases, and Counterexamples"
 ---
 
 > **Abstract.** Returning to density, we examine our main conjecture in the finite case.  
