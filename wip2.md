@@ -122,11 +122,12 @@ So maybe this is not quite the most interesting case ever but we'll pretend othe
 Instead of that observation, it is slightly more interesting to consider the whole idea of reducing wasted space by sliding the shapes downwards. First we have to actually relate this to density.
 
 > **Lemma 18 (Improvement).** Suppose $A_0$ is a set of natural numbers, and for each $n \geq 1$ the set $A_n$ is identical to $A_{n-1}$ except for making one element smaller (that means removing an element and adding some smaller natural number which was not already in $A_{n-1}$).
-> If this sequence is finite then obviously $A_0$ and $A_n$ differ by at most $n$ elements, so they have the same upper and lower density. But, if the sequence is infinite, then we can define $A_\infty$ pretty easily, since each prefix $A_n \cap [k]$ can only change a finite number of times. Just say $k \in A_\infty$ iff $k$ is a member of all but finitely many of the $A_n$.
-> In this case, $\dsup(A_0) \leq \dsup(A_\infty)$ and $\dinf(A_0) \leq \dinf(A_\infty)$.
+> If this sequence is finite then obviously $A_0$ and $A_n$ differ by at most $n$ elements, so they have the same upper and lower density. But, if the sequence is infinite, then we can define $A_\infty$ pretty easily, since each prefix $A_n \cap [k]$ can only change a finite number of times. Just say $k \in A_\infty$ iff $k$ is a member of all but finitely many of the $A_n$.  
+> In this case, $\dsup(A_0) \leq \dsup(A_\infty)$ and $\dinf(A_0) \leq \dinf(A_\infty)$.  
 > Also, if $A_n \perp B$ for all $n$, then $A_\infty \perp B$ also.
 
-_Proof._ It is always true that $|A_0 \cap [k]| \leq |A_\infty \cap [k]|$. Divide by $k$ and do lim sup or inf to get the inequalities.  
+_Proof._ It is always true that $|A_0 \cap [k]| \leq |A_\infty \cap [k]|$.  
+Divide by $k$ and do lim sup or inf to get the inequalities.  
 The last bit is true because if $b_1 A_\infty \cap b_2 A_\infty$ were nonempty, then the same would be true of $A_n$ where $n$ is taken large enough so that a long enough prefix of $A_n$ matches $A_\infty$.  $\proofqed$
 
 This gives us a pretty natural and intuitive result, which is that any set $A \perp B$ which we intend to maximize whatever density we're looking at should never waste space. If you can replace some integer in $A$ with some smaller integer, you should, and you can do this infinitely many times until you've obtained a new set $A$ for which doing so is no longer possible, and the density can only have increased. Neat.
