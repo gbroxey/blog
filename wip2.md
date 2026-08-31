@@ -124,7 +124,7 @@ Instead of that observation, it is slightly more interesting to consider the who
 > **Lemma 18 (Improvement).** Suppose $A_0$ is a set of natural numbers, and for each $n \geq 1$ the set $A_n$ is identical to $A_{n-1}$ except for making one element smaller (that means removing an element and adding some smaller natural number which was not already in $A_{n-1}$).
 > If this sequence is finite then obviously $A_0$ and $A_n$ differ by at most $n$ elements, so they have the same upper and lower density. But, if the sequence is infinite, then we can define $A_\infty$ pretty easily, since each prefix $A_n \cap [k]$ can only change a finite number of times. Just say $k \in A_\infty$ iff $k$ is a member of all but finitely many of the $A_n$.  
 > In this case, $\dsup(A_0) \leq \dsup(A_\infty)$ and $\dinf(A_0) \leq \dinf(A_\infty)$.  
-> Also, if $A_n \perp B$ for all $n$, then $A_\infty \perp B$ also.
+> Also, if $A_n \perp B$ for all $n$, then $A_\infty \perp B$ as well.
 
 _Proof._ It is always true that $|A_0 \cap [k]| \leq |A_\infty \cap [k]|$.  
 Divide by $k$ and do lim sup or inf to get the inequalities.  
@@ -168,7 +168,9 @@ so in fact $\dsup(A) < H(B)^{-1}$ here. $\proofqed$
 
 We managed to handle this one because any possible holes could always be plugged, and the shape of $B$ wasn't so vicious as to prevent this from happening. Here's a contrived example which is less friendly.
 
-## TODO
+### TODO SECTION
+
+---
 
 Alright then, it's time to move onto the 
 
@@ -182,9 +184,7 @@ Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
 The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
 
----
-
-## Lower Density
+#### Lower Density
 
 The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
 
