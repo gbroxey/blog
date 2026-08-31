@@ -72,9 +72,9 @@ Let $U_0$ be the set of all proper divisors of $p$, and let $U_1$ be the set $\l
 Also let $U_2$ be the set of all integers relatively prime to $p$.  
 We can set $U = U_0 \times U_1 \times U_2$ and then $U \times B$ is a direct factor pair!
 
-Okay, but what about something like 
+Okay, but what about something like
 
-## $B = \lbrace 1, p^2, p^3 \rbrace$
+### $B = \lbrace 1, p^2, p^3 \rbrace$
 
 where it's not part of a direct factor pair?
 
@@ -134,11 +134,11 @@ This gives us a pretty natural and intuitive result, which is that any set $A \p
 
 We're now able to deal with slightly grosser looking one-dimensional sets like 
 
-## $B = \lbrace 1, p^3, p^4 \rbrace$
+### $B = \lbrace 1, p^3, p^4 \rbrace$
 
 Notice that $B$ can actually slot into itself this time:
 
-TODO PICTURE
+<center><img src = "./images/wip2/onedim-2.svg" style="width: 80vw"/></center>
 
 But thankfully we can make sense of it, and the packing you think is optimal is indeed the best.  
 Consider these rules about the slice $W = A \cap v V_{\text{pow}}$:
@@ -176,7 +176,7 @@ Alright then, it's time to move onto the
 
 You can probably guess what's coming here, which is that we're now going to be looking at subsets of $\lbrace p^i q^j \rbrace$ for suitable $p, q$.
 
-## $B = \lbrace 1, 2, 3\rbrace$
+### $B = \lbrace 1, 2, 3\rbrace$
 
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 

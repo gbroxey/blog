@@ -39,6 +39,8 @@
 
 \begin{document}
 
+%DIAGRAM OF {1, p^2, p^3}
+
 \begin{center}
 \begin{tikzpicture}[scale=1.5, every node/.style={scale=1.25}]
 \begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
@@ -80,6 +82,57 @@
 \foreach \j in {0,...,1} {
 \node at (\i, 1.5*\j) {$v \cdot p^{\i}$};
 }
+}
+\end{tikzpicture}
+\end{center}
+
+\newpage
+
+%DIAGRAM OF {1, p^3, p^4}
+
+\begin{center}
+\begin{tikzpicture}[scale=1.5, every node/.style={scale=1.25}]
+\begin{scope}[xshift=-0.5cm,yshift=-0.5cm]
+\fill[white!100] (0,0) -- (12, 0) -- (12, 1) -- (0, 1) -- cycle;
+\draw (0,0) grid (12, 1);
+\draw[very thick] (0,0) -- (12, 0) -- (12, 1) -- (0, 1) -- cycle;
+
+% \thickdotshape{black!15}{black!60}{1}{0*1.5}{0.2}
+% \thickdotshape{black!15}{black!60}{2}{0*1.5}{0.2}
+
+%upwards ones
+\foreach \i in {0, 7} {
+  \foreach \j in {0, 3, 4} {
+    \if \j 0
+      \thickdotshape{blue!25}{blue!60}{\i}{0*1.5}{0.75}
+    \else 
+      \thickdotshape{blue!10}{blue!60}{\i+\j}{0*1.5}{0.35}
+    \fi
+    \draw[very thick, blue!60] (\i+\j+0.5, 0*1.5+1-\lborder) -- (\i+\j+0.5, 0*1.5+1+2*\lborder);
+    }
+  \draw[very thick, blue!60] (\i+0.5, 0*1.5+1+2*\lborder) -- (\i+4.5, 0*1.5+1+2*\lborder);
+}
+%downwards ones
+\foreach \i in {2} {
+  \foreach \j in {0, 3, 4} {
+    \if \j 0
+      \thickdotshape{blue!25}{blue!60}{\i}{0*1.5}{0.75}
+    \else 
+      \thickdotshape{blue!10}{blue!60}{\i+\j}{0*1.5}{0.35}
+    \fi
+    \draw[very thick, blue!60] (\i+\j+0.5, 0*1.5-2*\lborder) -- (\i+\j+0.5, 0*1.5+\lborder);
+    }
+  \draw[very thick, blue!60] (\i+0.5, 0*1.5-2*\lborder) -- (\i+4.5, 0*1.5-2*\lborder);
+}
+
+% \draw[very thick, blue!60] (9.5, 0*1.5+1-\lborder) -- (9.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1-\lborder);
+% \draw[very thick, blue!60] (11.5, 0*1.5+1+2*\lborder) -- (11.6, 0*1.5+1+2*\lborder);
+% \draw[very thick, blue!60] (11.7, 0*1.5+1+2*\lborder) -- (11.8, 0*1.5+1+2*\lborder);
+% \draw[very thick, blue!60] (11.9, 0*1.5+1+2*\lborder) -- (12, 0*1.5+1+2*\lborder);
+
+\end{scope}
+\foreach \i in {0,1,...,11} {
+\node at (\i, 0) {$v \cdot p^{\i}$};
 }
 \end{tikzpicture}
 \end{center}
