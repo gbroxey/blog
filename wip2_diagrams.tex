@@ -40,6 +40,7 @@
 \begin{document}
 
 %DIAGRAM OF {1, p^2, p^3}
+%onedim-1.svg
 
 \begin{center}
 \begin{tikzpicture}[scale=1.5, every node/.style={scale=1.25}]
@@ -55,8 +56,8 @@
 \thickdotshape{blue!10}{blue!60}{2}{0*1.5}{0.35}
 \thickdotshape{blue!10}{blue!60}{3}{0*1.5}{0.35}
 
-\draw[very thick, blue!60] (0.5, 0*1.5+1-\lborder) -- (0.5, 0*1.5+1+2*\lborder) -- (2.5, 0*1.5+1+2*\lborder) -- (2.5, 0*1.5+1-\lborder);
-\draw[very thick, blue!60] (2.5, 0*1.5+1+2*\lborder) -- (3.5, 0*1.5+1+2*\lborder) -- (3.5, 0*1.5+1-\lborder);
+\draw[line width=2pt, blue!60] (0.5, 0*1.5+1-\lborder) -- (0.5, 0*1.5+1+2*\lborder) -- (2.5, 0*1.5+1+2*\lborder) -- (2.5, 0*1.5+1-\lborder);
+\draw[line width=2pt, blue!60] (2.5, 0*1.5+1+2*\lborder) -- (3.5, 0*1.5+1+2*\lborder) -- (3.5, 0*1.5+1-\lborder);
 
 \thickdotshape{black!15}{black!60}{4}{0*1.5}{0.2}
 
@@ -65,17 +66,17 @@
 \thickdotshape{blue!10}{blue!60}{7}{0*1.5}{0.35}
 \thickdotshape{blue!10}{blue!60}{8}{0*1.5}{0.35}
 
-\draw[very thick, blue!60] (5.5, 0*1.5+1-\lborder) -- (5.5, 0*1.5+1+2*\lborder) -- (7.5, 0*1.5+1+2*\lborder) -- (7.5, 0*1.5+1-\lborder);
-\draw[very thick, blue!60] (7.5, 0*1.5+1+2*\lborder) -- (8.5, 0*1.5+1+2*\lborder) -- (8.5, 0*1.5+1-\lborder);
+\draw[line width=2pt, blue!60] (5.5, 0*1.5+1-\lborder) -- (5.5, 0*1.5+1+2*\lborder) -- (7.5, 0*1.5+1+2*\lborder) -- (7.5, 0*1.5+1-\lborder);
+\draw[line width=2pt, blue!60] (7.5, 0*1.5+1+2*\lborder) -- (8.5, 0*1.5+1+2*\lborder) -- (8.5, 0*1.5+1-\lborder);
 
 \thickdotshape{blue!25}{blue!60}{9}{0*1.5}{0.75}
 \thickdotshape{black!15}{black!60}{10}{0*1.5}{0.2}
 \thickdotshape{blue!10}{blue!60}{11}{0*1.5}{0.35}
 
-\draw[very thick, blue!60] (9.5, 0*1.5+1-\lborder) -- (9.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1-\lborder);
-\draw[very thick, blue!60] (11.5, 0*1.5+1+2*\lborder) -- (11.6, 0*1.5+1+2*\lborder);
-\draw[very thick, blue!60] (11.7, 0*1.5+1+2*\lborder) -- (11.8, 0*1.5+1+2*\lborder);
-\draw[very thick, blue!60] (11.9, 0*1.5+1+2*\lborder) -- (12, 0*1.5+1+2*\lborder);
+\draw[line width=2pt, blue!60] (9.5, 0*1.5+1-\lborder) -- (9.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1-\lborder);
+\draw[line width=2pt, blue!60] (11.5, 0*1.5+1+2*\lborder) -- (11.6, 0*1.5+1+2*\lborder);
+\draw[line width=2pt, blue!60] (11.7, 0*1.5+1+2*\lborder) -- (11.8, 0*1.5+1+2*\lborder);
+\draw[line width=2pt, blue!60] (11.9, 0*1.5+1+2*\lborder) -- (12, 0*1.5+1+2*\lborder);
 
 \end{scope}
 \foreach \i in {0,1,...,11} {
@@ -89,6 +90,7 @@
 \newpage
 
 %DIAGRAM OF {1, p^3, p^4}
+%onedim-2.svg
 
 \begin{center}
 \begin{tikzpicture}[scale=1.5, every node/.style={scale=1.25}]
@@ -108,9 +110,9 @@
     \else 
       \thickdotshape{blue!10}{blue!60}{\i+\j}{0*1.5}{0.35}
     \fi
-    \draw[very thick, blue!60] (\i+\j+0.5, 0*1.5+1-\lborder) -- (\i+\j+0.5, 0*1.5+1+2*\lborder);
+    \draw[line width=2pt, blue!60] (\i+\j+0.5, 0*1.5+1-\lborder) -- (\i+\j+0.5, 0*1.5+1+2*\lborder);
     }
-  \draw[very thick, blue!60] (\i+0.5, 0*1.5+1+2*\lborder) -- (\i+4.5, 0*1.5+1+2*\lborder);
+  \draw[line width=2pt, blue!60] (\i+0.5, 0*1.5+1+2*\lborder) -- (\i+4.5, 0*1.5+1+2*\lborder);
 }
 %downwards ones
 \foreach \i in {2} {
@@ -120,9 +122,9 @@
     \else 
       \thickdotshape{blue!10}{blue!60}{\i+\j}{0*1.5}{0.35}
     \fi
-    \draw[very thick, blue!60] (\i+\j+0.5, 0*1.5-2*\lborder) -- (\i+\j+0.5, 0*1.5+\lborder);
+    \draw[line width=2pt, blue!60] (\i+\j+0.5, 0*1.5-2*\lborder) -- (\i+\j+0.5, 0*1.5+\lborder);
     }
-  \draw[very thick, blue!60] (\i+0.5, 0*1.5-2*\lborder) -- (\i+4.5, 0*1.5-2*\lborder);
+  \draw[line width=2pt, blue!60] (\i+0.5, 0*1.5-2*\lborder) -- (\i+4.5, 0*1.5-2*\lborder);
 }
 
 % \draw[very thick, blue!60] (9.5, 0*1.5+1-\lborder) -- (9.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1+2*\lborder) -- (11.5, 0*1.5+1-\lborder);
