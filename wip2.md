@@ -130,7 +130,7 @@ _Proof._ It is always true that $|A_0 \cap [k]| \leq |A_\infty \cap [k]|$.
 Divide by $k$ and do lim sup or inf to get the inequalities.  
 The last bit is true because if $b_1 A_\infty \cap b_2 A_\infty$ were nonempty, then the same would be true of $A_n$ where $n$ is taken large enough so that a long enough prefix of $A_n$ matches $A_\infty$.  $\proofqed$
 
-This gives us a pretty natural and intuitive result, which is that any set $A \perp B$ which we intend to maximize whatever density we're looking at should never waste space. If you can replace some integer in $A$ with some smaller integer, you should, and you can do this infinitely many times until you've obtained a new set $A$ for which doing so is no longer possible, and the density can only have increased. Neat.
+This gives us a pretty natural and intuitive result, which is that if we are intending for some set $A \perp B$ to maximize (natural, upper, lower) density, then we should not waste any space. If you can replace some integer in $A$ with some smaller integer, you should, and you can do this infinitely many times until you've obtained a new set $A$ for which doing so is no longer possible, and the density can only have increased. Neat.
 
 We're now able to deal with slightly grosser looking one-dimensional sets like 
 
@@ -141,7 +141,7 @@ Notice that $B$ can actually slot into itself this time:
 <center><img src = "./images/wip2/onedim-2.svg" style="width: 80vw"/></center>
 
 But thankfully we can make sense of it, and the packing you think is optimal is indeed the best.  
-Consider these rules about the slice $W = A \cap v V_{\text{pow}}$:
+Consider these strategies to improve the slice $W = A \cap v V_{\text{pow}}$:
 - If $v p^0$ is not in $W$, just slide the entire slice down (divide it by a suitable power of $p$) until it is
 - If $v p^i$ is in $W$, and $v p^{i+1}$ and $v p^{i+2}$ aren't in $W \times B$, then replace the next smallest member of $W$ with $v p^{i+2}$
 - If $v p^i$ is in $W$, and $v p^{i+5}$ isn't in $W \times B$, then replace the next smallest member of $W$ with $v p^{i+5}$
@@ -176,17 +176,17 @@ Alright then, it's time to move onto the
 
 ## "Two-Dimensional" Case
 
-You can probably guess what's coming here, which is that we're now going to be looking at subsets of $\lbrace p^i q^j \rbrace$ for suitable $p, q$.
+You can probably guess what's coming here, which is that we're now going to be looking at subsets of $\lbrace p^i q^j \rbrace$ for suitable $p, q$. This is obviously already incredibly general, so we'll start with just $p = 2$ and $q = 3$ and think for a bit about what we can do there.
 
 ### $B = \lbrace 1, 2, 3\rbrace$
 
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
-The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition.
+The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition. This is perhaps the most interesting finite case we've looked at so far, and so we're going to be examining it in more detail than we have so far. We'll start by investigating the lower density of $A$ (which up until now we have ignored as less interesting of an idea).
 
 #### Lower Density
 
-The first idea to explore is to see what happens when we greedily shove elements into $A$, lowest first.
+What happens when we greedily shove elements into $A$, lowest first?
 
 <center><img src = "./images/wip2/greedy.svg" style="width: 80vw"/></center>
 
@@ -195,8 +195,8 @@ After some time we arrive at $A = \lbrace 1, 4, 5, 7, 9, 11, 13, 16, \ldots \rbr
 
 > **Lemma TODO.** The set $A$ consists of all $4^i 9^j k$ where $\gcd(k, 6) = 1$.
 
-_Proof._ Search the sequence on OEIS.  
-Suppose we have proven that $A \cap \lbrack 1 .. n \rbrack$ is full of the desired elements, and let $n+1$ be written in the form $2^i 3^j k$ for $i, j \geq 0$ and $\gcd(k, 6) = 1$. Suppose that $i, j$ are not both even, we will show that $n+1$ cannot be included in the set $A$.
+_Proof._ Search the sequence on OEIS (it's one of mine).  
+Suppose we have proven that $A \cap \lbrack n \rbrack$ is full of the desired elements, and let $n+1$ be written in the form $2^i 3^j k$ for $i, j \geq 0$ and $\gcd(k, 6) = 1$. Suppose that $i, j$ are not both even, we will show that $n+1$ cannot be included in the set $A$.
 
 If $i$ is odd and $j$ is even, then $2^{i-1}3^jk$ is an element of $A$, and so $n+1$ is twice an element of $A$ and cannot be added to the set. A similar idea works if $i$ is even and $j$ is odd.
 
@@ -204,7 +204,9 @@ If $i, j$ are both odd, then $2^{i+1} 3^{j-1}k = \frac{2}{3}(n+1) \leq n$ is an 
 Then $2A$ would contain $2(n+1) = 2^{i+1} 3^j k$ and $3A$ would contain $3 \cdot 2^{i+1}3^{j-1}k = 2^{i+1} 3^j k$.  
 In this case, $2A$ and $3A$ are not disjoint.
 
-So $n+1 = 2^i 3^j k$ can only be included in $A$ if $i, j$ are both even. $\proofqed$
+So $n+1 = 2^i 3^j k$ can only be included in $A$ if $i, j$ are both even. 
+
+We can always include integers for which $i, j$ are both even during this greedy construction (you can verify that if you want, but I want to move on) so the lemma is proved. $\proofqed$
 
 Let's also compute the density of this set for good measure.
 
@@ -213,6 +215,8 @@ We can verify that $A_1$ is periodic and so has density $\frac{2}{6} = \frac{1}{
 Also, $A_1 \perp A_0$, so by [Lemma 7][density1],
 
 $$\dnat(A) = \dnat(A_1) H(A_0) = \frac{1}{3} \sum_{i, j \geq 0} \frac{1}{4^i 9^j} = \frac{1}{2}$$
+
+TODO add something here about why we did all that
 
 ---
 
