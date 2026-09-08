@@ -273,18 +273,21 @@ Logarithmic density is particularly amenable to our problem setup:
 > If $B$ is infinite then take larger and larger finite subsets of $B$ to prove the same bound.  
 > Conjecture 1 holds for logarithmic density. Yay!
 
-_Proof._ Since $B$ is finite, assume as always the $B$-dilations of $A$ are disjoint. 
+_Proof._ Since $B$ is finite, assume as always the $B$-dilations of $A$ are disjoint.  
 Consider this inequality, by expanding the terms in the product:
 
 $$\left(\sum_{a \leq x,\, a \in A} \frac{1}{a}\right) \times \left(\sum_{b \in B} \frac{1}{b}\right) \leq \sum_{n \leq x\max(B)} \frac{1}{n} \sim \log(x\max(B)) \sim \log(x)$$
 
 Divide by $\log(x)$ and by $H(B)$ and let $x$ go to infinity. Neat! $\proofqed$
 
-Okay, so, to prove that the greedy construction maximizes lower density when $B = \lbrace 1, 2, 3 \rbrace$, we will actually be showing that $\ldinf(A) \leq \frac{1}{2}$, and then using $\dinf(A) \leq \ldinf(A)$.
+But we can do *more*:
+
+> **Theorem TODO.** If $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, and so $\dinf(A) \leq \frac{1}{2}$.  
+> Therefore the greedy construction maximizes lower density here.
 
 TODO RELABEL BELOW VARS
 
-From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
+_Proof._ From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
 
 Immediately $\dnat(Q) = \varphi(6)/6 = 1/3$.  
 
