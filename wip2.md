@@ -182,7 +182,7 @@ You can probably guess what's coming here, which is that we're now going to be l
 
 Here we have $H(B) = 11/6$, and so we need to prove $\dsup(A) \leq 6/11$.
 
-The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition. This is perhaps the most interesting finite case we've looked at so far, and so we're going to be examining it in more detail than we have so far. We'll start by investigating the lower density of $A$ (which up until now we have ignored as less interesting of an idea).
+The first thing to notice is that thanks to [Lemma 13][density2], we can reduce the study of the case $A \perp \lbrace 1, 2, 3\rbrace$ to the case $A, 2A, 3A$ disjoint. From here on we'll assume this stronger condition. This is perhaps the most interesting finite case we've looked at so far, and so we're going to be examining it in more detail. We'll start by investigating the lower density of $A$ (which up until now we have ignored as less interesting of an idea).
 
 #### Lower Density
 
@@ -216,14 +216,19 @@ Also, $A_1 \perp A_0$, so by [Lemma 7][density1],
 
 $$\dnat(A) = \dnat(A_1) H(A_0) = \frac{1}{3} \sum_{i, j \geq 0} \frac{1}{4^i 9^j} = \frac{1}{2}$$
 
-TODO add something here about why we did all that
+In this case and in related cases, we'll be visualizing our set $A$ as a subset of an infinite grid, similarly to the lines of squares from before:
 
----
+TODO PICTURE
 
-Perhaps surprisingly, we can prove a very good upper bound on the lower density of $A$.  
+Since we're looking at one slice at a time, remember that really all of these numbers are scaled by some integer not divisible by $2$ or $3$. For this set $A$, all of the slices look the same, so I just drew the first one. The members of $A$ are represented by the circled (?) values, and the L-triominoes show you where the corresponding members of $2A$ and $3A$ are.
+
+So why did we do all that?
+
+The reason is that this greedy construction is really interesting, because we can make a denser construction without a huge amount of pain (we'll do this in a bit), and also because this construction *actually is optimal* when it comes to the lower density of the set $A$.
+
 This section is dedicated to providing a proof that, if $S \perp \lbrace 1, 2, 3 \rbrace$, then $\dinf(S) \leq \frac{1}{2}$.
 
-To do so, we need to introduce the concept of logarithmic density.
+To do so, we need to introduce the concept of logarithmic density (exciting!!).
 
 $$\newcommand{\ldnat}{\mathrm \delta}
 \newcommand{\ldsup}{\overline{\mathrm \delta}}
@@ -251,7 +256,7 @@ Then for all large $x$, say $x \geq x_0$, we have $A(x) \geq cx$.
 Now use [Abel's summation theorem][abel] to write
 
 $$\begin{align*}
-\sum_{n \leq x,\, n \in A} \frac{1}{n} &= \frac{A(x)}{x} + \int_1^x \frac{A(t)}{t^2}dt\\
+\sum_{a \leq x,\, a \in A} \frac{1}{a} &= \frac{A(x)}{x} + \int_1^x \frac{A(t)}{t^2}dt\\
 &\geq \int_{x_0}^x \frac{ct}{t^2}dt\\
 &= c\int_{x_0}^x \frac{1}{t}dt\\
 &= c \log(x) - c \log(x_0)
@@ -262,7 +267,22 @@ and therefore we have $\ldinf(A) \geq c$. Letting $c \to \dinf(A)$ from below we
 The bound $\dsup(A) \geq \ldsup(A)$ comes from considering $A' = \NN - A$.  
 We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
 
-We will prove that if $A \perp \lbrace 1, 2, 3 \rbrace$, then $\ldinf(A) \leq \frac{1}{2}$, hence $\dinf(A) \leq \frac{1}{2}$.
+Logarithmic density is particularly amenable to our problem setup:
+
+> **Lemma TODO.** If $A \perp B$ and $B$ is finite then $\ldsup(A) \leq H(B)^{-1}$. 
+> If $B$ is infinite then take larger and larger finite subsets of $B$ to prove the same bound. 
+> Conjecture 1 holds for logarithmic density. Yay!
+
+_Proof._ Since $B$ is finite, assume as always the $B$-dilations of $A$ are disjoint. 
+Consider this inequality, by expanding the terms in the product:
+
+$$\left(\sum_{a \leq x,\, a \in A} \frac{1}{a}\right) \times \left(\sum_{b \in B} \frac{1}{b}\right) \leq \sum_{n \leq x\max(B)} \frac{1}{n} \sim \log(x\max(B)) \sim \log(x)$$
+
+Divide by $\log(x)$ and by $H(B)$ and let $x$ go to infinity. Neat! $\proofqed$
+
+Okay, so, to prove that the greedy construction maximizes lower density when $B = \lbrace 1, 2, 3 \rbrace$, we will actually be showing that $\ldinf(A) \leq \frac{1}{2}$, and then using $\dinf(A) \leq \ldinf(A)$.
+
+TODO RELABEL BELOW VARS
 
 From here on, let's write $Q$ for the set of all naturals of the form $6k \pm 1$ (equivalently the set of all naturals not divisible by $2$ or by $3$), and also write $R$ for the set of all integers of the form $2^i 3^j$. This way, all of the dilations $rQ$ are disjoint (so that $Q \perp R$), and $Q \times R = \NN$.
 
