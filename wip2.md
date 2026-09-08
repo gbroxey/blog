@@ -269,8 +269,8 @@ We have $\dsup(A) = 1-\dinf(A') \geq 1-\ldinf(A') = \ldsup(A)$. $\proofqed$.
 
 Logarithmic density is particularly amenable to our problem setup:
 
-> **Lemma TODO.** If $A \perp B$ and $B$ is finite then $\ldsup(A) \leq H(B)^{-1}$. 
-> If $B$ is infinite then take larger and larger finite subsets of $B$ to prove the same bound. 
+> **Lemma TODO.** If $A \perp B$ and $B$ is finite then $\ldsup(A) \leq H(B)^{-1}$.  
+> If $B$ is infinite then take larger and larger finite subsets of $B$ to prove the same bound.  
 > Conjecture 1 holds for logarithmic density. Yay!
 
 _Proof._ Since $B$ is finite, assume as always the $B$-dilations of $A$ are disjoint. 
