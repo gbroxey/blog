@@ -102,7 +102,7 @@ We need to get asymptotics on $R(n)$, which will be instantly related to $\frac{
 This is very easy (the following analysis is from Theorem 3.4 from Apostol's Introduction to Analytic Number Theory):
 
 $$\begin{align*}
-S(n) &= \sum_{k \leq n} \sigma(k) = \sum_{k \leq n} \sum_{q \mid n} q\\
+S(n) &= \sum_{k \leq n} \sigma(k) = \sum_{k \leq n} \sum_{q \mid k} q\\
 &= \sum_{qd \leq n} q = \sum_{d \leq n} \sum_{q \leq n/d} q\\
 &= \sum_{d \leq n} \left[ \frac{1}{2} \left(\frac{n}{d}\right)^2 + O\left(\frac{n}{d}\right)\right]\\
 &= \frac{n^2}{2} \sum_{d \leq n} \frac{1}{d^2} + O\left(n \sum_{d \leq n} \frac{1}{d}\right)
