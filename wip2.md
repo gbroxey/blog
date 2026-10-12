@@ -150,13 +150,13 @@ First, we need to be convinced that these actions will always preserve $A \perp 
 
 TODO PICTURE
 
-Now, so long as I say the magic words "perform whichever action minimizes the value of the smallest integer changed in the set $A$", we obtain by magic a set $A_{\infty}$ of possibly higher density for which none of those listed improvements are possible.  
+Now, so long as I say the magic words "perform whichever action minimizes the value of the smallest integer changed in the set $A$", we obtain a set $A_{\infty}$ of possibly higher density for which none of those listed improvements are possible.  
 
 It turns out that the improvements I listed actually totally determine $W$, which can be seen by just looking at each $v p^0, v p^1, \ldots$ in order. By the first rule, $v p^0 \in W$. Since $A \perp B$, we can't include $v p^1$, and by the second rule, we have to have $v p^2 \in W$. Together that covers everything up to $v p^6$, and then the third rule tells us $v p^7 \in W$, and so on.
 
 TODO PICTURE
 
-So there is a set $A$ which maximizes density, and its density is[^0]
+So there is a set $A$ which maximizes density, and its density is[^ftnote_onedim_034]
 
 $$\frac{p^4(p^2+1)(p-1)}{p^7-1}$$
 
@@ -166,7 +166,7 @@ $$\frac{1 + p + p^2 + p^3 + p^4 + p^6}{1 + p + p^2 + p^3 + p^4 + p^5 + p^6} < 1$
 
 so in fact $\dsup(A) < H(B)^{-1}$ here. $\proofqed$
 
-We managed to handle this one because any possible holes could always be plugged, and the shape of $B$ wasn't so vicious as to prevent this from happening. Here's a contrived example which is less friendly.
+We managed to handle this one because the shape of $B$ was decently friendly. Here's a contrived example which is worse.
 
 ### TODO SECTION
 
@@ -484,7 +484,7 @@ The code for this blog post is available nowhere.
 [saffari]: https://www.renyi.hu/~p_erdos/1979-10.pdf
 [abel]: https://en.wikipedia.org/wiki/Abel%27s_summation_formula
 
-[^0]: Here $V_\text{div} \times V_\text{rel}$ has density $1/\sum p^{-k} = (1-p)/p$, and we're taking the product of that set with $\lbrace 1, p^2, p^7, p^9, \ldots \rbrace$. See [Lemma 7][density1] again if you want.
+[^ftnote_onedim_034]: Here $V_\text{div} \times V_\text{rel}$ has density $1/\sum p^{-k} = (1-p)/p$, and we're taking the product of that set with $\lbrace 1, p^2, p^7, p^9, \ldots \rbrace$. See [Lemma 7][density1] again if you want.
 [^2]: In the previous entries in this series, we've seen that if we have $A \times B = \NN$ such that every product $ab$ is unique (referred to by Erdős and Saffari as $A$ and $B$ being "direct factor pair"), and such that this construction is nice enough in some way, then we have $\dnat(A) = H(B)^{-1}$ exactly (see for example the analysis of $R_0 \times R_1$ in [Lemma 8 of the first post][density1], or the setup with $U$ and $V$ in [Lemma 9 of the second post][density2]). If $B$ was nicer, like $\lbrace 1, 2, 3, 6\rbrace$, then we would have an equivalently nice set $U$ so that $U \times B = \NN$ with density $H(B)^{-1}$ which would make the proof easy. Here, we should notice that $B = \lbrace 1, 2, 3 \rbrace$ does not permit such a construction. A hypothetical setup with $U \times \lbrace 1, 2, 3 \rbrace = \NN$ would force $1 \in U$, and also then $4 \in U$, but then we find it impossible to include $6 \in U$. This, in other words, is caused by the simple fact that there is no perfect tiling of a quarter plane by the L triomino.
 
 ---
