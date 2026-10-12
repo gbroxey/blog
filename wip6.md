@@ -95,7 +95,7 @@ $$R(n) = \sum_{k \leq n} r_4(k) = 8S(n) - 32S(n/4)$$
 
 The reason we care about this is that, by the analytical lemma on $\theta(x)^4$, we have
 
-$$\liminf_{n \to \infty} \frac{R(n)}{n^2} \leq \liminf_{x \to 1^-} \frac{(1-x)^2}{2} \theta(x)^4 \leq \limsup_{x \to 1^-} \frac{(1-x)^2}{2} \leq \limsup_{n \to \infty} \frac{R(n)}{n^2}$$
+$$\liminf_{n \to \infty} \frac{R(n)}{n^2} \leq \liminf_{x \to 1^-} \frac{(1-x)^2}{2} \theta(x)^4 \leq \limsup_{x \to 1^-} \frac{(1-x)^2}{2} \theta(x)^4 \leq \limsup_{n \to \infty} \frac{R(n)}{n^2}$$
 
 We need to get asymptotics on $R(n)$, which will be instantly related to $\frac{\pi^2}{2}$ by using the limit we got earlier with $\theta(x)^4$.
 
