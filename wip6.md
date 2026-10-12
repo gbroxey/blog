@@ -1,5 +1,5 @@
 ---
-title: "Proving $\zeta(2) = \frac{\pi^2}{6}$ by Jacobi Four-Square Theorem and Lattice Point Counting"
+title: "Solving the Basel Problem by Jacobi Four-Square Theorem and Lattice Point Counting"
 tags: [analysis,number theory]
 date: 2023-10-12
 ---
