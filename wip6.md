@@ -20,16 +20,22 @@ The expression on the left hand side is the value $\zeta(2)$ of the Riemann zeta
 
 ---
 
-First, you probably should read [this blog post from 2023][older-post] where I used a nice lattice point counting idea to show that $(1/2)!$ must equal $\frac{\sqrt{\pi}}{2}$. We will, in fact, be using almost the exact same setup as in that blog post.
+First, you probably should read [this blog post from 2023][older-post] where I used a nice lattice point counting idea to show that $(1/2)!$ must equal $\frac{\sqrt{\pi}}{2}$. We will, in fact, be using almost the exact same setup here.
 
 Define, for $|x| < 1$,
+
 $$a(x) = \sum_{n \geq 0} x^{n^2}$$
+
 and recall from before that
+
 $$\lim_{x \to 1} (1-x)a(x)^2 = \frac{\pi}{4}$$
+
 by counting the lattice points inside a quarter-circle and using the analytical lemma. So far this is all the same as last time.
 
-Also define
+Define
+
 $$\theta(x) = \sum_{n \in \mathbb Z} x^{n^2}$$
+
 which is (related to) the Jacobi theta function. We care about it because the $x^n$ coefficient of $\theta^k$ is $r_k(n)$, the number of representations of $n$ as a sum of $k$ integer squares. This differs only slightly from our $a(x)$ - the coefficient of $x^n$ in $a(x)^k$ is the number of representations of $n$ as a sum of $k$ _non-negative_ integers squared.
 
 For $\theta(x)^2$, the coefficient of $x$ is $4$, from the representations $1 = 1^2 + 0^2 = (-1)^2 + 0^2 = 0^2 + 1^2 = 0^2 + (-1)^2$.
@@ -69,9 +75,13 @@ $$r_4(n) = 8\sigma(n) - 32\sigma(n/4)$$
 where the second term is taken to be zero when $n/4$ is a fraction.
 
 Let 
+
 $$S(n) = \sum_{k \leq n} \sigma(k)$$
+
 Then
+
 $$R(n) = \sum_{k \leq n} r_4(k) = 8S(n) - 32S(n/4)$$
+
 We need to get asymptotics on $R(n)$, which will be instantly related to $\frac{\pi^2}{2}$ by using the analytical lemma on $\theta(x)^4$.
 
 This is very easy (the following analysis is from Theorem 3.4 from Apostol's Introduction to Analytic Number Theory):
@@ -84,11 +94,13 @@ S(n) &= \sum_{k \leq n} \sigma(k) = \sum_{k \leq n} \sum_{q \mid n} q\\
 \end{align*}$$
 
 The error-term is of the order $n \log n$ and so is negligible, and the sum $\sum \frac{1}{d^2}$ will converge to $\zeta(2)$. So
+
 $$S(n) = \frac{1}{2} \zeta(2) n^2 + o(n^2)$$
 
 Plugging this into $R(n) = 8S(n) - 32S(n/4)$ and simplifying, we get
 
 $$R(n) = 3\zeta(2)n^2 + o(n^2)$$
+
 which is enough for our analytical lemma to show
 
 $$\lim_{x \to 1} \frac{(1-x)^2}{2} \theta(x)^4 = 3 \zeta(2)$$
