@@ -22,7 +22,7 @@ The expression on the left hand side is the value $\zeta(2)$ of the Riemann zeta
 
 First, you probably should read [this blog post from 2023][older-post] where I used a nice lattice point counting idea to show that $(1/2)!$ must equal $\frac{\sqrt{\pi}}{2}$. We will, in fact, be using almost the exact same setup here.
 
-Define, for $|x| < 1$,
+Define, for $\lvert x \rvert < 1$,
 
 $$a(x) = \sum_{n \geq 0} x^{n^2}$$
 
@@ -36,9 +36,18 @@ Define
 
 $$\theta(x) = \sum_{n \in \mathbb Z} x^{n^2}$$
 
-which is (related to) the Jacobi theta function. We care about it because the $x^n$ coefficient of $\theta^k$ is $r_k(n)$, the number of representations of $n$ as a sum of $k$ integer squares. This differs only slightly from our $a(x)$ - the coefficient of $x^n$ in $a(x)^k$ is the number of representations of $n$ as a sum of $k$ _non-negative_ integers squared.
+which is (related to) the Jacobi theta function. We care about it because the $x^n$ coefficient of $\theta^k$ is $r_k(n)$, the number of representations of $n$ as a sum of $k$ integer squares.
 
-For $\theta(x)^2$, the coefficient of $x$ is $4$, from the representations $1 = 1^2 + 0^2 = (-1)^2 + 0^2 = 0^2 + 1^2 = 0^2 + (-1)^2$.
+This differs only slightly from our $a(x)$ - the coefficient of $x^n$ in $a(x)^k$ is the number of representations of $n$ as a sum of $k$ _non-negative_ integers squared.
+
+For $\theta(x)^2$, the coefficient of $x$ is $4$, from the representations
+
+$$\begin{align*}
+1 &= 1^2 + 0^2\\
+&= (-1)^2 + 0^2\\
+&= 0^2 + 1^2\\
+&= 0^2 + (-1)^2
+\end{align*}$$
 
 For $a(x)^2$ though, the coefficient of $x$ is $2$, from $1 = 1^2 + 0^2 = 0^2 + 1^2$.
 
@@ -48,9 +57,11 @@ $$\lim_{x \to 1} (1-x)\theta(x)^2 = \pi$$
 
 which is quite nice to look at.
 
-Our next step is obviously to ask ourselves where $\pi^2$ could possibly come from, and the answer is of course from squaring $\pi$. So, we'll have to think about the coefficients of $\theta(x)^4$ in connection with the limit
+Our next step is obviously to ask ourselves where $\pi^2$ could possibly come from, and the answer is of course from squaring $\pi$. So, we'll have to think about the coefficients of $\theta(x)^4$ and then use
 
 $$\lim_{x \to 1} \frac{(1-x)^2}{2} \theta(x)^4 = \frac{\pi^2}{2}$$
+
+which I got from squaring the previous limit and dividing by two.
 
 In order to use the analytical lemma from last time, we need to analyze partial sums of the coefficients $r_4(n)$ in the series for $\theta(x)^4$. It turns out a really smart guy called Jacobi already did that for us, so we'll borrow his work.
 
@@ -68,7 +79,7 @@ It can also be proved using quaternions (which makes sense, because quaternions 
 
 Another proof which appears elsewhere in that mathoverflow thread is elementary and appears in section 2.4 of the book "Elementary Number Theory, Group Theory, and Ramanujan Graphs" by Davidoff, Sarnak, and Valette. You can find that online if you want.
 
-Okay, so, the version I'll be using is the following:
+Okay, so, the version I'll be using is the following, where $\sigma(n)$ is the sum of all divisors of $n$:
 
 $$r_4(n) = 8\sigma(n) - 32\sigma(n/4)$$
 
@@ -82,7 +93,11 @@ Then
 
 $$R(n) = \sum_{k \leq n} r_4(k) = 8S(n) - 32S(n/4)$$
 
-We need to get asymptotics on $R(n)$, which will be instantly related to $\frac{\pi^2}{2}$ by using the analytical lemma on $\theta(x)^4$.
+The reason we care about this is that, by the analytical lemma on $\theta(x)^4$, we have
+
+$$\liminf_{n \to \infty} \frac{R(n)}{n^2} \leq \liminf_{x \to 1^-} \frac{(1-x)^2}{2} \theta(x)^4 \leq \limsup_{x \to 1^-} \frac{(1-x)^2}{2} \leq \limsup_{n \to \infty} \frac{R(n)}{n^2}$$
+
+We need to get asymptotics on $R(n)$, which will be instantly related to $\frac{\pi^2}{2}$ by using the limit we got earlier with $\theta(x)^4$.
 
 This is very easy (the following analysis is from Theorem 3.4 from Apostol's Introduction to Analytic Number Theory):
 
@@ -101,7 +116,7 @@ Plugging this into $R(n) = 8S(n) - 32S(n/4)$ and simplifying, we get
 
 $$R(n) = 3\zeta(2)n^2 + o(n^2)$$
 
-which is enough for our analytical lemma to show
+which shows
 
 $$\lim_{x \to 1} \frac{(1-x)^2}{2} \theta(x)^4 = 3 \zeta(2)$$
 
